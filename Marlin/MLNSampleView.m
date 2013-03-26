@@ -434,21 +434,17 @@ static void *sampleContext = &sampleContext;
     CGFloat dx = locationInView.x - [self visibleRect].origin.x;
     NSUInteger fpp;
     
+    CGFloat dfpp = (_framesPerPixel * [event magnification]);
+    if (ABS(dfpp) < 1) {
+        if ([event magnification] < 0) {
+            dfpp = -1;
+        } else {
+            dfpp = 1;
+        }
+    }
+    fpp = _framesPerPixel - dfpp;
+         
     /*
-     // This gives a more responsive zoom, but the resulting _framesPerPixel
-     // doesn't give a nice round value compatible with the cache so scrolling
-     // gives artifacts and looks ugly
-     CGFloat dfpp = (_framesPerPixel * [event magnification]);
-     if (ABS(dfpp) < 1) {
-     if ([event magnification] < 0) {
-     dfpp = -1;
-     } else {
-     dfpp = 1;
-     }
-     }
-     _framesPerPixel -= dfpp;
-     */
-    
     fpp = _framesPerPixel;
     
     _summedMagnificationLevel -= ([event magnification] * 2);
@@ -464,7 +460,7 @@ static void *sampleContext = &sampleContext;
         fpp /= 2;
         _summedMagnificationLevel = 0;
     }
-    
+    */
     if (fpp < 1) {
         fpp = 1;
     }
