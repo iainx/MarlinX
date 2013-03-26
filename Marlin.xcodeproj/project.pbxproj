@@ -7,16 +7,66 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AE05C60316C246DF00A7B9D9 /* MLNSampleChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = AE05C60216C246DF00A7B9D9 /* MLNSampleChannel.m */; };
+		AE298D7A16F7CC720031334A /* DDAbstractDatabaseLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = AE298D6B16F7CC720031334A /* DDAbstractDatabaseLogger.m */; };
+		AE298D7B16F7CC720031334A /* DDASLLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = AE298D6D16F7CC720031334A /* DDASLLogger.m */; };
+		AE298D7C16F7CC720031334A /* DDFileLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = AE298D6F16F7CC720031334A /* DDFileLogger.m */; };
+		AE298D7D16F7CC720031334A /* DDLog.m in Sources */ = {isa = PBXBuildFile; fileRef = AE298D7116F7CC720031334A /* DDLog.m */; };
+		AE298D7E16F7CC720031334A /* DDTTYLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = AE298D7316F7CC720031334A /* DDTTYLogger.m */; };
+		AE298D7F16F7CC720031334A /* ContextFilterLogFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = AE298D7616F7CC720031334A /* ContextFilterLogFormatter.m */; };
+		AE298D8016F7CC720031334A /* DispatchQueueLogFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = AE298D7816F7CC720031334A /* DispatchQueueLogFormatter.m */; };
+		AE298D8116F7CC720031334A /* README.txt in Resources */ = {isa = PBXBuildFile; fileRef = AE298D7916F7CC720031334A /* README.txt */; };
+		AE31A9C916F146ED0051CF41 /* MLNSample+Operations.m in Sources */ = {isa = PBXBuildFile; fileRef = AE31A9C816F146ED0051CF41 /* MLNSample+Operations.m */; };
+		AE5AB6CD16EA2DE0008D0AE4 /* MLNSample+Drawing.m in Sources */ = {isa = PBXBuildFile; fileRef = AE5AB6CC16EA2DE0008D0AE4 /* MLNSample+Drawing.m */; };
+		AE6A0F3C16BD1F1900362CC4 /* MLNSampleBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = AE6A0F3B16BD1F1900362CC4 /* MLNSampleBlock.m */; };
+		AE6FB1D816B8FF6E00139735 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = AE6FB1D716B8FF6E00139735 /* Constants.m */; };
+		AE6FB1DB16B9C57900139735 /* MLNSampleView.m in Sources */ = {isa = PBXBuildFile; fileRef = AE6FB1DA16B9C57900139735 /* MLNSampleView.m */; };
 		AECDE7C216B7C0C300DE94D5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AECDE7C116B7C0C300DE94D5 /* Cocoa.framework */; };
 		AECDE7CC16B7C0C300DE94D5 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = AECDE7CA16B7C0C300DE94D5 /* InfoPlist.strings */; };
 		AECDE7CE16B7C0C300DE94D5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = AECDE7CD16B7C0C300DE94D5 /* main.m */; };
 		AECDE7D216B7C0C300DE94D5 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = AECDE7D016B7C0C300DE94D5 /* Credits.rtf */; };
-		AECDE7D516B7C0C300DE94D5 /* SLFDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = AECDE7D416B7C0C300DE94D5 /* SLFDocument.m */; };
-		AECDE7D816B7C0C300DE94D5 /* SLFDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = AECDE7D616B7C0C300DE94D5 /* SLFDocument.xib */; };
+		AECDE7D516B7C0C300DE94D5 /* MLNDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = AECDE7D416B7C0C300DE94D5 /* MLNDocument.m */; };
+		AECDE7D816B7C0C300DE94D5 /* MLNDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = AECDE7D616B7C0C300DE94D5 /* MLNDocument.xib */; };
 		AECDE7DB16B7C0C300DE94D5 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = AECDE7D916B7C0C300DE94D5 /* MainMenu.xib */; };
+		AECDE7E316B7C26800DE94D5 /* MLNSample.m in Sources */ = {isa = PBXBuildFile; fileRef = AECDE7E216B7C26800DE94D5 /* MLNSample.m */; };
+		AECDE7E516B7C3B900DE94D5 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AECDE7E416B7C3B900DE94D5 /* AudioToolbox.framework */; };
+		AECDE7E816B7D59C00DE94D5 /* MLNLoadOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = AECDE7E716B7D59C00DE94D5 /* MLNLoadOperation.m */; };
+		AED56DCF16FD1D73005E2573 /* pa_ringbuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = AED56DCD16FD1D73005E2573 /* pa_ringbuffer.c */; };
+		AEDA842B16C88B7F001B2DD1 /* MLNApplicationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = AEDA842A16C88B7F001B2DD1 /* MLNApplicationDelegate.m */; };
+		AEDA843316C8D13E001B2DD1 /* MLNMMapRegion.m in Sources */ = {isa = PBXBuildFile; fileRef = AEDA843216C8D13E001B2DD1 /* MLNMMapRegion.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		AE05C60116C246DF00A7B9D9 /* MLNSampleChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNSampleChannel.h; sourceTree = "<group>"; };
+		AE05C60216C246DF00A7B9D9 /* MLNSampleChannel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNSampleChannel.m; sourceTree = "<group>"; };
+		AE298D6A16F7CC720031334A /* DDAbstractDatabaseLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDAbstractDatabaseLogger.h; sourceTree = "<group>"; };
+		AE298D6B16F7CC720031334A /* DDAbstractDatabaseLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDAbstractDatabaseLogger.m; sourceTree = "<group>"; };
+		AE298D6C16F7CC720031334A /* DDASLLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDASLLogger.h; sourceTree = "<group>"; };
+		AE298D6D16F7CC720031334A /* DDASLLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDASLLogger.m; sourceTree = "<group>"; };
+		AE298D6E16F7CC720031334A /* DDFileLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDFileLogger.h; sourceTree = "<group>"; };
+		AE298D6F16F7CC720031334A /* DDFileLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDFileLogger.m; sourceTree = "<group>"; };
+		AE298D7016F7CC720031334A /* DDLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDLog.h; sourceTree = "<group>"; };
+		AE298D7116F7CC720031334A /* DDLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDLog.m; sourceTree = "<group>"; };
+		AE298D7216F7CC720031334A /* DDTTYLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDTTYLogger.h; sourceTree = "<group>"; };
+		AE298D7316F7CC720031334A /* DDTTYLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDTTYLogger.m; sourceTree = "<group>"; };
+		AE298D7516F7CC720031334A /* ContextFilterLogFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContextFilterLogFormatter.h; sourceTree = "<group>"; };
+		AE298D7616F7CC720031334A /* ContextFilterLogFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContextFilterLogFormatter.m; sourceTree = "<group>"; };
+		AE298D7716F7CC720031334A /* DispatchQueueLogFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DispatchQueueLogFormatter.h; sourceTree = "<group>"; };
+		AE298D7816F7CC720031334A /* DispatchQueueLogFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DispatchQueueLogFormatter.m; sourceTree = "<group>"; };
+		AE298D7916F7CC720031334A /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
+		AE31A9C716F146ED0051CF41 /* MLNSample+Operations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MLNSample+Operations.h"; sourceTree = "<group>"; };
+		AE31A9C816F146ED0051CF41 /* MLNSample+Operations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MLNSample+Operations.m"; sourceTree = "<group>"; };
+		AE31A9CA16F28D3E0051CF41 /* MLNSampleDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNSampleDelegate.h; sourceTree = "<group>"; };
+		AE5AB6AF16E5759E008D0AE4 /* MLNSampleViewDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNSampleViewDelegate.h; sourceTree = "<group>"; };
+		AE5AB6CB16EA2DE0008D0AE4 /* MLNSample+Drawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MLNSample+Drawing.h"; sourceTree = "<group>"; };
+		AE5AB6CC16EA2DE0008D0AE4 /* MLNSample+Drawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MLNSample+Drawing.m"; sourceTree = "<group>"; };
+		AE6A0F3A16BD1F1900362CC4 /* MLNSampleBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNSampleBlock.h; sourceTree = "<group>"; };
+		AE6A0F3B16BD1F1900362CC4 /* MLNSampleBlock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNSampleBlock.m; sourceTree = "<group>"; };
+		AE6FB1D416B8FC9200139735 /* MLNLoadOperationDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNLoadOperationDelegate.h; sourceTree = "<group>"; };
+		AE6FB1D616B8FF6E00139735 /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
+		AE6FB1D716B8FF6E00139735 /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
+		AE6FB1D916B9C57900139735 /* MLNSampleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNSampleView.h; sourceTree = "<group>"; };
+		AE6FB1DA16B9C57900139735 /* MLNSampleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNSampleView.m; sourceTree = "<group>"; };
 		AECDE7BD16B7C0C300DE94D5 /* Marlin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Marlin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AECDE7C116B7C0C300DE94D5 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		AECDE7C416B7C0C300DE94D5 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -27,10 +77,22 @@
 		AECDE7CD16B7C0C300DE94D5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		AECDE7CF16B7C0C300DE94D5 /* Marlin-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Marlin-Prefix.pch"; sourceTree = "<group>"; };
 		AECDE7D116B7C0C300DE94D5 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
-		AECDE7D316B7C0C300DE94D5 /* SLFDocument.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLFDocument.h; sourceTree = "<group>"; };
-		AECDE7D416B7C0C300DE94D5 /* SLFDocument.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLFDocument.m; sourceTree = "<group>"; };
-		AECDE7D716B7C0C300DE94D5 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/SLFDocument.xib; sourceTree = "<group>"; };
+		AECDE7D316B7C0C300DE94D5 /* MLNDocument.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNDocument.h; sourceTree = "<group>"; };
+		AECDE7D416B7C0C300DE94D5 /* MLNDocument.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDocument.m; sourceTree = "<group>"; };
+		AECDE7D716B7C0C300DE94D5 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MLNDocument.xib; sourceTree = "<group>"; };
 		AECDE7DA16B7C0C300DE94D5 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		AECDE7E116B7C26800DE94D5 /* MLNSample.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNSample.h; sourceTree = "<group>"; };
+		AECDE7E216B7C26800DE94D5 /* MLNSample.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNSample.m; sourceTree = "<group>"; };
+		AECDE7E416B7C3B900DE94D5 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		AECDE7E616B7D59C00DE94D5 /* MLNLoadOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNLoadOperation.h; sourceTree = "<group>"; };
+		AECDE7E716B7D59C00DE94D5 /* MLNLoadOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNLoadOperation.m; sourceTree = "<group>"; };
+		AED56DCD16FD1D73005E2573 /* pa_ringbuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pa_ringbuffer.c; sourceTree = "<group>"; };
+		AED56DCE16FD1D73005E2573 /* pa_ringbuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pa_ringbuffer.h; sourceTree = "<group>"; };
+		AED56DD016FD1D96005E2573 /* pa_memorybarrier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pa_memorybarrier.h; sourceTree = "<group>"; };
+		AEDA842916C88B7F001B2DD1 /* MLNApplicationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNApplicationDelegate.h; sourceTree = "<group>"; };
+		AEDA842A16C88B7F001B2DD1 /* MLNApplicationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNApplicationDelegate.m; sourceTree = "<group>"; };
+		AEDA843116C8D13E001B2DD1 /* MLNMMapRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNMMapRegion.h; sourceTree = "<group>"; };
+		AEDA843216C8D13E001B2DD1 /* MLNMMapRegion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNMMapRegion.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -38,6 +100,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AECDE7E516B7C3B900DE94D5 /* AudioToolbox.framework in Frameworks */,
 				AECDE7C216B7C0C300DE94D5 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -45,6 +108,45 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		AE298D6916F7CC720031334A /* Lumberjack */ = {
+			isa = PBXGroup;
+			children = (
+				AE298D6A16F7CC720031334A /* DDAbstractDatabaseLogger.h */,
+				AE298D6B16F7CC720031334A /* DDAbstractDatabaseLogger.m */,
+				AE298D6C16F7CC720031334A /* DDASLLogger.h */,
+				AE298D6D16F7CC720031334A /* DDASLLogger.m */,
+				AE298D6E16F7CC720031334A /* DDFileLogger.h */,
+				AE298D6F16F7CC720031334A /* DDFileLogger.m */,
+				AE298D7016F7CC720031334A /* DDLog.h */,
+				AE298D7116F7CC720031334A /* DDLog.m */,
+				AE298D7216F7CC720031334A /* DDTTYLogger.h */,
+				AE298D7316F7CC720031334A /* DDTTYLogger.m */,
+				AE298D7416F7CC720031334A /* Extensions */,
+			);
+			path = Lumberjack;
+			sourceTree = "<group>";
+		};
+		AE298D7416F7CC720031334A /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				AE298D7516F7CC720031334A /* ContextFilterLogFormatter.h */,
+				AE298D7616F7CC720031334A /* ContextFilterLogFormatter.m */,
+				AE298D7716F7CC720031334A /* DispatchQueueLogFormatter.h */,
+				AE298D7816F7CC720031334A /* DispatchQueueLogFormatter.m */,
+				AE298D7916F7CC720031334A /* README.txt */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		AE5AB6C916E93623008D0AE4 /* External Sources */ = {
+			isa = PBXGroup;
+			children = (
+				AED56DD116FD1E95005E2573 /* Portaudio */,
+				AE298D6916F7CC720031334A /* Lumberjack */,
+			);
+			name = "External Sources";
+			sourceTree = "<group>";
+		};
 		AECDE7B216B7C0C300DE94D5 = {
 			isa = PBXGroup;
 			children = (
@@ -65,6 +167,7 @@
 		AECDE7C016B7C0C300DE94D5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				AECDE7E416B7C3B900DE94D5 /* AudioToolbox.framework */,
 				AECDE7C116B7C0C300DE94D5 /* Cocoa.framework */,
 				AECDE7C316B7C0C300DE94D5 /* Other Frameworks */,
 			);
@@ -84,10 +187,34 @@
 		AECDE7C716B7C0C300DE94D5 /* Marlin */ = {
 			isa = PBXGroup;
 			children = (
-				AECDE7D316B7C0C300DE94D5 /* SLFDocument.h */,
-				AECDE7D416B7C0C300DE94D5 /* SLFDocument.m */,
-				AECDE7D616B7C0C300DE94D5 /* SLFDocument.xib */,
+				AEDA842916C88B7F001B2DD1 /* MLNApplicationDelegate.h */,
+				AEDA842A16C88B7F001B2DD1 /* MLNApplicationDelegate.m */,
+				AECDE7D316B7C0C300DE94D5 /* MLNDocument.h */,
+				AECDE7D416B7C0C300DE94D5 /* MLNDocument.m */,
+				AECDE7D616B7C0C300DE94D5 /* MLNDocument.xib */,
 				AECDE7D916B7C0C300DE94D5 /* MainMenu.xib */,
+				AECDE7E116B7C26800DE94D5 /* MLNSample.h */,
+				AECDE7E216B7C26800DE94D5 /* MLNSample.m */,
+				AE31A9CA16F28D3E0051CF41 /* MLNSampleDelegate.h */,
+				AE5AB6CB16EA2DE0008D0AE4 /* MLNSample+Drawing.h */,
+				AE5AB6CC16EA2DE0008D0AE4 /* MLNSample+Drawing.m */,
+				AE31A9C716F146ED0051CF41 /* MLNSample+Operations.h */,
+				AE31A9C816F146ED0051CF41 /* MLNSample+Operations.m */,
+				AE6A0F3A16BD1F1900362CC4 /* MLNSampleBlock.h */,
+				AE6A0F3B16BD1F1900362CC4 /* MLNSampleBlock.m */,
+				AE05C60116C246DF00A7B9D9 /* MLNSampleChannel.h */,
+				AE05C60216C246DF00A7B9D9 /* MLNSampleChannel.m */,
+				AEDA843116C8D13E001B2DD1 /* MLNMMapRegion.h */,
+				AEDA843216C8D13E001B2DD1 /* MLNMMapRegion.m */,
+				AE6FB1D916B9C57900139735 /* MLNSampleView.h */,
+				AE6FB1DA16B9C57900139735 /* MLNSampleView.m */,
+				AE5AB6AF16E5759E008D0AE4 /* MLNSampleViewDelegate.h */,
+				AECDE7E616B7D59C00DE94D5 /* MLNLoadOperation.h */,
+				AECDE7E716B7D59C00DE94D5 /* MLNLoadOperation.m */,
+				AE6FB1D416B8FC9200139735 /* MLNLoadOperationDelegate.h */,
+				AE6FB1D616B8FF6E00139735 /* Constants.h */,
+				AE6FB1D716B8FF6E00139735 /* Constants.m */,
+				AE5AB6C916E93623008D0AE4 /* External Sources */,
 				AECDE7C816B7C0C300DE94D5 /* Supporting Files */,
 			);
 			path = Marlin;
@@ -103,6 +230,16 @@
 				AECDE7D016B7C0C300DE94D5 /* Credits.rtf */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		AED56DD116FD1E95005E2573 /* Portaudio */ = {
+			isa = PBXGroup;
+			children = (
+				AED56DCD16FD1D73005E2573 /* pa_ringbuffer.c */,
+				AED56DCE16FD1D73005E2573 /* pa_ringbuffer.h */,
+				AED56DD016FD1D96005E2573 /* pa_memorybarrier.h */,
+			);
+			name = Portaudio;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -131,7 +268,7 @@
 		AECDE7B416B7C0C300DE94D5 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				CLASSPREFIX = SLF;
+				CLASSPREFIX = MLN;
 				LastUpgradeCheck = 0450;
 				ORGANIZATIONNAME = iain;
 			};
@@ -159,8 +296,9 @@
 			files = (
 				AECDE7CC16B7C0C300DE94D5 /* InfoPlist.strings in Resources */,
 				AECDE7D216B7C0C300DE94D5 /* Credits.rtf in Resources */,
-				AECDE7D816B7C0C300DE94D5 /* SLFDocument.xib in Resources */,
+				AECDE7D816B7C0C300DE94D5 /* MLNDocument.xib in Resources */,
 				AECDE7DB16B7C0C300DE94D5 /* MainMenu.xib in Resources */,
+				AE298D8116F7CC720031334A /* README.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -172,7 +310,25 @@
 			buildActionMask = 2147483647;
 			files = (
 				AECDE7CE16B7C0C300DE94D5 /* main.m in Sources */,
-				AECDE7D516B7C0C300DE94D5 /* SLFDocument.m in Sources */,
+				AECDE7D516B7C0C300DE94D5 /* MLNDocument.m in Sources */,
+				AECDE7E316B7C26800DE94D5 /* MLNSample.m in Sources */,
+				AECDE7E816B7D59C00DE94D5 /* MLNLoadOperation.m in Sources */,
+				AE6FB1D816B8FF6E00139735 /* Constants.m in Sources */,
+				AE6FB1DB16B9C57900139735 /* MLNSampleView.m in Sources */,
+				AE6A0F3C16BD1F1900362CC4 /* MLNSampleBlock.m in Sources */,
+				AE05C60316C246DF00A7B9D9 /* MLNSampleChannel.m in Sources */,
+				AEDA842B16C88B7F001B2DD1 /* MLNApplicationDelegate.m in Sources */,
+				AEDA843316C8D13E001B2DD1 /* MLNMMapRegion.m in Sources */,
+				AE5AB6CD16EA2DE0008D0AE4 /* MLNSample+Drawing.m in Sources */,
+				AE31A9C916F146ED0051CF41 /* MLNSample+Operations.m in Sources */,
+				AE298D7A16F7CC720031334A /* DDAbstractDatabaseLogger.m in Sources */,
+				AE298D7B16F7CC720031334A /* DDASLLogger.m in Sources */,
+				AE298D7C16F7CC720031334A /* DDFileLogger.m in Sources */,
+				AE298D7D16F7CC720031334A /* DDLog.m in Sources */,
+				AE298D7E16F7CC720031334A /* DDTTYLogger.m in Sources */,
+				AE298D7F16F7CC720031334A /* ContextFilterLogFormatter.m in Sources */,
+				AE298D8016F7CC720031334A /* DispatchQueueLogFormatter.m in Sources */,
+				AED56DCF16FD1D73005E2573 /* pa_ringbuffer.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -195,12 +351,12 @@
 			name = Credits.rtf;
 			sourceTree = "<group>";
 		};
-		AECDE7D616B7C0C300DE94D5 /* SLFDocument.xib */ = {
+		AECDE7D616B7C0C300DE94D5 /* MLNDocument.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
 				AECDE7D716B7C0C300DE94D5 /* en */,
 			);
-			name = SLFDocument.xib;
+			name = MLNDocument.xib;
 			sourceTree = "<group>";
 		};
 		AECDE7D916B7C0C300DE94D5 /* MainMenu.xib */ = {
@@ -310,6 +466,7 @@
 				AECDE7E016B7C0C300DE94D5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

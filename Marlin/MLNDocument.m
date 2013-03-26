@@ -6,9 +6,14 @@
 //  Copyright (c) 2013 iain. All rights reserved.
 //
 
-#import "SLFDocument.h"
+#import "MLNDocument.h"
+#import "MLNSample.h"
+#import "MLNSample+Operations.h"
+#import "MLNSampleView.h"
 
-@implementation SLFDocument
+@implementation MLNDocument {
+    MLNSample *_testSample;
+}
 
 - (id)init
 {
@@ -23,13 +28,35 @@
 {
     // Override returning the nib file name of the document
     // If you need to use a subclass of NSWindowController or if your document supports multiple NSWindowControllers, you should remove this method and override -makeWindowControllers instead.
-    return @"SLFDocument";
+    return @"MLNDocument";
 }
 
 - (void)windowControllerDidLoadNib:(NSWindowController *)aController
 {
     [super windowControllerDidLoadNib:aController];
     // Add any code here that needs to be executed once the windowController has loaded the document's window.
+    
+    NSURL *url = [NSURL fileURLWithPath:@"/Users/iain/Desktop/Change of Scenery rado edit.wav" isDirectory:NO];
+    //NSURL *url = [NSURL fileURLWithPath:@"/Users/iain/sine.wav" isDirectory:NO];
+    _testSample = [[MLNSample alloc] initWithURL:url];
+    
+    [_sampleView setSample:_testSample];
+    [_sampleView setTranslatesAutoresizingMaskIntoConstraints:NO];
+    
+    // We only want to allow scrolling on the horizontal axis.
+    //[_scrollView setVerticalScrollElasticity:NSScrollElasticityNone];
+    
+    // FIXME: Only on 10.8
+    [_scrollView setBackgroundColor:[NSColor underPageBackgroundColor]];
+    
+    //[_scrollView setHasHorizontalRuler:YES];
+    //[_scrollView setRulersVisible:YES];
+    
+    NSClipView *clipView = [_scrollView contentView];
+    //[clipView setCopiesOnScroll:NO];
+    NSDictionary *viewsDict = @{@"sampleView":_sampleView};
+    
+    [clipView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[sampleView]|" options:0 metrics:nil views:viewsDict]];
 }
 
 + (BOOL)autosavesInPlace
@@ -56,4 +83,36 @@
     return YES;
 }
 
+#pragma Menu actions
+
+- (void)playSample:(id)sender
+{
+    [_testSample play];
+}
+
+- (void)stopSample:(id)sender
+{
+    [_testSample stop];
+}
+
+- (void)delete:(id)sender
+{
+    NSRange selection = [_sampleView selection];
+    DDLogVerbose(@"Delete selected range: %@", NSStringFromRange(selection));
+    
+    [_testSample deleteRange:selection];
+    [_sampleView clearSelection];
+}
+
+- (BOOL)validateMenuItem:(NSMenuItem *)menuItem
+{
+    BOOL valid = FALSE;
+    
+    DDLogVerbose(@"Validate");
+    if ([menuItem action] == @selector(delete:)) {
+        valid = [_sampleView hasSelection];
+    }
+    
+    return valid;
+}
 @end
