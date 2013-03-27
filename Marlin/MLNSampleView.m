@@ -133,16 +133,54 @@
     NSRect channelRect = realDrawRect;
     CGFloat channelHeight = realDrawRect.size.height / numberOfChannels;
     
+    // 55 56 58
+    NSColor *darkBG = [NSColor colorWithCalibratedRed:0.214 green:0.218 blue:0.226 alpha:1.0];
+    /*
+    [darkBG setFill];
+    NSRectFill(realDrawRect);
+    */
+    
     channelRect.size.height = channelHeight;
+    
+    NSRect maskRect = channelRect;
+    maskRect.size.height -= 20;
+    
+    // Scale to take Retina display into consideration
+    NSRect scaledRect = [self convertRectToBacking:maskRect];
+    
+    for (NSUInteger channel = 0; channel < numberOfChannels; channel++) {
+        channelRect.origin.y = realDrawRect.size.height - (realDrawRect.size.height / (numberOfChannels - channel));
+        maskRect.origin.y = channelRect.origin.y + 10.0;
+        
+        [darkBG setFill];
+        
+        NSRect channelBackgroundRect = maskRect;
+        channelBackgroundRect.origin.x = bounds.origin.x;
+        channelBackgroundRect.size.width = bounds.size.width;
+        [[NSBezierPath bezierPathWithRoundedRect:channelBackgroundRect xRadius:10.0 yRadius:10.0] fill];
+    }
+    
+    NSBezierPath *selectionPath;
+    
+    if (_hasSelection) {
+        NSRect selectionRect = [self selectionToRect];
+        
+        NSColor *selectionBackgroundColour = [NSColor colorWithCalibratedRed:0.2 green:0.2 blue:0.6 alpha:0.75];
+        [selectionBackgroundColour setFill];
+        
+        selectionRect.origin.x += 0.5;
+        selectionRect.origin.y += 0.5;
+        selectionRect.size.width -= 1;
+        selectionRect.size.height -= 1;
+        
+        selectionPath = [NSBezierPath bezierPathWithRoundedRect:selectionRect xRadius:5 yRadius:5];
+        
+        [selectionPath fill];
+    }
+    
     for (NSUInteger channel = 0; channel < numberOfChannels; channel++) {
         CGContextRef maskContext;
         CGImageRef sampleMask;
-        NSRect maskRect = channelRect;
-        
-        maskRect.size.height -= 20;
-        
-        // Scale to take Retina display into consideration
-        NSRect scaledRect = [self convertRectToBacking:maskRect];
         
         maskContext = [self createMaskContextForRect:scaledRect];
         [_sample drawWaveformInContext:maskContext
@@ -156,13 +194,9 @@
         channelRect.origin.y = realDrawRect.size.height - (realDrawRect.size.height / (numberOfChannels - channel));
         maskRect.origin.y = channelRect.origin.y + 10.0;
         
-        // RGB:30 32 40
-        NSColor *dark = [NSColor colorWithCalibratedRed:0.117 green:0.125 blue:0.156 alpha:1.0];
-        [dark setFill];
-        NSRectFill(maskRect);
-        
-        CGContextClipToMask(context, maskRect, sampleMask);
-
+        NSRect smallerMaskRect = NSInsetRect(maskRect, 0, 6);
+        CGContextClipToMask(context, smallerMaskRect, sampleMask);
+/*
         if (_sampleGradient == NULL) {
             CGFloat components[16] = {1.0, 0.2386, 0.2318, 1.0,  // Start color
                 0.3, 1.0, 0.0, 1.0, // Middle region
@@ -183,29 +217,20 @@
         startPoint = CGPointMake(maskRect.origin.x, maskRect.origin.y + (maskRect.size.height / 2));
         endPoint = CGPointMake(maskRect.origin.x, maskRect.origin.y + maskRect.size.height);
         CGContextDrawLinearGradient(context, _sampleGradient, startPoint, endPoint, 0);
+*/
+        NSColor *waveformColour = [NSColor colorWithCalibratedRed:0.5 green:0.5 blue:0.2 alpha:1.0];
+        [waveformColour setFill];
         
+        NSRectFill(smallerMaskRect);
         CGContextRestoreGState(context);
         
         CGImageRelease(sampleMask);
         CGContextRelease(maskContext);
     }
-    
-    if (_hasSelection) {
-        NSRect selectionRect = [self selectionToRect];
-        
-        NSColor *selectionBackgroundColour = [[NSColor selectedTextBackgroundColor] colorWithAlphaComponent:0.75];
-        [selectionBackgroundColour setFill];
 
-        selectionRect.origin.x += 0.5;
-        selectionRect.origin.y += 0.5;
-        selectionRect.size.width -= 1;
-        selectionRect.size.height -= 1;
-        
-        NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:selectionRect xRadius:5 yRadius:5];
-        
-        [path fill];
+    if (_hasSelection) {
         [[NSColor blackColor] set];
-        [path stroke];
+        [selectionPath stroke];
     }
     
     if (_drawCursor) {
@@ -443,7 +468,7 @@ static void *sampleContext = &sampleContext;
         }
     }
     fpp = _framesPerPixel - dfpp;
-         
+    
     /*
     fpp = _framesPerPixel;
     
