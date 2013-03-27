@@ -365,6 +365,10 @@ MyAQOutputCallback (void *userData,
 
 - (void)disposePlayer
 {
+    if (_playbackData == NULL) {
+        return;
+    }
+    
     [_playbackTimer invalidate];
     _playbackTimer = nil;
     
