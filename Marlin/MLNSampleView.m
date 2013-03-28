@@ -139,7 +139,7 @@
     NSRect scaledRect = [self convertRectToBacking:maskRect];
     
     for (NSUInteger channel = 0; channel < numberOfChannels; channel++) {
-        channelRect.origin.y = realDrawRect.size.height - (realDrawRect.size.height / (numberOfChannels - channel));
+        channelRect.origin.y = realDrawRect.size.height - (channelHeight * (channel + 1));
         maskRect.origin.y = channelRect.origin.y;
         
         [darkBG setFill];
@@ -150,9 +150,9 @@
         
         if (_shadowGradient == nil) {
             // Draw the shadow gradients
-            CGFloat components[8] = {0.0, 0.0, 0.0, 1.0,  // Start color
-                0.6, 0.6, 0.6, 0.0}; // End color
-            CGFloat locations[2] = {0.0, 1.0};
+            CGFloat components[8] = {0.45, 0.45, 0.45, 1.0,  // Start color
+                0.6, 0.6, 0.6, 0.1}; // End color
+            CGFloat locations[2] = {0.4, 1.0};
             size_t num_locations = 2;
             
             CGColorSpaceRef colorspace = CGColorSpaceCreateDeviceRGB();
@@ -161,12 +161,12 @@
         }
 
         CGPoint startPoint = CGPointMake(channelBackgroundRect.origin.x, NSMaxY(channelBackgroundRect) - 10);
-        CGPoint endPoint = CGPointMake(channelBackgroundRect.origin.x, NSMaxY(channelBackgroundRect) + 8);
+        CGPoint endPoint = CGPointMake(channelBackgroundRect.origin.x, NSMaxY(channelBackgroundRect) + 7);
         CGContextDrawLinearGradient(context, _shadowGradient, startPoint, endPoint, 0);
 
         if (channel != numberOfChannels - 1) {
             startPoint = CGPointMake(channelBackgroundRect.origin.x, channelBackgroundRect.origin.y + 10);
-            endPoint = CGPointMake(channelBackgroundRect.origin.x, channelBackgroundRect.origin.y - 8);
+            endPoint = CGPointMake(channelBackgroundRect.origin.x, channelBackgroundRect.origin.y - 7);
             CGContextDrawLinearGradient(context, _shadowGradient, startPoint, endPoint, 0);
         }
         
@@ -210,7 +210,7 @@
         
         CGContextSaveGState(context);
         
-        channelRect.origin.y = realDrawRect.size.height - (realDrawRect.size.height / (numberOfChannels - channel));
+        channelRect.origin.y = realDrawRect.size.height - (channelHeight * (channel + 1));
         maskRect.origin.y = channelRect.origin.y;
         
         NSRect smallerMaskRect = NSInsetRect(maskRect, 0, 6);
