@@ -150,14 +150,40 @@
     
     for (NSUInteger channel = 0; channel < numberOfChannels; channel++) {
         channelRect.origin.y = realDrawRect.size.height - (realDrawRect.size.height / (numberOfChannels - channel));
-        maskRect.origin.y = channelRect.origin.y + 10.0;
+        maskRect.origin.y = channelRect.origin.y;
         
         [darkBG setFill];
         
         NSRect channelBackgroundRect = maskRect;
         channelBackgroundRect.origin.x = bounds.origin.x;
         channelBackgroundRect.size.width = bounds.size.width;
-        [[NSBezierPath bezierPathWithRoundedRect:channelBackgroundRect xRadius:10.0 yRadius:10.0] fill];
+        
+        // Draw the shadow gradients
+        CGFloat components[8] = {0.0, 0.0, 0.0, 1.0,  // Start color
+            0.6, 0.6, 0.6, 0.0}; // End color
+        CGFloat locations[2] = {0.0, 1.0};
+        size_t num_locations = 2;
+        
+        CGColorSpaceRef colorspace = CGColorSpaceCreateDeviceRGB();
+        CGGradientRef shadowGradient = CGGradientCreateWithColorComponents(colorspace, components, locations, num_locations);
+        CGColorSpaceRelease(colorspace);
+        
+        CGPoint startPoint = CGPointMake(channelBackgroundRect.origin.x, NSMaxY(channelBackgroundRect) - 10);
+        CGPoint endPoint = CGPointMake(channelBackgroundRect.origin.x, NSMaxY(channelBackgroundRect) + 8);
+        CGContextDrawLinearGradient(context, shadowGradient, startPoint, endPoint, 0);
+
+        if (channel != numberOfChannels - 1) {
+            startPoint = CGPointMake(channelBackgroundRect.origin.x, channelBackgroundRect.origin.y + 10);
+            endPoint = CGPointMake(channelBackgroundRect.origin.x, channelBackgroundRect.origin.y - 8);
+            CGContextDrawLinearGradient(context, shadowGradient, startPoint, endPoint, 0);
+        }
+        
+        
+        NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:channelBackgroundRect xRadius:10.0 yRadius:10.0];
+        [path fill];
+        
+        [[NSColor blackColor] setStroke];
+        [path stroke];
     }
     
     NSBezierPath *selectionPath;
@@ -192,7 +218,7 @@
         CGContextSaveGState(context);
         
         channelRect.origin.y = realDrawRect.size.height - (realDrawRect.size.height / (numberOfChannels - channel));
-        maskRect.origin.y = channelRect.origin.y + 10.0;
+        maskRect.origin.y = channelRect.origin.y;
         
         NSRect smallerMaskRect = NSInsetRect(maskRect, 0, 6);
         CGContextClipToMask(context, smallerMaskRect, sampleMask);
@@ -233,7 +259,7 @@
         [selectionPath stroke];
     }
     
-    if (_drawCursor) {
+    if (_drawCursor && _hasSelection == NO) {
         NSPoint cursorPoint = [self convertFrameToPoint:_cursorFramePosition];
         NSRect cursorRect = NSMakeRect(cursorPoint.x + 0.5, 0, 1, [self bounds].size.height);
         if (NSIntersectsRect(cursorRect, dirtyRect)) {
