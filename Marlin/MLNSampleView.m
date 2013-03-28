@@ -32,7 +32,7 @@
     BOOL _inStart;
     BOOL _inEnd;
     
-    CGGradientRef _sampleGradient;
+    CGGradientRef _shadowGradient;
     
     NSTimer *_cursorTimer;
     NSUInteger _cursorFramePosition;
@@ -75,7 +75,7 @@
 
 - (void)dealloc
 {
-    CGGradientRelease(_sampleGradient);
+    CGGradientRelease(_shadowGradient);
 }
 
 - (BOOL)isFlipped
@@ -123,22 +123,12 @@
         return;
     }
     
-    
-    /**/
-    
     NSUInteger numberOfChannels = [_sample numberOfChannels];
-    //int numberOfGutters = (numberOfChannels - 1 == 0) ? 1 : (int)numberOfChannels - 1;
-    //CGFloat gutterSize = 50 * numberOfGutters;
-    
     NSRect channelRect = realDrawRect;
     CGFloat channelHeight = realDrawRect.size.height / numberOfChannels;
     
     // 55 56 58
     NSColor *darkBG = [NSColor colorWithCalibratedRed:0.214 green:0.218 blue:0.226 alpha:1.0];
-    /*
-    [darkBG setFill];
-    NSRectFill(realDrawRect);
-    */
     
     channelRect.size.height = channelHeight;
     
@@ -158,24 +148,26 @@
         channelBackgroundRect.origin.x = bounds.origin.x;
         channelBackgroundRect.size.width = bounds.size.width;
         
-        // Draw the shadow gradients
-        CGFloat components[8] = {0.0, 0.0, 0.0, 1.0,  // Start color
-            0.6, 0.6, 0.6, 0.0}; // End color
-        CGFloat locations[2] = {0.0, 1.0};
-        size_t num_locations = 2;
-        
-        CGColorSpaceRef colorspace = CGColorSpaceCreateDeviceRGB();
-        CGGradientRef shadowGradient = CGGradientCreateWithColorComponents(colorspace, components, locations, num_locations);
-        CGColorSpaceRelease(colorspace);
-        
+        if (_shadowGradient == nil) {
+            // Draw the shadow gradients
+            CGFloat components[8] = {0.0, 0.0, 0.0, 1.0,  // Start color
+                0.6, 0.6, 0.6, 0.0}; // End color
+            CGFloat locations[2] = {0.0, 1.0};
+            size_t num_locations = 2;
+            
+            CGColorSpaceRef colorspace = CGColorSpaceCreateDeviceRGB();
+            _shadowGradient = CGGradientCreateWithColorComponents(colorspace, components, locations, num_locations);
+            CGColorSpaceRelease(colorspace);
+        }
+
         CGPoint startPoint = CGPointMake(channelBackgroundRect.origin.x, NSMaxY(channelBackgroundRect) - 10);
         CGPoint endPoint = CGPointMake(channelBackgroundRect.origin.x, NSMaxY(channelBackgroundRect) + 8);
-        CGContextDrawLinearGradient(context, shadowGradient, startPoint, endPoint, 0);
+        CGContextDrawLinearGradient(context, _shadowGradient, startPoint, endPoint, 0);
 
         if (channel != numberOfChannels - 1) {
             startPoint = CGPointMake(channelBackgroundRect.origin.x, channelBackgroundRect.origin.y + 10);
             endPoint = CGPointMake(channelBackgroundRect.origin.x, channelBackgroundRect.origin.y - 8);
-            CGContextDrawLinearGradient(context, shadowGradient, startPoint, endPoint, 0);
+            CGContextDrawLinearGradient(context, _shadowGradient, startPoint, endPoint, 0);
         }
         
         
@@ -188,6 +180,7 @@
     
     NSBezierPath *selectionPath;
     
+    // Draw the background of the selection before we draw the waveform so it is behind.
     if (_hasSelection) {
         NSRect selectionRect = [self selectionToRect];
         
@@ -222,28 +215,7 @@
         
         NSRect smallerMaskRect = NSInsetRect(maskRect, 0, 6);
         CGContextClipToMask(context, smallerMaskRect, sampleMask);
-/*
-        if (_sampleGradient == NULL) {
-            CGFloat components[16] = {1.0, 0.2386, 0.2318, 1.0,  // Start color
-                0.3, 1.0, 0.0, 1.0, // Middle region
-                0.3, 1.0, 0.0, 1.0, // Middle region
-                1.0, 0.2386, 0.2318, 1.0}; // End color
-            CGFloat locations[4] = {0.02, 0.45, 0.55, 0.98};
-            size_t num_locations = 4;
-            
-            CGColorSpaceRef colorspace = CGColorSpaceCreateDeviceRGB();
-            _sampleGradient = CGGradientCreateWithColorComponents(colorspace, components, locations, num_locations);
-            CGColorSpaceRelease(colorspace);
-        }
-        
-        CGPoint startPoint = maskRect.origin;
-        CGPoint endPoint = CGPointMake(maskRect.origin.x, maskRect.origin.y + maskRect.size.height / 2);
-        CGContextDrawLinearGradient(context, _sampleGradient, startPoint, endPoint, 0);
-        
-        startPoint = CGPointMake(maskRect.origin.x, maskRect.origin.y + (maskRect.size.height / 2));
-        endPoint = CGPointMake(maskRect.origin.x, maskRect.origin.y + maskRect.size.height);
-        CGContextDrawLinearGradient(context, _sampleGradient, startPoint, endPoint, 0);
-*/
+
         NSColor *waveformColour = [NSColor colorWithCalibratedRed:0.5 green:0.5 blue:0.2 alpha:1.0];
         [waveformColour setFill];
         
@@ -254,6 +226,7 @@
         CGContextRelease(maskContext);
     }
 
+    // Draw the outline of the selection over the waveform
     if (_hasSelection) {
         [[NSColor blackColor] set];
         [selectionPath stroke];
