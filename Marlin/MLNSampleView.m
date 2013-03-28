@@ -164,12 +164,9 @@
         CGPoint endPoint = CGPointMake(channelBackgroundRect.origin.x, NSMaxY(channelBackgroundRect) + 7);
         CGContextDrawLinearGradient(context, _shadowGradient, startPoint, endPoint, 0);
 
-        if (channel != numberOfChannels - 1) {
-            startPoint = CGPointMake(channelBackgroundRect.origin.x, channelBackgroundRect.origin.y + 10);
-            endPoint = CGPointMake(channelBackgroundRect.origin.x, channelBackgroundRect.origin.y - 7);
-            CGContextDrawLinearGradient(context, _shadowGradient, startPoint, endPoint, 0);
-        }
-        
+        startPoint = CGPointMake(channelBackgroundRect.origin.x, channelBackgroundRect.origin.y + 10);
+        endPoint = CGPointMake(channelBackgroundRect.origin.x, channelBackgroundRect.origin.y - 7);
+        CGContextDrawLinearGradient(context, _shadowGradient, startPoint, endPoint, 0);
         
         NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:channelBackgroundRect xRadius:10.0 yRadius:10.0];
         [path fill];
