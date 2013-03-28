@@ -148,6 +148,10 @@
         channelBackgroundRect.origin.x = bounds.origin.x;
         channelBackgroundRect.size.width = bounds.size.width;
         
+        if (NSIntersectsRect(dirtyRect, channelBackgroundRect) == NO) {
+            continue;
+        }
+        
         if (_shadowGradient == nil) {
             // Draw the shadow gradients
             CGFloat components[8] = {0.45, 0.45, 0.45, 1.0,  // Start color
@@ -175,23 +179,25 @@
         [path stroke];
     }
     
-    NSBezierPath *selectionPath;
+    NSBezierPath *selectionPath = nil;
     
     // Draw the background of the selection before we draw the waveform so it is behind.
     if (_hasSelection) {
         NSRect selectionRect = [self selectionToRect];
         
-        NSColor *selectionBackgroundColour = [NSColor colorWithCalibratedRed:0.2 green:0.2 blue:0.6 alpha:0.75];
-        [selectionBackgroundColour setFill];
-        
-        selectionRect.origin.x += 0.5;
-        selectionRect.origin.y += 0.5;
-        selectionRect.size.width -= 1;
-        selectionRect.size.height -= 1;
-        
-        selectionPath = [NSBezierPath bezierPathWithRoundedRect:selectionRect xRadius:5 yRadius:5];
-        
-        [selectionPath fill];
+        if (NSIntersectsRect(selectionRect, dirtyRect)) {
+            NSColor *selectionBackgroundColour = [NSColor colorWithCalibratedRed:0.2 green:0.2 blue:0.6 alpha:0.75];
+            [selectionBackgroundColour setFill];
+            
+            selectionRect.origin.x += 0.5;
+            selectionRect.origin.y += 0.5;
+            selectionRect.size.width -= 1;
+            selectionRect.size.height -= 1;
+            
+            selectionPath = [NSBezierPath bezierPathWithRoundedRect:selectionRect xRadius:5 yRadius:5];
+            
+            [selectionPath fill];
+        }
     }
     
     for (NSUInteger channel = 0; channel < numberOfChannels; channel++) {
@@ -210,6 +216,10 @@
         channelRect.origin.y = realDrawRect.size.height - (channelHeight * (channel + 1));
         maskRect.origin.y = channelRect.origin.y;
         
+        if (NSIntersectsRect(dirtyRect, channelRect) == NO) {
+            continue;
+        }
+
         NSRect smallerMaskRect = NSInsetRect(maskRect, 0, 6);
         CGContextClipToMask(context, smallerMaskRect, sampleMask);
 
@@ -224,7 +234,8 @@
     }
 
     // Draw the outline of the selection over the waveform
-    if (_hasSelection) {
+    // Checking selectionPath will let us know if the background of the selection needed to be draw
+    if (selectionPath) {
         [[NSColor blackColor] set];
         [selectionPath stroke];
     }
