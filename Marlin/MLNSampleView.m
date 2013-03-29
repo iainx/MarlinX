@@ -137,20 +137,21 @@
     
     // Scale to take Retina display into consideration
     NSRect scaledRect = [self convertRectToBacking:maskRect];
+    NSUInteger channel;
     
-    for (NSUInteger channel = 0; channel < numberOfChannels; channel++) {
+    for (channel = 0; channel < numberOfChannels; channel++) {
         channelRect.origin.y = realDrawRect.size.height - (channelHeight * (channel + 1));
         maskRect.origin.y = channelRect.origin.y;
-        
-        [darkBG setFill];
         
         NSRect channelBackgroundRect = maskRect;
         channelBackgroundRect.origin.x = bounds.origin.x;
         channelBackgroundRect.size.width = bounds.size.width;
         
+        /*
         if (NSIntersectsRect(dirtyRect, channelBackgroundRect) == NO) {
             continue;
         }
+         */
         
         if (_shadowGradient == nil) {
             // Draw the shadow gradients
@@ -173,10 +174,25 @@
         CGContextDrawLinearGradient(context, _shadowGradient, startPoint, endPoint, 0);
         
         NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:channelBackgroundRect xRadius:10.0 yRadius:10.0];
+        [darkBG setFill];
         [path fill];
         
         [[NSColor blackColor] setStroke];
         [path stroke];
+    }
+    
+    // Draw ruler scale
+    // numberOfChannels - 1 because we don't want to draw one for the bottom channel
+    for (channel = 0; channel < numberOfChannels - 1; channel++) {
+        NSRect rulerRect = NSMakeRect(bounds.origin.x, realDrawRect.size.height - (channelHeight * (channel + 1)) - 20,
+                                      bounds.size.width, 20);
+        
+        NSRect intersectRect = NSIntersectionRect(dirtyRect, rulerRect);
+        // We want the horizontal intersect, but to make drawing ticks easier we draw the whole height
+        intersectRect.size.height = rulerRect.size.height;
+        intersectRect.origin.y = rulerRect.origin.y;
+        
+        [self drawRulerInContext:context inRect:intersectRect];
     }
     
     NSBezierPath *selectionPath = nil;
@@ -226,7 +242,9 @@
         NSColor *waveformColour = [NSColor colorWithCalibratedRed:0.5 green:0.5 blue:0.2 alpha:1.0];
         [waveformColour setFill];
         
-        NSRectFill(smallerMaskRect);
+        NSRect intersectRect = NSIntersectionRect(smallerMaskRect, dirtyRect);
+        
+        NSRectFill(intersectRect);
         CGContextRestoreGState(context);
         
         CGImageRelease(sampleMask);
@@ -248,6 +266,71 @@
             NSRectFillUsingOperation(cursorRect, NSCompositeCopy);
         }
     }
+}
+
+// Calculate the gap between the main ruler ticks.
+// Code from original Marlin: https://git.gnome.org/browse/marlin/tree/marlin/marlin-marker-view.c
+static int
+getIncrementForFramesPerPixel (NSUInteger framesPerPixel)
+{
+    int increment, i, f, factor;
+    
+	i = 1;
+	f = 100;
+	increment = i * f;
+    
+	/* Go up as 100, 200, 500, 1000, 2000, 5000 and so on... */
+	for (factor = 1; ; factor *= 2) {
+		if (framesPerPixel <= factor) {
+			break;
+		}
+        
+		i++;
+		if (i == 3) {
+			i = 5;
+		} else if (i == 6) {
+			i = 1;
+			f *= 10;
+		}
+        
+		increment = i * f;
+	}
+    
+	return increment;
+}
+
+- (void)drawRulerInContext:(CGContextRef)context
+                    inRect:(NSRect)dirtyRect
+{
+    NSUInteger firstFrame = dirtyRect.origin.x * _framesPerPixel;
+    int increment = getIncrementForFramesPerPixel(_framesPerPixel);
+    
+    NSUInteger modIncrement = firstFrame % increment;
+    NSUInteger firstMarkFrame = firstFrame - modIncrement;
+    CGFloat firstMarkPixel = (CGFloat)(firstMarkFrame / _framesPerPixel);
+    CGFloat incrementPixels = (increment / _framesPerPixel);
+    
+    CGFloat maxY = NSMaxY(dirtyRect);
+    CGFloat maxX = NSMaxX(dirtyRect);
+    for (CGFloat i = firstMarkPixel; i < maxX; i += incrementPixels) {
+        CGContextMoveToPoint(context, i + 0.5, dirtyRect.origin.y);
+        CGContextAddLineToPoint(context, i + 0.5, dirtyRect.origin.y + 5);
+        
+        CGContextMoveToPoint(context, i + 0.5, maxY);
+        CGContextAddLineToPoint(context, i + 0.5, maxY - 5);
+        
+        CGFloat minorGap = incrementPixels / 10;
+        for (CGFloat j = i; j < i + incrementPixels; j += minorGap) {
+            CGContextMoveToPoint(context, j + 0.5, dirtyRect.origin.y);
+            CGContextAddLineToPoint(context, j + 0.5, dirtyRect.origin.y + 2);
+            
+            CGContextMoveToPoint(context, j + 0.5, maxY);
+            CGContextAddLineToPoint(context, j + 0.5, maxY - 2);
+        }
+        CGContextSetRGBStrokeColor(context, 0, 0, 0, 1.0);
+        CGContextStrokePath(context);
+    }
+    
 }
 
 #pragma mark - accessors
