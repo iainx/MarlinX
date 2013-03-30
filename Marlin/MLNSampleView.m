@@ -538,10 +538,8 @@ static void *sampleContext = &sampleContext;
                 break;
                 
             case NSLeftMouseDragged:
-                DDLogVerbose(@"Dragging: %@ %@ %@ %@", dragged ? @"YES":@"NO", _inStart ? @"YES":@"NO", _inEnd ? @"YES":@"NO", _hasSelection ? @"YES" : @"NO");
                 if (dragged == NO && !_inStart && !_inEnd) {
                     if (_hasSelection) {
-                        DDLogVerbose(@"Clear selection");
                         [self clearSelection];
                     }
                     _selectionStartFrame = possibleStartFrame;
