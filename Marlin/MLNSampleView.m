@@ -70,6 +70,11 @@
     _cursorFramePosition = 0;
     [self resetCursorTimer:0.9];
     
+    [self setContentCompressionResistancePriority:NSLayoutPriorityRequired
+                                   forOrientation:NSLayoutConstraintOrientationVertical];
+    [self setContentHuggingPriority:NSLayoutPriorityDefaultLow
+                     forOrientation:NSLayoutConstraintOrientationVertical];
+    
     return self;
 }
 
@@ -85,7 +90,13 @@
 
 - (NSSize)intrinsicContentSize
 {
-    NSSize intrinsicSize = NSMakeSize(_intrinsicWidth, NSViewNoInstrinsicMetric);
+    CGFloat minimumHeight = 100 * [_sample numberOfChannels];
+    
+    if (minimumHeight == 0) {
+        minimumHeight = NSViewNoInstrinsicMetric;
+    }
+    
+    NSSize intrinsicSize = NSMakeSize(_intrinsicWidth, minimumHeight);
     return intrinsicSize;
 }
 
