@@ -109,6 +109,8 @@
     return maskContext;
 }
 
+#define GUTTER_SIZE 24
+
 - (void)drawRect:(NSRect)dirtyRect
 {
     CGContextRef context = [[NSGraphicsContext currentContext] graphicsPort];
@@ -125,7 +127,11 @@
     
     NSUInteger numberOfChannels = [_sample numberOfChannels];
     NSRect channelRect = realDrawRect;
-    CGFloat channelHeight = realDrawRect.size.height / numberOfChannels;
+    
+    // If there is only 1 channel, we need extra room for the marker gutter
+    // We also make the bottom gutter smaller because we don't need the second row of ticks
+    int extraGutterHeight = (numberOfChannels == 1) ? GUTTER_SIZE - 7 : 0;
+    CGFloat channelHeight = (realDrawRect.size.height - extraGutterHeight) / numberOfChannels;
     
     // 55 56 58
     NSColor *darkBG = [NSColor colorWithCalibratedRed:0.214 green:0.218 blue:0.226 alpha:1.0];
@@ -133,7 +139,7 @@
     channelRect.size.height = channelHeight;
     
     NSRect maskRect = channelRect;
-    maskRect.size.height -= 20;
+    maskRect.size.height -= GUTTER_SIZE;
     
     // Scale to take Retina display into consideration
     NSRect scaledRect = [self convertRectToBacking:maskRect];
@@ -183,16 +189,28 @@
     
     // Draw ruler scale
     // numberOfChannels - 1 because we don't want to draw one for the bottom channel
-    for (channel = 0; channel < numberOfChannels - 1; channel++) {
-        NSRect rulerRect = NSMakeRect(bounds.origin.x, realDrawRect.size.height - (channelHeight * (channel + 1)) - 20,
-                                      bounds.size.width, 20);
+    int firstChannel = (numberOfChannels == 1) ? 0 : 1;
+    for (channel = firstChannel; channel < numberOfChannels; channel++) {
+        CGFloat rulerY;
+        CGFloat rulerGutterSize;
+        
+        // If there is only one channel, we draw the ruler below the channel, otherwise it is above
+        if (numberOfChannels == 1) {
+            rulerY = 0;
+            rulerGutterSize = GUTTER_SIZE - 7;
+        } else {
+            rulerY = realDrawRect.size.height - (channelHeight * channel) - GUTTER_SIZE;
+            rulerGutterSize = GUTTER_SIZE;
+        }
+        NSRect rulerRect = NSMakeRect(bounds.origin.x, rulerY,
+                                      bounds.size.width, rulerGutterSize);
         
         NSRect intersectRect = NSIntersectionRect(dirtyRect, rulerRect);
         // We want the horizontal intersect, but to make drawing ticks easier we draw the whole height
         intersectRect.size.height = rulerRect.size.height;
         intersectRect.origin.y = rulerRect.origin.y;
         
-        [self drawRulerInContext:context inRect:intersectRect];
+        [self drawRulerInContext:context inRect:intersectRect onlyDrawTop:(numberOfChannels == 1)];
     }
     
     NSBezierPath *selectionPath = nil;
@@ -301,34 +319,71 @@ getIncrementForFramesPerPixel (NSUInteger framesPerPixel)
 
 - (void)drawRulerInContext:(CGContextRef)context
                     inRect:(NSRect)dirtyRect
+               onlyDrawTop:(BOOL)onlyDrawTop
 {
-    NSUInteger firstFrame = dirtyRect.origin.x * _framesPerPixel;
+    NSRect scaledRect = [self convertRectToBacking:dirtyRect];
+    NSUInteger firstFrame = scaledRect.origin.x * _framesPerPixel;
     int increment = getIncrementForFramesPerPixel(_framesPerPixel);
     
     NSUInteger modIncrement = firstFrame % increment;
     NSUInteger firstMarkFrame = firstFrame - modIncrement;
-    CGFloat firstMarkPixel = (CGFloat)(firstMarkFrame / _framesPerPixel);
-    CGFloat incrementPixels = (increment / _framesPerPixel);
     
     CGFloat maxY = NSMaxY(dirtyRect);
-    CGFloat maxX = NSMaxX(dirtyRect);
-    for (CGFloat i = firstMarkPixel; i < maxX; i += incrementPixels) {
-        CGContextMoveToPoint(context, i + 0.5, dirtyRect.origin.y);
-        CGContextAddLineToPoint(context, i + 0.5, dirtyRect.origin.y + 5);
-        
-        CGContextMoveToPoint(context, i + 0.5, maxY);
-        CGContextAddLineToPoint(context, i + 0.5, maxY - 5);
-        
-        CGFloat minorGap = incrementPixels / 10;
-        for (CGFloat j = i; j < i + incrementPixels; j += minorGap) {
-            CGContextMoveToPoint(context, j + 0.5, dirtyRect.origin.y);
-            CGContextAddLineToPoint(context, j + 0.5, dirtyRect.origin.y + 2);
-            
-            CGContextMoveToPoint(context, j + 0.5, maxY);
-            CGContextAddLineToPoint(context, j + 0.5, maxY - 2);
+    NSUInteger maxX = NSMaxX(scaledRect) * _framesPerPixel;
+    
+    // Need to draw to the next major marker
+    // to make sure that the label is drawn
+    int modLast = maxX % increment;
+    maxX += (increment - modLast);
+    
+    for (NSUInteger i = firstMarkFrame; i <= maxX; i += increment) {
+        CGPoint markPoint = [self convertFrameToPoint:i];
+        if (onlyDrawTop == NO) {
+            CGContextMoveToPoint(context, markPoint.x + 0.5, dirtyRect.origin.y);
+            CGContextAddLineToPoint(context, markPoint.x + 0.5, dirtyRect.origin.y + 5);
         }
+        
+        CGContextMoveToPoint(context, markPoint.x + 0.5, maxY);
+        CGContextAddLineToPoint(context, markPoint.x + 0.5, maxY - 5);
+
+        NSUInteger minorGap = increment / 10;
+        NSUInteger j;
+        int iter;
+        
+        for (j = i + minorGap, iter = 0; j < i + increment; j += minorGap, iter++) {
+            CGPoint minorPoint = [self convertFrameToPoint:j];
+            CGFloat length = (iter == 5) ? 3.5 : 2;
+            
+            if (onlyDrawTop == NO) {
+                CGContextMoveToPoint(context, minorPoint.x + 0.5, dirtyRect.origin.y);
+                CGContextAddLineToPoint(context, minorPoint.x + 0.5, dirtyRect.origin.y + length);
+            }
+            CGContextMoveToPoint(context, minorPoint.x + 0.5, maxY);
+            CGContextAddLineToPoint(context, minorPoint.x + 0.5, maxY - length);
+        }
+
         CGContextSetRGBStrokeColor(context, 0, 0, 0, 1.0);
         CGContextStrokePath(context);
+        
+        NSString *label = [NSString stringWithFormat:@"%lu", i];
+        NSAttributedString *attrLabel = [[NSAttributedString alloc] initWithString:label];
+        NSSize labelSize = [attrLabel size];
+        
+        CGFloat x = markPoint.x - (labelSize.width / 2) + 0.5;
+
+        // Make sure the label is all on screen at both 0
+        if (x < 0) {
+            x = 0;
+        }
+        
+        // and at the end of the view
+        NSRect bounds = [self bounds];
+        if (x + labelSize.width > bounds.size.width) {
+            x = bounds.size.width - labelSize.width;
+        }
+        // 4 is kind of a magic number deduced by trial and error
+        // labelSize seems to add padding I guess.
+        [label drawAtPoint:NSMakePoint(x, maxY - (4 + labelSize.height)) withAttributes:nil];
     }
     
 }
