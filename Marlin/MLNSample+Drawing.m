@@ -174,11 +174,13 @@
     NSUInteger pixelsDrawn;
     CGFloat h = scaledBounds.size.height / 2;
     
+    CGFloat x = (scaledBounds.origin.x < 0) ? 0: scaledBounds.origin.x;
+    
     pixelsDrawn = [self fillPointArray:pointArray
                                 length:numberOfPoints
                            fromChannel:channel
                       atFramesPerPixel:(int)framesPerPixel
-                            startFrame:(int)scaledBounds.origin.x * framesPerPixel];
+                            startFrame:(int)x * framesPerPixel];
     
     //
     //CGFloat yoff = h + (channelCount - (c + 1)) * ((boundsHeight / 2) + gutterSpacing);
