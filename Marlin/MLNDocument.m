@@ -31,6 +31,22 @@
     return @"MLNDocument";
 }
 
+static void *sampleContext = &sampleContext;
+
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary *)change
+                       context:(void *)context
+{
+    if (context != sampleContext) {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+    
+    if ([keyPath isEqualToString:@"loaded"]) {
+        [_toolbar validateVisibleItems];
+    }
+}
+
 - (void)windowControllerDidLoadNib:(NSWindowController *)aController
 {
     [super windowControllerDidLoadNib:aController];
@@ -38,7 +54,14 @@
     
     NSURL *url = [NSURL fileURLWithPath:@"/Users/iain/Desktop/Change of Scenery rado edit.wav" isDirectory:NO];
     //NSURL *url = [NSURL fileURLWithPath:@"/Users/iain/sine.wav" isDirectory:NO];
+    
+    // Doesn't like 8 channel.
+    //NSURL *url = [NSURL fileURLWithPath:@"/Users/iain/Documents/6_Channel_ID.wav" isDirectory:NO];
     _testSample = [[MLNSample alloc] initWithURL:url];
+    [_testSample addObserver:self
+                  forKeyPath:@"loaded"
+                     options:0
+                     context:sampleContext];
     
     [_sampleView setSample:_testSample];
     [_sampleView setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -83,7 +106,7 @@
     return YES;
 }
 
-#pragma Menu actions
+#pragma mark - Menu & Toolbar actions
 
 - (void)playSample:(id)sender
 {
@@ -104,13 +127,31 @@
     [_sampleView clearSelection];
 }
 
+- (IBAction)showInformation:(id)sender
+{
+    
+}
+
+#pragma mark - Validators
+
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem
 {
-    BOOL valid = FALSE;
+    BOOL valid = NO;
     
     DDLogVerbose(@"Validate");
     if ([menuItem action] == @selector(delete:)) {
         valid = [_sampleView hasSelection];
+    }
+    
+    return valid;
+}
+
+- (BOOL)validateToolbarItem:(NSToolbarItem *)theItem
+{
+    BOOL valid = NO;
+    
+    if ([theItem action] == @selector(showInformation:)) {
+        valid = [_testSample isLoaded];
     }
     
     return valid;

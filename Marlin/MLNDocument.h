@@ -12,9 +12,12 @@
 
 @interface MLNDocument : NSDocument
 
-@property (readwrite) IBOutlet NSScrollView *scrollView;
-@property (readwrite) IBOutlet MLNSampleView *sampleView;
+@property (readwrite, weak) IBOutlet NSToolbar *toolbar;
+@property (readwrite, weak) IBOutlet NSScrollView *scrollView;
+@property (readwrite, weak) IBOutlet MLNSampleView *sampleView;
 
 - (IBAction)playSample:(id)sender;
 - (IBAction)stopSample:(id)sender;
+- (IBAction)showInformation:(id)sender;
+
 @end
