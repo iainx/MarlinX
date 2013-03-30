@@ -493,6 +493,8 @@ static void *sampleContext = &sampleContext;
 
 - (void)mouseDown:(NSEvent *)event
 {
+    NSUInteger possibleStartFrame;
+    
     if ([event type] != NSLeftMouseDown) {
         return;
     }
@@ -500,19 +502,26 @@ static void *sampleContext = &sampleContext;
     // Store the current selection in case we need to remove it on mouseUp
     NSRect selectionRect = [self selectionToRect];
     
-    [self clearSelection];
+    /*
+    if (!_inStart && !_inEnd) {
+        [self clearSelection];
+    }
+    */
     
     // Possible selection start
     NSPoint mouseLoc = [self convertPoint:[event locationInWindow] fromView:nil];
     NSPoint startPoint = mouseLoc;
     
     if (!_inStart && !_inEnd) {
+        /*
         _selectionStartFrame = [self convertPointToFrame:startPoint];
         _selectionEndFrame = _selectionStartFrame;
         _selectionDirection = 1; // No direction;
         DDLogVerbose(@"Maybe start drag: %lu", _selectionStartFrame);
+         */
+        possibleStartFrame = [self convertPointToFrame:startPoint];
     }
-
+     
     // Grab the mouse and handle everything in a modal event loop
     NSUInteger eventMask = NSLeftMouseDraggedMask | NSLeftMouseUpMask | NSPeriodicMask;
     NSEvent *nextEvent;
@@ -529,6 +538,17 @@ static void *sampleContext = &sampleContext;
                 break;
                 
             case NSLeftMouseDragged:
+                DDLogVerbose(@"Dragging: %@ %@ %@ %@", dragged ? @"YES":@"NO", _inStart ? @"YES":@"NO", _inEnd ? @"YES":@"NO", _hasSelection ? @"YES" : @"NO");
+                if (dragged == NO && !_inStart && !_inEnd) {
+                    if (_hasSelection) {
+                        DDLogVerbose(@"Clear selection");
+                        [self clearSelection];
+                    }
+                    _selectionStartFrame = possibleStartFrame;
+                    _selectionEndFrame = possibleStartFrame;
+                    _selectionDirection = 1;
+                }
+                
                 dragged = YES;
                 
                 mouseLoc = [self convertPoint:[nextEvent locationInWindow] fromView:nil];
@@ -555,7 +575,6 @@ static void *sampleContext = &sampleContext;
                 // Move the cursor
                 [self moveCursor:_selectionStartFrame];
                 
-                /*
                 if (dragged == NO) {
                     _selectionStartFrame = 0;
                     _selectionEndFrame = 0;
@@ -570,7 +589,6 @@ static void *sampleContext = &sampleContext;
                     selectionRect.size.width += 0.5;
                     [self setNeedsDisplayInRect:selectionRect];
                 }
-                 */
                 return;
                 
             default:
