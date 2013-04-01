@@ -23,7 +23,8 @@
 
 - (void)drawRect:(NSRect)dirtyRect
 {
-    // Drawing code here.
+    [[NSColor redColor] set];
+    NSRectFill(dirtyRect);
 }
 
 #pragma mark Layout
