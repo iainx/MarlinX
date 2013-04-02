@@ -555,7 +555,7 @@ static void *sampleContext = &sampleContext;
                 _dragEvent = nil;
 
                 // Move the cursor
-                [self moveCursor:_selectionStartFrame];
+                [self moveCursor:possibleStartFrame];
                 
                 if (dragged == NO) {
                     _selectionStartFrame = 0;
