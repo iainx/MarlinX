@@ -11,6 +11,7 @@
 #import "MLNSample+Drawing.h"
 
 @implementation MLNOverviewBar {
+    NSSize _cachedSize;
     NSMutableArray *_channelMasks;
 }
 
@@ -25,6 +26,7 @@ static void *sampleContext = &sampleContext;
         // Initialization code here.
     }
     
+    _cachedSize = NSZeroSize;
     _channelMasks = [[NSMutableArray alloc] init];
     
     [self setContentCompressionResistancePriority:NSLayoutPriorityRequired
@@ -49,6 +51,16 @@ static void *sampleContext = &sampleContext;
     
     DDLogVerbose(@"Overview height: %f", height);
     return NSMakeSize(NSViewNoInstrinsicMetric, height);
+}
+
+- (void)viewWillDraw
+{
+    if (NSEqualSizes(_cachedSize, [self frame].size)) {
+        return;
+    }
+    
+    [self createChannelMasks];
+    _cachedSize = [self frame].size;
 }
 
 - (void)drawRect:(NSRect)dirtyRect
