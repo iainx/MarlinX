@@ -42,7 +42,7 @@
     // on the main thread again.
     status = ExtAudioFileOpenURL(urlRef, &_fileRef);
     if (check_status_is_error(status, "ExtAudioFileOpenURL")) {
-        _error = make_error(status, "ExtAudioFileOpenURL");
+        _error = make_error(status, "ExtAudioFileOpenURL", __PRETTY_FUNCTION__, __LINE__);
         
         if (_error && [_delegate respondsToSelector:@selector(didFailLoadWithError:)]) {
             [_delegate didFailLoadWithError:_error];
@@ -68,9 +68,10 @@
     UInt32 propSize = sizeof(inFormat);
     status = ExtAudioFileGetProperty(_fileRef, kExtAudioFileProperty_FileDataFormat, &propSize, &inFormat);
     if (check_status_is_error(status, "ExtAudioFileGetProperty")) {
-        _error = make_error(status, "ExtAudioFileGetProperty");
+        _error = make_error(status, "ExtAudioFileGetProperty", __PRETTY_FUNCTION__, __LINE__);
         goto cleanup;
     }
+
 
     // Setup the output asbd
     _outputFormat.mFormatID = kAudioFormatLinearPCM;
@@ -86,7 +87,7 @@
     status = ExtAudioFileSetProperty(_fileRef, kExtAudioFileProperty_ClientDataFormat,
                                      sizeof(AudioStreamBasicDescription), &_outputFormat);
     if (check_status_is_error(status, "ExtAudioFileSetProperty")) {
-        _error = make_error (status, "ExtAudioFileSetProperty");
+        _error = make_error (status, "ExtAudioFileSetProperty", __PRETTY_FUNCTION__, __LINE__);
         goto cleanup;
     }
     
@@ -95,7 +96,7 @@
     
     status = ExtAudioFileGetProperty(_fileRef, kExtAudioFileProperty_FileLengthFrames, &propSize, &totalFrameCount);
     if (check_status_is_error(status, "ExtAudioFileGetProperty")) {
-        _error = make_error(status, "ExtAudioFileGetProperty");
+        _error = make_error(status, "ExtAudioFileGetProperty", __PRETTY_FUNCTION__, __LINE__);
         goto cleanup;
     }
     
@@ -130,7 +131,7 @@
         
         status = ExtAudioFileRead(_fileRef, &frameCount, bufferList);
         if (check_status_is_error(status, "ExtAudioFileRead")) {
-            _error = make_error(status, "ExtAudioFileRead");
+            _error = make_error(status, "ExtAudioFileRead", __PRETTY_FUNCTION__, __LINE__);
             break;
         }
         
@@ -244,10 +245,12 @@ check_status_is_error (OSStatus    status,
 
 static NSError *
 make_error (OSStatus    status,
-            const char *operation)
+            const char *operation,
+            const char *function,
+            int         linenumber)
 {
     return [NSError errorWithDomain:kMLNSampleErrorDomain
                                code:MLNSampleLoadError
-                           userInfo:@{@"method" : [NSString stringWithCString:operation encoding:NSUTF8StringEncoding], @"statusCode": @(status)}];
+                           userInfo:@{@"method" : [NSString stringWithFormat:@"%s (%s:%d)", operation, function, linenumber], @"statusCode": @(status)}];
 }
 @end
