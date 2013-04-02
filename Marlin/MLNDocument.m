@@ -58,6 +58,9 @@ static void *sampleContext = &sampleContext;
     
     // Doesn't like 8 channel.
     NSURL *url = [NSURL fileURLWithPath:@"/Users/iain/Documents/6_Channel_ID.wav" isDirectory:NO];
+    //NSURL *url = [NSURL fileURLWithPath:@"/Users/iain/Documents/8_Channel_ID.wav" isDirectory:NO];
+    //NSURL *url = [NSURL fileURLWithPath:@"/Users/iain/Documents/2dpl.wav" isDirectory:NO];
+    
     _testSample = [[MLNSample alloc] initWithURL:url];
     [_testSample addObserver:self
                   forKeyPath:@"loaded"
