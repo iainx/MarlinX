@@ -262,6 +262,8 @@
         
         CGImageRelease(sampleMask);
         CGContextRelease(maskContext);
+        
+        [self drawNameForChannel:channel InRect:smallerMaskRect];
     }
 
     // Draw the outline of the selection over the waveform
@@ -279,6 +281,31 @@
             NSRectFillUsingOperation(cursorRect, NSCompositeCopy);
         }
     }
+}
+
+- (void)drawNameForChannel:(NSUInteger)channel
+                    InRect:(NSRect)dirtyRect
+{
+    static const char *mono[1] = {"Mono"};
+    static const char *stereo[2] = {"Left", "Right"};
+    static const char *surround51[6] = {"Front Left", "Front Right", "Centre", "Sub", "Surround Left", "Surround Right"};
+    static const char *surround71[8] = {"Front Left", "Front Right", "Centre", "Sub", "Surround Left", "Surround Right", "Surround Back Left", "Surround Back Right"};
+    
+    static const char **channelCountToNamesMap[8] = {mono, stereo, surround51, surround51, surround51, surround51, surround71, surround71};
+    
+    const char **nameMap = channelCountToNamesMap[[_sample numberOfChannels] - 1];
+    NSString *name = [NSString stringWithUTF8String:nameMap[channel]];
+    NSDictionary *attrs = @{NSForegroundColorAttributeName: [NSColor lightGrayColor]};
+    NSAttributedString *attrString = [[NSAttributedString alloc] initWithString:name attributes:attrs];
+    
+    NSRect nameRect;
+    
+    nameRect.size = [attrString size];
+    
+    CGFloat y = NSMaxY(dirtyRect) - nameRect.size.height;
+    nameRect.origin = CGPointMake(5, y);
+    
+    [attrString drawInRect:nameRect];
 }
 
 // Calculate the gap between the main ruler ticks.
