@@ -78,7 +78,7 @@ static void *sampleContext = &sampleContext;
     NSDictionary *viewsDict = @{@"overviewBarView": _overviewBarView,
                                 @"scrollView": _scrollView,
                                 @"sampleView": _sampleView};
-    NSArray *constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[overviewBarView][scrollView]|"
+    NSArray *constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[overviewBarView][scrollView]-40-|"
                                                                    options:0
                                                                    metrics:nil
                                                                      views:viewsDict];
