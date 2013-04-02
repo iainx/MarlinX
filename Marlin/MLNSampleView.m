@@ -48,22 +48,6 @@
         return nil;
     }
     
-    _framesPerPixel = 256;
-    _summedMagnificationLevel = 0;
-    _drawCursor = YES;
-    _cursorFramePosition = 0;
-    [self resetCursorTimer:0.9];
-    
-    return self;
-}
-
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-    self = [super initWithCoder:aDecoder];
-    if (!self) {
-        return nil;
-    }
-    
     _framesPerPixel = 128;
     _summedMagnificationLevel = 0;
     _drawCursor = YES;
