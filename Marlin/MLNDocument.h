@@ -9,12 +9,14 @@
 #import <Cocoa/Cocoa.h>
 
 @class MLNSampleView;
+@class MLNOverviewBar;
 
 @interface MLNDocument : NSDocument
 
 @property (readwrite, weak) IBOutlet NSToolbar *toolbar;
 @property (readwrite, weak) IBOutlet NSScrollView *scrollView;
 @property (readwrite, weak) IBOutlet MLNSampleView *sampleView;
+@property (readwrite, weak) IBOutlet MLNOverviewBar *overviewBarView;
 
 - (IBAction)playSample:(id)sender;
 - (IBAction)stopSample:(id)sender;

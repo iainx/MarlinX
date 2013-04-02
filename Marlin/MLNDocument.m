@@ -7,6 +7,7 @@
 //
 
 #import "MLNDocument.h"
+#import "MLNOverviewBar.h"
 #import "MLNSample.h"
 #import "MLNSample+Operations.h"
 #import "MLNSampleView.h"
@@ -52,17 +53,18 @@ static void *sampleContext = &sampleContext;
     [super windowControllerDidLoadNib:aController];
     // Add any code here that needs to be executed once the windowController has loaded the document's window.
     
-    NSURL *url = [NSURL fileURLWithPath:@"/Users/iain/Desktop/Change of Scenery rado edit.wav" isDirectory:NO];
+    //NSURL *url = [NSURL fileURLWithPath:@"/Users/iain/Desktop/Change of Scenery rado edit.wav" isDirectory:NO];
     //NSURL *url = [NSURL fileURLWithPath:@"/Users/iain/sine.wav" isDirectory:NO];
     
     // Doesn't like 8 channel.
-    //NSURL *url = [NSURL fileURLWithPath:@"/Users/iain/Documents/6_Channel_ID.wav" isDirectory:NO];
+    NSURL *url = [NSURL fileURLWithPath:@"/Users/iain/Documents/6_Channel_ID.wav" isDirectory:NO];
     _testSample = [[MLNSample alloc] initWithURL:url];
     [_testSample addObserver:self
                   forKeyPath:@"loaded"
                      options:0
                      context:sampleContext];
     
+    [_overviewBarView setSample:_testSample];
     [_sampleView setSample:_testSample];
     [_sampleView setTranslatesAutoresizingMaskIntoConstraints:NO];
     
