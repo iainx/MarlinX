@@ -52,7 +52,7 @@ static void *sampleContext = &sampleContext;
 {
     [super windowControllerDidLoadNib:aController];
     // Add any code here that needs to be executed once the windowController has loaded the document's window.
-    
+
     //NSURL *url = [NSURL fileURLWithPath:@"/Users/iain/Desktop/Change of Scenery rado edit.wav" isDirectory:NO];
     //NSURL *url = [NSURL fileURLWithPath:@"/Users/iain/sine.wav" isDirectory:NO];
     
@@ -64,12 +64,45 @@ static void *sampleContext = &sampleContext;
                      options:0
                      context:sampleContext];
     
+    _overviewBarView = [[MLNOverviewBar alloc] initWithFrame:NSZeroRect];
+    [_overviewBarView setTranslatesAutoresizingMaskIntoConstraints:NO];
+    _scrollView = [[NSScrollView alloc] initWithFrame:NSZeroRect];
+    [_scrollView setTranslatesAutoresizingMaskIntoConstraints:NO];
+    
+    _sampleView = [[MLNSampleView alloc] initWithFrame:NSZeroRect];
+    
+    NSWindow *window = [aController window];
+    [[window contentView] addSubview:_overviewBarView];
+    [[window contentView] addSubview:_scrollView];
+    
+    NSDictionary *viewsDict = @{@"overviewBarView": _overviewBarView,
+                                @"scrollView": _scrollView,
+                                @"sampleView": _sampleView};
+    NSArray *constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[overviewBarView][scrollView]|"
+                                                                   options:0
+                                                                   metrics:nil
+                                                                     views:viewsDict];
+    [[window contentView] addConstraints:constraints];
+    
+    constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"|[overviewBarView]|"
+                                                          options:0
+                                                          metrics:nil
+                                                            views:viewsDict];
+    [[window contentView] addConstraints:constraints];
+
+    constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"|[scrollView]|"
+                                                          options:0
+                                                          metrics:nil
+                                                            views:viewsDict];
+    [[window contentView] addConstraints:constraints];
+    
     [_overviewBarView setSample:_testSample];
     [_sampleView setSample:_testSample];
     [_sampleView setTranslatesAutoresizingMaskIntoConstraints:NO];
     
-    // We only want to allow scrolling on the horizontal axis.
-    //[_scrollView setVerticalScrollElasticity:NSScrollElasticityNone];
+    [_scrollView setHasHorizontalScroller:YES];
+    [_scrollView setScrollerKnobStyle:NSScrollerKnobStyleLight];
+    //[_scrollView setVerticalScrollElasticity:NSScrollElasticityAllowed];
     
     // FIXME: Only on 10.8
     [_scrollView setBackgroundColor:[NSColor underPageBackgroundColor]];
@@ -77,9 +110,10 @@ static void *sampleContext = &sampleContext;
     //[_scrollView setHasHorizontalRuler:YES];
     //[_scrollView setRulersVisible:YES];
     
+    [_scrollView setDocumentView:_sampleView];
+    
     NSClipView *clipView = [_scrollView contentView];
     //[clipView setCopiesOnScroll:NO];
-    NSDictionary *viewsDict = @{@"sampleView":_sampleView};
     
     [clipView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[sampleView]|" options:0 metrics:nil views:viewsDict]];
 }
