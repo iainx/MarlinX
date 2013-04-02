@@ -31,6 +31,7 @@ static void *sampleContext = &sampleContext;
                                    forOrientation:NSLayoutConstraintOrientationVertical];
     [self setContentHuggingPriority:NSLayoutPriorityRequired
                      forOrientation:NSLayoutConstraintOrientationVertical];
+    
     return self;
 }
 
@@ -58,16 +59,29 @@ static void *sampleContext = &sampleContext;
     CGFloat channelHeight = bounds.size.height / [_sample numberOfChannels];
     
     channelRect.size.height = (channelHeight - 1);
+    NSColor *darkBG = [NSColor colorWithCalibratedRed:0.214 green:0.218 blue:0.226 alpha:1.0];
+
+    [[NSColor underPageBackgroundColor] setFill];
+    NSRectFill(dirtyRect);
     
     for (int channel = 0; channel < [_sample numberOfChannels]; channel++) {
+        channelRect.origin.y = (bounds.size.height - (channelHeight * (channel + 1))) + 1;
+        
+        // Draw the background
+        NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:channelRect
+                                                             xRadius:4 yRadius:4];
+        [darkBG set];
+        [path fill];
+        
+        // Draw the sample mask
         CGContextSaveGState(context);
         CGImageRef channelMask = (CGImageRef)CFBridgingRetain([_channelMasks objectAtIndex:channel]);
         
-        channelRect.origin.y = (bounds.size.height - (channelHeight * (channel + 1))) + 1;
-        
         CGContextClipToMask(context, channelRect, channelMask);
+    
+        NSColor *waveformColour = [NSColor colorWithCalibratedRed:0.5 green:0.5 blue:0.2 alpha:1.0];
+        [waveformColour setFill];
         
-        [[NSColor redColor] setFill];
         NSRectFill(channelRect);
         CGContextRestoreGState(context);
     }
