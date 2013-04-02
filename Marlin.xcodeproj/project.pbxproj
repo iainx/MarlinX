@@ -32,6 +32,7 @@
 		AECDE7E516B7C3B900DE94D5 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AECDE7E416B7C3B900DE94D5 /* AudioToolbox.framework */; };
 		AECDE7E816B7D59C00DE94D5 /* MLNLoadOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = AECDE7E716B7D59C00DE94D5 /* MLNLoadOperation.m */; };
 		AED56DCF16FD1D73005E2573 /* pa_ringbuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = AED56DCD16FD1D73005E2573 /* pa_ringbuffer.c */; };
+		AED56DD5170A5406005E2573 /* MLNOverviewBar.m in Sources */ = {isa = PBXBuildFile; fileRef = AED56DD4170A5406005E2573 /* MLNOverviewBar.m */; };
 		AEDA842B16C88B7F001B2DD1 /* MLNApplicationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = AEDA842A16C88B7F001B2DD1 /* MLNApplicationDelegate.m */; };
 		AEDA843316C8D13E001B2DD1 /* MLNMMapRegion.m in Sources */ = {isa = PBXBuildFile; fileRef = AEDA843216C8D13E001B2DD1 /* MLNMMapRegion.m */; };
 /* End PBXBuildFile section */
@@ -89,6 +90,8 @@
 		AED56DCD16FD1D73005E2573 /* pa_ringbuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pa_ringbuffer.c; sourceTree = "<group>"; };
 		AED56DCE16FD1D73005E2573 /* pa_ringbuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pa_ringbuffer.h; sourceTree = "<group>"; };
 		AED56DD016FD1D96005E2573 /* pa_memorybarrier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pa_memorybarrier.h; sourceTree = "<group>"; };
+		AED56DD3170A5406005E2573 /* MLNOverviewBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNOverviewBar.h; sourceTree = "<group>"; };
+		AED56DD4170A5406005E2573 /* MLNOverviewBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNOverviewBar.m; sourceTree = "<group>"; };
 		AEDA842916C88B7F001B2DD1 /* MLNApplicationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNApplicationDelegate.h; sourceTree = "<group>"; };
 		AEDA842A16C88B7F001B2DD1 /* MLNApplicationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNApplicationDelegate.m; sourceTree = "<group>"; };
 		AEDA843116C8D13E001B2DD1 /* MLNMMapRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNMMapRegion.h; sourceTree = "<group>"; };
@@ -208,6 +211,8 @@
 				AEDA843216C8D13E001B2DD1 /* MLNMMapRegion.m */,
 				AE6FB1D916B9C57900139735 /* MLNSampleView.h */,
 				AE6FB1DA16B9C57900139735 /* MLNSampleView.m */,
+				AED56DD3170A5406005E2573 /* MLNOverviewBar.h */,
+				AED56DD4170A5406005E2573 /* MLNOverviewBar.m */,
 				AE5AB6AF16E5759E008D0AE4 /* MLNSampleViewDelegate.h */,
 				AECDE7E616B7D59C00DE94D5 /* MLNLoadOperation.h */,
 				AECDE7E716B7D59C00DE94D5 /* MLNLoadOperation.m */,
@@ -329,6 +334,7 @@
 				AE298D7F16F7CC720031334A /* ContextFilterLogFormatter.m in Sources */,
 				AE298D8016F7CC720031334A /* DispatchQueueLogFormatter.m in Sources */,
 				AED56DCF16FD1D73005E2573 /* pa_ringbuffer.c in Sources */,
+				AED56DD5170A5406005E2573 /* MLNOverviewBar.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
