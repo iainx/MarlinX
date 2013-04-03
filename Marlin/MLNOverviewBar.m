@@ -22,8 +22,8 @@ static void *sampleContext = &sampleContext;
 - (id)initWithFrame:(NSRect)frame
 {
     self = [super initWithFrame:frame];
-    if (self) {
-        // Initialization code here.
+    if (!self) {
+        return nil;
     }
     
     _cachedSize = NSZeroSize;
@@ -101,7 +101,7 @@ static void *sampleContext = &sampleContext;
     }
 }
 
-- (CGContextRef)createMaskContextForRect:(NSRect)scaledRect
+- (CGContextRef)newMaskContextForRect:(NSRect)scaledRect
 {
     CGContextRef maskContext;
     CGColorSpaceRef colorspace = CGColorSpaceCreateDeviceGray();
@@ -130,7 +130,7 @@ static void *sampleContext = &sampleContext;
 
     [_channelMasks removeAllObjects];
     for (int channel = 0; channel < [_sample numberOfChannels]; channel++) {
-        CGContextRef maskContext = [self createMaskContextForRect:channelRect];
+        CGContextRef maskContext = [self newMaskContextForRect:channelRect];
         CGImageRef channelMask;
         
         [_sample drawWaveformInContext:maskContext

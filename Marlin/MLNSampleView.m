@@ -86,7 +86,7 @@
 
 #pragma mark - Sample view drawing
 
-- (CGContextRef)createMaskContextForRect:(NSRect)scaledRect
+- (CGContextRef)newMaskContextForRect:(NSRect)scaledRect
 {
     CGContextRef maskContext;
     CGColorSpaceRef colorspace = CGColorSpaceCreateDeviceGray();
@@ -233,7 +233,14 @@
         CGContextRef maskContext;
         CGImageRef sampleMask;
         
-        maskContext = [self createMaskContextForRect:scaledRect];
+        channelRect.origin.y = realDrawRect.size.height - (channelHeight * (channel + 1));
+        maskRect.origin.y = channelRect.origin.y;
+        
+        if (NSIntersectsRect(dirtyRect, channelRect) == NO) {
+            continue;
+        }
+
+        maskContext = [self newMaskContextForRect:scaledRect];
         [_sample drawWaveformInContext:maskContext
                          channelNumber:channel
                                   rect:scaledRect
@@ -242,13 +249,6 @@
         
         CGContextSaveGState(context);
         
-        channelRect.origin.y = realDrawRect.size.height - (channelHeight * (channel + 1));
-        maskRect.origin.y = channelRect.origin.y;
-        
-        if (NSIntersectsRect(dirtyRect, channelRect) == NO) {
-            continue;
-        }
-
         NSRect smallerMaskRect = NSInsetRect(maskRect, 0, 6);
         CGContextClipToMask(context, smallerMaskRect, sampleMask);
 
@@ -504,7 +504,7 @@ static void *sampleContext = &sampleContext;
 
 - (void)mouseDown:(NSEvent *)event
 {
-    NSUInteger possibleStartFrame;
+    NSUInteger possibleStartFrame = 0;
     
     if ([event type] != NSLeftMouseDown) {
         return;
@@ -580,16 +580,16 @@ static void *sampleContext = &sampleContext;
             case NSLeftMouseUp:
                 [NSEvent stopPeriodicEvents];
                 _dragEvent = nil;
-
-                // Move the cursor
-                [self moveCursor:possibleStartFrame];
                 
                 if (dragged == NO) {
                     _selectionStartFrame = 0;
                     _selectionEndFrame = 0;
                     _hasSelection = NO;
                     [self selectionChanged];
-                    
+
+                    // Move the cursor
+                    [self moveCursor:possibleStartFrame];
+
                     [self removeTrackingArea:_startTrackingArea];
                     [self removeTrackingArea:_endTrackingArea];
                     _startTrackingArea = nil;
