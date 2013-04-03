@@ -263,7 +263,7 @@
         CGImageRelease(sampleMask);
         CGContextRelease(maskContext);
         
-        [self drawNameForChannel:channel InRect:smallerMaskRect];
+        [self drawNameForChannel:channel InRect:maskRect];
     }
 
     // Draw the outline of the selection over the waveform
@@ -284,7 +284,7 @@
 }
 
 - (void)drawNameForChannel:(NSUInteger)channel
-                    InRect:(NSRect)dirtyRect
+                    InRect:(NSRect)maskRect
 {
     static const char *mono[1] = {"Mono"};
     static const char *stereo[2] = {"Left", "Right"};
@@ -302,8 +302,8 @@
     
     nameRect.size = [attrString size];
     
-    CGFloat y = NSMaxY(dirtyRect) - nameRect.size.height;
-    nameRect.origin = CGPointMake(5, y);
+    CGFloat y = NSMaxY(maskRect) - (nameRect.size.height + 3);
+    nameRect.origin = CGPointMake(8, y);
     
     [attrString drawInRect:nameRect];
 }
