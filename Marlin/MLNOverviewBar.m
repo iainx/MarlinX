@@ -95,11 +95,10 @@ static void *sampleContext = &sampleContext;
         [waveformColour setFill];
         
         NSRectFill(channelRect);
+        
+        CGImageRelease(channelMask);
         CGContextRestoreGState(context);
     }
-    
-    [[NSColor blackColor] set];
-    [[NSBezierPath bezierPathWithRect:bounds] stroke];
 }
 
 - (CGContextRef)createMaskContextForRect:(NSRect)scaledRect
@@ -141,6 +140,7 @@ static void *sampleContext = &sampleContext;
         channelMask = CGBitmapContextCreateImage(maskContext);
         
         [_channelMasks addObject:CFBridgingRelease(channelMask)];
+        CGContextRelease(maskContext);
     }
 }
 
