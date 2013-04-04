@@ -14,4 +14,5 @@
 
 @property (readwrite, strong) MLNSample *sample;
 
+- (void)setSelection:(NSRange)selection;
 @end

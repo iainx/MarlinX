@@ -13,6 +13,8 @@
 @implementation MLNOverviewBar {
     NSSize _cachedSize;
     NSMutableArray *_channelMasks;
+    NSRange _selection;
+    NSUInteger _framesPerPixel;
 }
 
 @synthesize sample = _sample;
@@ -49,7 +51,6 @@ static void *sampleContext = &sampleContext;
         height = 12 * [_sample numberOfChannels];
     }
     
-    DDLogVerbose(@"Overview height: %f", height);
     return NSMakeSize(NSViewNoInstrinsicMetric, height);
 }
 
@@ -58,7 +59,7 @@ static void *sampleContext = &sampleContext;
     if (NSEqualSizes(_cachedSize, [self frame].size)) {
         return;
     }
-    
+
     [self createChannelMasks];
     _cachedSize = [self frame].size;
 }
@@ -84,6 +85,26 @@ static void *sampleContext = &sampleContext;
                                                              xRadius:4 yRadius:4];
         [darkBG set];
         [path fill];
+    }
+
+    NSBezierPath *selectionPath = nil;
+    if (_selection.length != 0) {
+        NSRect selectionRect = [self selectionToRect:_selection];
+        
+        selectionRect.origin.x += 0.5;
+        selectionRect.origin.y += 1.5;
+        selectionRect.size.width -= 1;
+        selectionRect.size.height -= 2;
+        
+        selectionPath = [NSBezierPath bezierPathWithRoundedRect:selectionRect xRadius:2.0 yRadius:2.0];
+        NSColor *selectionBackgroundColour = [NSColor colorWithCalibratedRed:0.2 green:0.2 blue:0.6 alpha:0.75];
+        [selectionBackgroundColour setFill];
+        
+        [selectionPath fill];
+    }
+    
+    for (int channel = 0; channel < [_sample numberOfChannels]; channel++) {
+        channelRect.origin.y = (bounds.size.height - (channelHeight * (channel + 1))) + 1;
         
         // Draw the sample mask
         CGContextSaveGState(context);
@@ -98,6 +119,11 @@ static void *sampleContext = &sampleContext;
         
         CGImageRelease(channelMask);
         CGContextRestoreGState(context);
+    }
+    
+    if (selectionPath) {
+        [[NSColor blackColor] setStroke];
+        [selectionPath stroke];
     }
 }
 
@@ -121,13 +147,10 @@ static void *sampleContext = &sampleContext;
 - (void)createChannelMasks
 {
     NSRect channelRect = [self convertRectToBacking:[self bounds]];
-    NSUInteger framesPerPixel;
     
     channelRect.size.height /= [_sample numberOfChannels];
     //channelRect = NSInsetRect(channelRect, 0, 1);
     
-    framesPerPixel = [_sample numberOfFrames] / channelRect.size.width;
-
     [_channelMasks removeAllObjects];
     for (int channel = 0; channel < [_sample numberOfChannels]; channel++) {
         CGContextRef maskContext = [self newMaskContextForRect:channelRect];
@@ -136,7 +159,7 @@ static void *sampleContext = &sampleContext;
         [_sample drawWaveformInContext:maskContext
                          channelNumber:channel
                                   rect:channelRect
-                    withFramesPerPixel:framesPerPixel];
+                    withFramesPerPixel:_framesPerPixel];
         channelMask = CGBitmapContextCreateImage(maskContext);
         
         [_channelMasks addObject:CFBridgingRelease(channelMask)];
@@ -161,13 +184,41 @@ static void *sampleContext = &sampleContext;
     }
     
     if ([keyPath isEqualToString:@"loaded"]) {
+        NSSize scaledSize = [self convertSizeToBacking:[self bounds].size];
+        _framesPerPixel = [_sample numberOfFrames] / scaledSize.width;
+        
+        [self createChannelMasks];
         [self invalidateIntrinsicContentSize];
         [self setNeedsDisplay:YES];
         return;
     }
 }
 
+- (NSRect)selectionToRect:(NSRange)selection
+{
+    NSRect rect = [self bounds];
+    NSRect selectionRect = NSZeroRect;
+    
+    selectionRect.origin.x = selection.location / _framesPerPixel;
+    selectionRect.size.width = (NSMaxRange(selection) / _framesPerPixel) - selectionRect.origin.x;
+    
+    selectionRect = [self convertRectFromBacking:selectionRect];
+    
+    rect.origin.x = selectionRect.origin.x;
+    rect.size.width = selectionRect.size.width;
+    
+    return rect;
+}
+
 #pragma mark - Accessors
+
+- (void)setFrameSize:(NSSize)newSize
+{
+    NSSize scaledSize = [self convertSizeToBacking:newSize];
+    _framesPerPixel = [_sample numberOfFrames] / scaledSize.width;
+
+    [super setFrameSize:newSize];
+}
 
 - (void)setSample:(MLNSample *)sample
 {
@@ -180,8 +231,13 @@ static void *sampleContext = &sampleContext;
               forKeyPath:@"numberOfChannels"
                  options:NSKeyValueObservingOptionNew
                  context:sampleContext];
+    [_sample addObserver:self
+              forKeyPath:@"loaded"
+                 options:NSKeyValueObservingOptionNew
+                 context:sampleContext];
     
     if ([_sample isLoaded]) {
+        _framesPerPixel = [_sample numberOfFrames] / [self bounds].size.width;
         [self createChannelMasks];
         [self invalidateIntrinsicContentSize];
         [self setNeedsDisplay:YES];
@@ -191,5 +247,20 @@ static void *sampleContext = &sampleContext;
 - (MLNSample *)sample
 {
     return _sample;
+}
+
+- (void)setSelection:(NSRange)selection
+{
+    if (NSEqualRanges(selection, _selection)) {
+        return;
+    }
+    
+    NSRect rect = [self selectionToRect:_selection];
+    [self setNeedsDisplayInRect:rect];
+    
+    _selection = selection;
+
+    rect = [self selectionToRect:_selection];
+    [self setNeedsDisplayInRect:rect];
 }
 @end

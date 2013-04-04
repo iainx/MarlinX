@@ -57,9 +57,9 @@ static void *sampleContext = &sampleContext;
     //NSURL *url = [NSURL fileURLWithPath:@"/Users/iain/sine.wav" isDirectory:NO];
     
     // Doesn't like 8 channel.
-    NSURL *url = [NSURL fileURLWithPath:@"/Users/iain/Documents/6_Channel_ID.wav" isDirectory:NO];
+    //NSURL *url = [NSURL fileURLWithPath:@"/Users/iain/Documents/6_Channel_ID.wav" isDirectory:NO];
     //NSURL *url = [NSURL fileURLWithPath:@"/Users/iain/Documents/8_Channel_ID.wav" isDirectory:NO];
-    //NSURL *url = [NSURL fileURLWithPath:@"/Users/iain/Documents/2dpl.wav" isDirectory:NO];
+    NSURL *url = [NSURL fileURLWithPath:@"/Users/iain/Documents/2dpl.wav" isDirectory:NO];
     
     _testSample = [[MLNSample alloc] initWithURL:url];
     [_testSample addObserver:self
@@ -73,6 +73,7 @@ static void *sampleContext = &sampleContext;
     [_scrollView setTranslatesAutoresizingMaskIntoConstraints:NO];
     
     _sampleView = [[MLNSampleView alloc] initWithFrame:NSZeroRect];
+    [_sampleView setDelegate:self];
     
     NSWindow *window = [aController window];
     [[window contentView] addSubview:_overviewBarView];
@@ -194,5 +195,12 @@ static void *sampleContext = &sampleContext;
     }
     
     return valid;
+}
+
+#pragma mark - Sample View delegate
+- (void)sampleView:(MLNSampleView *)sampleView
+selectionDidChange:(NSRange)selection
+{
+    [_overviewBarView setSelection:selection];
 }
 @end
