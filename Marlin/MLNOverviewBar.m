@@ -51,7 +51,7 @@ static void *sampleContext = &sampleContext;
         height = 12 * [_sample numberOfChannels];
     }
     
-    return NSMakeSize(NSViewNoInstrinsicMetric, height);
+    return NSMakeSize(NSViewNoInstrinsicMetric, height + 1);
 }
 
 - (void)viewWillDraw
@@ -69,7 +69,7 @@ static void *sampleContext = &sampleContext;
     CGContextRef context = [[NSGraphicsContext currentContext] graphicsPort];
     NSRect bounds = [self bounds];
     NSRect channelRect = bounds;
-    CGFloat channelHeight = bounds.size.height / [_sample numberOfChannels];
+    CGFloat channelHeight = (bounds.size.height - 1) / [_sample numberOfChannels];
     
     channelRect.size.height = (channelHeight - 1);
     NSColor *darkBG = [NSColor colorWithCalibratedRed:0.214 green:0.218 blue:0.226 alpha:1.0];
@@ -78,7 +78,7 @@ static void *sampleContext = &sampleContext;
     NSRectFill(dirtyRect);
     
     for (int channel = 0; channel < [_sample numberOfChannels]; channel++) {
-        channelRect.origin.y = (bounds.size.height - (channelHeight * (channel + 1))) + 1;
+        channelRect.origin.y = ((bounds.size.height - 1) - (channelHeight * (channel + 1))) + 1;
         
         // Draw the background
         NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:channelRect
@@ -94,7 +94,7 @@ static void *sampleContext = &sampleContext;
         selectionRect.origin.x += 0.5;
         selectionRect.origin.y += 1.5;
         selectionRect.size.width -= 1;
-        selectionRect.size.height -= 2;
+        selectionRect.size.height -= 3;
         
         selectionPath = [NSBezierPath bezierPathWithRoundedRect:selectionRect xRadius:2.0 yRadius:2.0];
         NSColor *selectionBackgroundColour = [NSColor colorWithCalibratedRed:0.2 green:0.2 blue:0.6 alpha:0.75];
@@ -104,7 +104,7 @@ static void *sampleContext = &sampleContext;
     }
     
     for (int channel = 0; channel < [_sample numberOfChannels]; channel++) {
-        channelRect.origin.y = (bounds.size.height - (channelHeight * (channel + 1))) + 1;
+        channelRect.origin.y = ((bounds.size.height - 1) - (channelHeight * (channel + 1))) + 1;
         
         // Draw the sample mask
         CGContextSaveGState(context);
