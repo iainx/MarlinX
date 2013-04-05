@@ -98,9 +98,9 @@ static void *sampleContext = &sampleContext;
         NSRect selectionRect = [self selectionToRect:_selection];
         
         selectionRect.origin.x += 0.5;
-        selectionRect.origin.y += 5.5;
+        selectionRect.origin.y += 4.5;
         selectionRect.size.width -= 1;
-        selectionRect.size.height -= 11;
+        selectionRect.size.height -= 9;
         
         selectionPath = [NSBezierPath bezierPathWithRoundedRect:selectionRect xRadius:2.0 yRadius:2.0];
         NSColor *selectionBackgroundColour = [NSColor colorWithCalibratedRed:0.2 green:0.2 blue:0.6 alpha:0.75];
@@ -137,8 +137,9 @@ static void *sampleContext = &sampleContext;
     }
     
     if (_visibleRange.length != 0) {
-        [[NSColor blackColor] set];
+        //[[NSColor blackColor] set];
         
+        [[NSColor colorWithCalibratedRed:0.1 green:0.12 blue:0.15 alpha:1.0] set];
         DDLogVerbose(@"drawing %@", NSStringFromRect(borderRect));
         NSBezierPath *borderPath = [NSBezierPath bezierPathWithRoundedRect:borderRect xRadius:2.0 yRadius:2.0];
         [borderPath setLineWidth:1.0];
