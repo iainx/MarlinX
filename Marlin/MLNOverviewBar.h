@@ -14,5 +14,6 @@
 
 @property (readwrite, strong) MLNSample *sample;
 
+- (void)setVisibleRange:(NSRange)visibleRange;
 - (void)setSelection:(NSRange)selection;
 @end

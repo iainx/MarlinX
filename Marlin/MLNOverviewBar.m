@@ -14,6 +14,7 @@
     NSSize _cachedSize;
     NSMutableArray *_channelMasks;
     NSRange _selection;
+    NSRange _visibleRange;
     NSUInteger _framesPerPixel;
 }
 
@@ -45,13 +46,13 @@ static void *sampleContext = &sampleContext;
 {
     CGFloat height;
     
-    if ([_sample numberOfChannels] < 2) {
-        height = 24;
+    if ([_sample numberOfChannels] < 3) {
+        height = 36;
     } else {
         height = 12 * [_sample numberOfChannels];
     }
     
-    return NSMakeSize(NSViewNoInstrinsicMetric, height + 1);
+    return NSMakeSize(NSViewNoInstrinsicMetric, height + 9);
 }
 
 - (void)viewWillDraw
@@ -69,7 +70,7 @@ static void *sampleContext = &sampleContext;
     CGContextRef context = [[NSGraphicsContext currentContext] graphicsPort];
     NSRect bounds = [self bounds];
     NSRect channelRect = bounds;
-    CGFloat channelHeight = (bounds.size.height - 1) / [_sample numberOfChannels];
+    CGFloat channelHeight = (bounds.size.height - 9) / [_sample numberOfChannels];
     
     channelRect.size.height = (channelHeight - 1);
     NSColor *darkBG = [NSColor colorWithCalibratedRed:0.214 green:0.218 blue:0.226 alpha:1.0];
@@ -77,8 +78,13 @@ static void *sampleContext = &sampleContext;
     [[NSColor underPageBackgroundColor] setFill];
     NSRectFill(dirtyRect);
     
+    NSRect borderRect = NSZeroRect;
+    if (_visibleRange.length != 0) {
+        borderRect = [self visibleRangeToRect:_visibleRange];
+    }
+    
     for (int channel = 0; channel < [_sample numberOfChannels]; channel++) {
-        channelRect.origin.y = ((bounds.size.height - 1) - (channelHeight * (channel + 1))) + 1;
+        channelRect.origin.y = ((bounds.size.height - 5) - (channelHeight * (channel + 1))) + 1;
         
         // Draw the background
         NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:channelRect
@@ -92,9 +98,9 @@ static void *sampleContext = &sampleContext;
         NSRect selectionRect = [self selectionToRect:_selection];
         
         selectionRect.origin.x += 0.5;
-        selectionRect.origin.y += 1.5;
+        selectionRect.origin.y += 5.5;
         selectionRect.size.width -= 1;
-        selectionRect.size.height -= 3;
+        selectionRect.size.height -= 11;
         
         selectionPath = [NSBezierPath bezierPathWithRoundedRect:selectionRect xRadius:2.0 yRadius:2.0];
         NSColor *selectionBackgroundColour = [NSColor colorWithCalibratedRed:0.2 green:0.2 blue:0.6 alpha:0.75];
@@ -104,7 +110,7 @@ static void *sampleContext = &sampleContext;
     }
     
     for (int channel = 0; channel < [_sample numberOfChannels]; channel++) {
-        channelRect.origin.y = ((bounds.size.height - 1) - (channelHeight * (channel + 1))) + 1;
+        channelRect.origin.y = ((bounds.size.height - 5) - (channelHeight * (channel + 1))) + 1;
         
         // Draw the sample mask
         CGContextSaveGState(context);
@@ -112,11 +118,15 @@ static void *sampleContext = &sampleContext;
         
         CGContextClipToMask(context, channelRect, channelMask);
     
-        NSColor *waveformColour = [NSColor colorWithCalibratedRed:0.5 green:0.5 blue:0.2 alpha:1.0];
-        [waveformColour setFill];
-        
+        [[NSColor darkGrayColor] setFill];
         NSRectFill(channelRect);
         
+        if (NSEqualRects(borderRect, NSZeroRect) == NO) {
+            NSColor *waveformColour = [NSColor colorWithCalibratedRed:0.5 green:0.5 blue:0.2 alpha:1.0];
+            [waveformColour setFill];
+            
+            NSRectFill(borderRect);
+        }
         CGImageRelease(channelMask);
         CGContextRestoreGState(context);
     }
@@ -124,6 +134,15 @@ static void *sampleContext = &sampleContext;
     if (selectionPath) {
         [[NSColor blackColor] setStroke];
         [selectionPath stroke];
+    }
+    
+    if (_visibleRange.length != 0) {
+        [[NSColor blackColor] set];
+        
+        DDLogVerbose(@"drawing %@", NSStringFromRect(borderRect));
+        NSBezierPath *borderPath = [NSBezierPath bezierPathWithRoundedRect:borderRect xRadius:2.0 yRadius:2.0];
+        [borderPath setLineWidth:1.0];
+        [borderPath stroke];
     }
 }
 
@@ -210,6 +229,26 @@ static void *sampleContext = &sampleContext;
     return rect;
 }
 
+- (NSRect)visibleRangeToRect:(NSRange)visibleRange
+{
+    if (_framesPerPixel == 0) {
+        return NSZeroRect;
+    }
+    
+    NSRect visibleRect = NSZeroRect;
+    visibleRect.origin.x = visibleRange.location / _framesPerPixel;
+    visibleRect.size.width = (NSMaxRange(visibleRange) / _framesPerPixel) - visibleRect.origin.x;
+    NSRect scaledRect = [self convertRectFromBacking:visibleRect];
+    
+    NSRect borderRect = NSMakeRect(scaledRect.origin.x, 2.5, scaledRect.size.width, [self bounds].size.height - 5);
+    
+    if (NSMaxX(borderRect) > NSMaxX([self bounds])) {
+        borderRect.size.width = ([self bounds].size.width - borderRect.origin.x) - 1;
+    }
+    
+    return borderRect;
+}
+
 #pragma mark - Accessors
 
 - (void)setFrameSize:(NSSize)newSize
@@ -262,5 +301,26 @@ static void *sampleContext = &sampleContext;
 
     rect = [self selectionToRect:_selection];
     [self setNeedsDisplayInRect:rect];
+}
+
+- (void)setVisibleRange:(NSRange)visibleRange
+{
+    if (NSEqualRanges(visibleRange, _visibleRange)) {
+        return;
+    }
+    
+    NSRect newRect = [self visibleRangeToRect:visibleRange];
+    NSRect rect = [self visibleRangeToRect:_visibleRange];
+    
+    if (NSEqualRects(newRect, rect)) {
+        return;
+    }
+    
+    NSRect unionRect = NSUnionRect(newRect, rect);
+    unionRect.origin.x -= 10;
+    unionRect.size.width += 20;
+    [self setNeedsDisplayInRect:unionRect];
+    
+    _visibleRange = visibleRange;
 }
 @end

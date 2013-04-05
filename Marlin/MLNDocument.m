@@ -34,6 +34,19 @@
 
 static void *sampleContext = &sampleContext;
 
+- (NSRange)boundsToVisibleSampleRange:(NSRect)bounds
+{
+    NSRect scaledBounds = [_sampleView convertRectToBacking:bounds];
+    
+    if (scaledBounds.origin.x < 0) {
+        scaledBounds.size.width += (scaledBounds.origin.x);
+        scaledBounds.origin.x = 0;
+    }
+    NSRange visibleRange = NSMakeRange(scaledBounds.origin.x * [_sampleView framesPerPixel],
+                                       scaledBounds.size.width * [_sampleView framesPerPixel]);
+    return visibleRange;
+}
+
 - (void)observeValueForKeyPath:(NSString *)keyPath
                       ofObject:(id)object
                         change:(NSDictionary *)change
@@ -45,7 +58,18 @@ static void *sampleContext = &sampleContext;
     
     if ([keyPath isEqualToString:@"loaded"]) {
         [_toolbar validateVisibleItems];
+        
+        NSRange visibleRange = [self boundsToVisibleSampleRange:[[_scrollView contentView] bounds]];
+        [_overviewBarView setVisibleRange:visibleRange];
     }
+}
+
+- (void)clipViewBoundsChanged:(NSNotification *)note
+{
+    NSRect newBounds = [[note object] bounds];
+    
+    NSRange visibleRange = [self boundsToVisibleSampleRange:newBounds];
+    [_overviewBarView setVisibleRange:visibleRange];
 }
 
 - (void)windowControllerDidLoadNib:(NSWindowController *)aController
@@ -119,7 +143,16 @@ static void *sampleContext = &sampleContext;
     NSClipView *clipView = [_scrollView contentView];
     //[clipView setCopiesOnScroll:NO];
     
+    // Set up the clipview so that the sampleView fills the whole of it vertically
     [clipView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[sampleView]|" options:0 metrics:nil views:viewsDict]];
+    
+    // Post the clip view bounds changed so we can track it with the overview bar
+    [clipView setPostsBoundsChangedNotifications:YES];
+    NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+    [nc addObserver:self
+           selector:@selector(clipViewBoundsChanged:)
+               name:NSViewBoundsDidChangeNotification
+             object:clipView];
 }
 
 + (BOOL)autosavesInPlace
