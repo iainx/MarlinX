@@ -721,9 +721,11 @@ subtractSelectionRects (NSRect a, NSRect b)
 - (NSRect)selectionToRect
 {
     NSPoint startPoint = [self convertFrameToPoint:_selectionStartFrame];
-    NSPoint endPoint = [self convertFrameToPoint:_selectionEndFrame];
-    NSInteger selectionWidth = (endPoint.x - startPoint.x);
-    NSRect selectionRect = NSMakeRect(startPoint.x, 0, selectionWidth, [self bounds].size.height);
+    NSUInteger selectionFrameWidth = _selectionEndFrame - _selectionStartFrame;
+    
+    // Overload NSPoint here to convert a frame to the backing store pixel format
+    NSPoint selectionWidth = [self convertFrameToPoint:selectionFrameWidth];
+    NSRect selectionRect = NSMakeRect(startPoint.x, 0, selectionWidth.x, [self bounds].size.height);
     
     return selectionRect;
 }
