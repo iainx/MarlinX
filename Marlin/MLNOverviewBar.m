@@ -137,10 +137,7 @@ static void *sampleContext = &sampleContext;
     }
     
     if (_visibleRange.length != 0) {
-        //[[NSColor blackColor] set];
-        
         [[NSColor colorWithCalibratedRed:0.1 green:0.12 blue:0.15 alpha:1.0] set];
-        DDLogVerbose(@"drawing %@", NSStringFromRect(borderRect));
         NSBezierPath *borderPath = [NSBezierPath bezierPathWithRoundedRect:borderRect xRadius:2.0 yRadius:2.0];
         [borderPath setLineWidth:1.0];
         [borderPath stroke];
