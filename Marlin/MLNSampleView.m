@@ -104,7 +104,7 @@
     return maskContext;
 }
 
-#define GUTTER_SIZE 24
+static const int GUTTER_SIZE = 24;
 
 - (void)drawRect:(NSRect)dirtyRect
 {
