@@ -568,7 +568,7 @@ static void *sampleContext = &sampleContext;
                     }
                     _dragEvent = nextEvent;
                     break;
-                } else if (timerOn == YES) {
+                } else if (timerOn) {
                     [NSEvent stopPeriodicEvents];
                     timerOn = NO;
                     _dragEvent = nil;
