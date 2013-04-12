@@ -8,6 +8,10 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class MLNSelectionAction;
+
 @interface MLNSelectionButton : NSButton
+
+- (id)initWithAction:(MLNSelectionAction *)action;
 
 @end

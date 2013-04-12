@@ -11,6 +11,7 @@
 #import "MLNSample.h"
 #import "MLNSample+Operations.h"
 #import "MLNSampleView.h"
+#import "MLNSelectionAction.h"
 
 @implementation MLNDocument {
     MLNSample *_testSample;
@@ -237,9 +238,30 @@ selectionDidChange:(NSRange)selection
     [_overviewBarView setSelection:selection];
 }
 
+- (void)testAction:(id)action
+{
+    DDLogVerbose(@"Invoked test action");
+}
+
 - (NSArray *)sampleViewWillShowSelectionToolbar
 {
-    return nil;
+    NSMutableArray *toolbarItems = [NSMutableArray arrayWithCapacity:3];
+    
+    for (int i = 0; i < 3; i++) {
+        MLNSelectionAction *action = [[MLNSelectionAction alloc] init];
+        SEL actionMethod = @selector(testAction:);
+        NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[self methodSignatureForSelector:actionMethod]];
+
+        [invocation setTarget:self];
+        [invocation setSelector:actionMethod];
+        
+        [action setName:@"Test"];
+        [action setInvocation:invocation];
+        
+        [toolbarItems addObject:action];
+    }
+    
+    return toolbarItems;
 }
 
 - (NSArray *)sampleViewWillShowSelectionMenu

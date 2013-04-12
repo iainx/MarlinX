@@ -56,9 +56,9 @@
 {
     //return NSMakeSize(NSViewNoInstrinsicMetric, NSViewNoInstrinsicMetric);
     if (_horizontal) {
-        return NSMakeSize(100.0, 20.0);
+        return NSMakeSize(100.0, 30.0);
     } else {
-        return NSMakeSize(20.0, 100.0);
+        return NSMakeSize(30.0, 100.0);
     }
 }
 
@@ -90,7 +90,7 @@
             viewsDict[@"currentView"] = currentView;
             
             if (previousView == nil) {
-                vf = [self visualFormat:@"|[currentView]" isVerticalByDefault:NO];
+                vf = [self visualFormat:@"|-5-[currentView]" isVerticalByDefault:NO];
                 NSArray *c = [NSLayoutConstraint constraintsWithVisualFormat:vf
                                                                      options:0
                                                                      metrics:nil
@@ -106,15 +106,17 @@
                 [constraints addObjectsFromArray:c];
             }
             
-            vf = [self visualFormat:@"|[currentView]|" isVerticalByDefault:YES];
+            vf = [self visualFormat:@"|-5-[currentView]-5-|" isVerticalByDefault:YES];
             [constraints addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:vf
                                                                                      options:0
                                                                                      metrics:nil
                                                                                        views:viewsDict]];
+            
+            previousView = currentView;
         }
         
         if ([[self subviews] count] > 0) {
-            vf = [self visualFormat:@"[currentView]|" isVerticalByDefault:NO];
+            vf = [self visualFormat:@"[currentView]-5-|" isVerticalByDefault:NO];
             [constraints addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:vf
                                                                                      options:0
                                                                                      metrics:nil

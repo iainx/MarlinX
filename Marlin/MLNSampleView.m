@@ -12,6 +12,8 @@
 #import "MLNSample+Drawing.h"
 #import "MLNSampleBlock.h"
 #import "MLNSampleChannel.h"
+#import "MLNSelectionAction.h"
+#import "MLNSelectionButton.h"
 #import "MLNSelectionToolbar.h"
 
 @implementation MLNSampleView {
@@ -838,7 +840,23 @@ subtractSelectionRects (NSRect a, NSRect b)
 - (void)updateSelectionToolbarInSelectionRect:(NSRect)newSelectionRect
 {
     if (_selectionToolbar == nil) {
+        if (![_delegate respondsToSelector:@selector(sampleViewWillShowSelectionToolbar)]) {
+            return;
+        }
+        
+        NSArray *toolbarItems = [_delegate sampleViewWillShowSelectionToolbar];
+        if ([toolbarItems count] == 0) {
+            return;
+        }
+        
         _selectionToolbar = [[MLNSelectionToolbar alloc] initWithFrame:NSZeroRect];
+        for (MLNSelectionAction *action in toolbarItems) {
+            MLNSelectionButton *button = [[MLNSelectionButton alloc] initWithAction:action];
+            
+            
+            [_selectionToolbar addSubview:button];
+        }
+        
         [_selectionToolbar setTranslatesAutoresizingMaskIntoConstraints:NO];
         [self addSubview:_selectionToolbar];
         
