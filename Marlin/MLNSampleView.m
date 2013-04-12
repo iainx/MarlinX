@@ -652,23 +652,6 @@ static void *sampleContext = &sampleContext;
     }
     fpp = _framesPerPixel - dfpp;
     
-    /*
-    fpp = _framesPerPixel;
-    
-    _summedMagnificationLevel -= ([event magnification] * 2);
-    if (_summedMagnificationLevel > -1 && _summedMagnificationLevel < 1) {
-        // FIXME: Should we add a timeout to reset the mag level?
-        return;
-    }
-    
-    if (_summedMagnificationLevel > 1) {
-        fpp *= 2;
-        _summedMagnificationLevel = 0;
-    } else if (_summedMagnificationLevel < -1) {
-        fpp /= 2;
-        _summedMagnificationLevel = 0;
-    }
-    */
     if (fpp < 1) {
         fpp = 1;
     }
