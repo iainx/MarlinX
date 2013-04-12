@@ -236,4 +236,15 @@ selectionDidChange:(NSRange)selection
 {
     [_overviewBarView setSelection:selection];
 }
+
+- (NSArray *)sampleViewWillShowSelectionToolbar
+{
+    return nil;
+}
+
+- (NSArray *)sampleViewWillShowSelectionMenu
+{
+    return nil;
+}
+
 @end

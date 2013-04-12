@@ -15,4 +15,6 @@
 - (void)sampleView:(MLNSampleView *)sampleView selectionDidChange:(NSRange)selection;
 - (void)sampleView:(MLNSampleView *)sampleView cursorDidMove:(NSUInteger)cursorFrame;
 
+- (NSArray *)sampleViewWillShowSelectionToolbar;
+- (NSArray *)sampleViewWillShowSelectionMenu;
 @end

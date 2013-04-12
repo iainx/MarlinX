@@ -12,12 +12,7 @@
 #import "MLNSample+Drawing.h"
 #import "MLNSampleBlock.h"
 #import "MLNSampleChannel.h"
-
-// TODO: Allow selection resizing
-//       Draw channel separator?
-//       Regions
-//       Markers
-//       Playhead
+#import "MLNSelectionToolbar.h"
 
 @implementation MLNSampleView {
     CGFloat _intrinsicWidth;
@@ -37,6 +32,12 @@
     NSTimer *_cursorTimer;
     NSUInteger _cursorFramePosition;
     BOOL _drawCursor;
+    
+    MLNSelectionToolbar *_selectionToolbar;
+    NSMutableArray *_toolbarConstraints;
+    NSLayoutConstraint *_toolbarXConstraint;
+    NSLayoutConstraint *_leftXConstraint;
+    BOOL _toolbarIsOnRight;
 }
 
 @synthesize framesPerPixel = _framesPerPixel;
@@ -486,6 +487,15 @@ static void *sampleContext = &sampleContext;
     return _framesPerPixel;
 }
 
+- (void)setFrameSize:(NSSize)newSize
+{
+    [super setFrameSize:newSize];
+    
+    // If we have a toolbar, then we may need to reposition it
+    if (_hasSelection) {
+        [self updateSelectionToolbarInSelectionRect:[self selectionToRect]];
+    }
+}
 #pragma mark - Events
 
 - (NSUInteger)convertPointToFrame:(NSPoint)point
@@ -594,6 +604,8 @@ static void *sampleContext = &sampleContext;
                     [self removeTrackingArea:_endTrackingArea];
                     _startTrackingArea = nil;
                     _endTrackingArea = nil;
+                    
+                    [self removeSelectionToolbar];
                     
                     selectionRect.size.width += 0.5;
                     [self setNeedsDisplayInRect:selectionRect];
@@ -782,6 +794,7 @@ subtractSelectionRects (NSRect a, NSRect b)
     [self addTrackingArea:_startTrackingArea];
     [self addTrackingArea:_endTrackingArea];
     
+    [self updateSelectionToolbarInSelectionRect:newSelectionRect];
     [self selectionChanged];
     
     // Only redraw the changed selection
@@ -794,6 +807,10 @@ subtractSelectionRects (NSRect a, NSRect b)
 - (void)clearSelection
 {
     NSRect selectionRect = [self selectionToRect];
+    
+    if (_selectionToolbar) {
+        [self removeSelectionToolbar];
+    }
     
     _selectionStartFrame = 0;
     _selectionEndFrame = 0;
@@ -808,6 +825,137 @@ subtractSelectionRects (NSRect a, NSRect b)
     selectionRect.size.width += 0.5;
     [self setNeedsDisplayInRect:selectionRect];
     DDLogVerbose(@"Mouse up: No drag %@", NSStringFromRect(selectionRect));
+}
+
+- (void)removeSelectionToolbar
+{
+    [_selectionToolbar removeFromSuperview];
+    _selectionToolbar = nil;
+    _toolbarConstraints = nil;
+    _toolbarXConstraint = nil;
+}
+
+- (void)updateSelectionToolbarInSelectionRect:(NSRect)newSelectionRect
+{
+    if (_selectionToolbar == nil) {
+        _selectionToolbar = [[MLNSelectionToolbar alloc] initWithFrame:NSZeroRect];
+        [_selectionToolbar setTranslatesAutoresizingMaskIntoConstraints:NO];
+        [self addSubview:_selectionToolbar];
+        
+        NSDictionary *viewsDict = @{@"toolbar": _selectionToolbar};
+        
+        // Setup the constraint that pins the toolbar to the top of the view
+        NSArray *constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-10-[toolbar]"
+                                                                       options:0
+                                                                       metrics:nil
+                                                                         views:viewsDict];
+        _toolbarConstraints = [NSMutableArray arrayWithArray:constraints];
+        [self addConstraints:_toolbarConstraints];
+    }
+    
+    NSSize intrinsicSize = [_selectionToolbar intrinsicContentSize];
+    CGFloat widthIfTheToolbarWasHorizontal = [_selectionToolbar isHorizontal] ? intrinsicSize.width : intrinsicSize.height;
+
+    if (widthIfTheToolbarWasHorizontal + 20.0 > newSelectionRect.size.width) {
+        // Toolbar is too big to put into the selection. Put it on its side and along the edge
+        
+        if ([_selectionToolbar isHorizontal]) {
+            // Switching to side
+            [_selectionToolbar setHorizontal:NO];
+            
+            // Because the toolbar has been fliped to vertical, we need to get the intrinsic size again
+            intrinsicSize = [_selectionToolbar intrinsicContentSize];
+            
+            [self removeConstraint:_toolbarXConstraint];
+            
+            // Now we work out which side of the selection it should be on
+            if ((NSMaxX(newSelectionRect) + intrinsicSize.width + 3) > NSMaxX([self bounds])) {
+                _toolbarXConstraint = [NSLayoutConstraint constraintWithItem:_selectionToolbar
+                                                                   attribute:NSLayoutAttributeRight
+                                                                   relatedBy:NSLayoutRelationEqual
+                                                                      toItem:self
+                                                                   attribute:NSLayoutAttributeLeft
+                                                                  multiplier:0
+                                                                    constant:newSelectionRect.origin.x - 3];
+                _toolbarIsOnRight = NO;
+            } else {
+                _toolbarXConstraint = [NSLayoutConstraint constraintWithItem:_selectionToolbar
+                                                                   attribute:NSLayoutAttributeLeft
+                                                                   relatedBy:NSLayoutRelationEqual
+                                                                      toItem:self
+                                                                   attribute:NSLayoutAttributeLeft
+                                                                  multiplier:0
+                                                                    constant:NSMaxX(newSelectionRect) + 3];
+                _toolbarIsOnRight = YES;
+            }
+            
+            [self addConstraint:_toolbarXConstraint];
+        } else {
+            // Check if the toolbar is on the correct side
+            BOOL changeSide = NO;
+            
+            if ((NSMaxX(newSelectionRect) + intrinsicSize.width + 3) > NSMaxX([self bounds])) {
+                if (_toolbarIsOnRight) {
+                    changeSide = YES;
+                }
+            } else {
+                if (!_toolbarIsOnRight) {
+                    changeSide = YES;
+                }
+            }
+            
+            // Reposition
+            if (changeSide) {
+                [self removeConstraint:_toolbarXConstraint];
+                if (_toolbarIsOnRight) {
+                    _toolbarXConstraint = [NSLayoutConstraint constraintWithItem:_selectionToolbar
+                                                                       attribute:NSLayoutAttributeRight
+                                                                       relatedBy:NSLayoutRelationEqual
+                                                                          toItem:self
+                                                                       attribute:NSLayoutAttributeLeft
+                                                                      multiplier:0
+                                                                        constant:newSelectionRect.origin.x - 3];
+                    _toolbarIsOnRight = NO;
+                } else {
+                    _toolbarXConstraint = [NSLayoutConstraint constraintWithItem:_selectionToolbar
+                                                                       attribute:NSLayoutAttributeLeft
+                                                                       relatedBy:NSLayoutRelationEqual
+                                                                          toItem:self
+                                                                       attribute:NSLayoutAttributeLeft
+                                                                      multiplier:0
+                                                                        constant:NSMaxX(newSelectionRect) + 3];
+                    _toolbarIsOnRight = YES;
+                }
+                [self addConstraint:_toolbarXConstraint];
+            } else {
+                CGFloat newConstant;
+                if (!_toolbarIsOnRight) {
+                    newConstant = newSelectionRect.origin.x - 3;
+                } else {
+                    newConstant = NSMaxX(newSelectionRect) + 3;
+                }
+                
+                [_toolbarXConstraint setConstant:newConstant];
+            }
+        }
+    } else {
+        if ([_selectionToolbar isHorizontal]) {
+            [_toolbarXConstraint setConstant:NSMaxX(newSelectionRect) - 10];
+        } else {
+            // Switch to horizontal and reposition
+            [_selectionToolbar setHorizontal:YES];
+            
+            [self removeConstraint:_toolbarXConstraint];
+            _toolbarXConstraint = [NSLayoutConstraint constraintWithItem:_selectionToolbar
+                                                               attribute:NSLayoutAttributeRight
+                                                               relatedBy:NSLayoutRelationEqual
+                                                                  toItem:self
+                                                               attribute:NSLayoutAttributeLeft
+                                                              multiplier:0
+                                                                constant:NSMaxX(newSelectionRect) - 10];
+            [self addConstraint:_toolbarXConstraint];
+        }
+    }
 }
 
 #pragma mark - Cursor

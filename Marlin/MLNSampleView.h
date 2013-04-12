@@ -18,6 +18,7 @@
 @property (readwrite, weak) id<MLNSampleViewDelegate> delegate;
 @property (readonly) BOOL hasSelection;
 @property (readonly) NSRange selection;
+@property (readwrite, strong) NSArray *selectionActions;
 
 - (void)clearSelection;
 

@@ -17,6 +17,9 @@
 		AE298D8016F7CC720031334A /* DispatchQueueLogFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = AE298D7816F7CC720031334A /* DispatchQueueLogFormatter.m */; };
 		AE298D8116F7CC720031334A /* README.txt in Resources */ = {isa = PBXBuildFile; fileRef = AE298D7916F7CC720031334A /* README.txt */; };
 		AE31A9C916F146ED0051CF41 /* MLNSample+Operations.m in Sources */ = {isa = PBXBuildFile; fileRef = AE31A9C816F146ED0051CF41 /* MLNSample+Operations.m */; };
+		AE57CA4B170F73250043E690 /* MLNSelectionButton.m in Sources */ = {isa = PBXBuildFile; fileRef = AE57CA4A170F73250043E690 /* MLNSelectionButton.m */; };
+		AE57CA4E171040AE0043E690 /* MLNSelectionToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = AE57CA4D171040AE0043E690 /* MLNSelectionToolbar.m */; };
+		AE57CA511710EB0A0043E690 /* MLNSelectionAction.m in Sources */ = {isa = PBXBuildFile; fileRef = AE57CA501710EB0A0043E690 /* MLNSelectionAction.m */; };
 		AE5AB6CD16EA2DE0008D0AE4 /* MLNSample+Drawing.m in Sources */ = {isa = PBXBuildFile; fileRef = AE5AB6CC16EA2DE0008D0AE4 /* MLNSample+Drawing.m */; };
 		AE6A0F3C16BD1F1900362CC4 /* MLNSampleBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = AE6A0F3B16BD1F1900362CC4 /* MLNSampleBlock.m */; };
 		AE6FB1D816B8FF6E00139735 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = AE6FB1D716B8FF6E00139735 /* Constants.m */; };
@@ -58,6 +61,12 @@
 		AE31A9C716F146ED0051CF41 /* MLNSample+Operations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MLNSample+Operations.h"; sourceTree = "<group>"; };
 		AE31A9C816F146ED0051CF41 /* MLNSample+Operations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MLNSample+Operations.m"; sourceTree = "<group>"; };
 		AE31A9CA16F28D3E0051CF41 /* MLNSampleDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNSampleDelegate.h; sourceTree = "<group>"; };
+		AE57CA49170F73250043E690 /* MLNSelectionButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNSelectionButton.h; sourceTree = "<group>"; };
+		AE57CA4A170F73250043E690 /* MLNSelectionButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNSelectionButton.m; sourceTree = "<group>"; };
+		AE57CA4C171040AE0043E690 /* MLNSelectionToolbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNSelectionToolbar.h; sourceTree = "<group>"; };
+		AE57CA4D171040AE0043E690 /* MLNSelectionToolbar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNSelectionToolbar.m; sourceTree = "<group>"; };
+		AE57CA4F1710EB0A0043E690 /* MLNSelectionAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNSelectionAction.h; sourceTree = "<group>"; };
+		AE57CA501710EB0A0043E690 /* MLNSelectionAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNSelectionAction.m; sourceTree = "<group>"; };
 		AE5AB6AF16E5759E008D0AE4 /* MLNSampleViewDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNSampleViewDelegate.h; sourceTree = "<group>"; };
 		AE5AB6CB16EA2DE0008D0AE4 /* MLNSample+Drawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MLNSample+Drawing.h"; sourceTree = "<group>"; };
 		AE5AB6CC16EA2DE0008D0AE4 /* MLNSample+Drawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MLNSample+Drawing.m"; sourceTree = "<group>"; };
@@ -213,6 +222,12 @@
 				AEDA843216C8D13E001B2DD1 /* MLNMMapRegion.m */,
 				AE6FB1D916B9C57900139735 /* MLNSampleView.h */,
 				AE6FB1DA16B9C57900139735 /* MLNSampleView.m */,
+				AE57CA4F1710EB0A0043E690 /* MLNSelectionAction.h */,
+				AE57CA501710EB0A0043E690 /* MLNSelectionAction.m */,
+				AE57CA49170F73250043E690 /* MLNSelectionButton.h */,
+				AE57CA4A170F73250043E690 /* MLNSelectionButton.m */,
+				AE57CA4C171040AE0043E690 /* MLNSelectionToolbar.h */,
+				AE57CA4D171040AE0043E690 /* MLNSelectionToolbar.m */,
 				AE5AB6AF16E5759E008D0AE4 /* MLNSampleViewDelegate.h */,
 				AECDE7E616B7D59C00DE94D5 /* MLNLoadOperation.h */,
 				AECDE7E716B7D59C00DE94D5 /* MLNLoadOperation.m */,
@@ -335,6 +350,9 @@
 				AE298D8016F7CC720031334A /* DispatchQueueLogFormatter.m in Sources */,
 				AED56DCF16FD1D73005E2573 /* pa_ringbuffer.c in Sources */,
 				AED56DD5170A5406005E2573 /* MLNOverviewBar.m in Sources */,
+				AE57CA4B170F73250043E690 /* MLNSelectionButton.m in Sources */,
+				AE57CA4E171040AE0043E690 /* MLNSelectionToolbar.m in Sources */,
+				AE57CA511710EB0A0043E690 /* MLNSelectionAction.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
