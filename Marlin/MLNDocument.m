@@ -206,18 +206,36 @@ static void *sampleContext = &sampleContext;
     
 }
 
+- (void)copy:(id)sender
+{
+    DDLogVerbose(@"Copy");
+}
+
+- (void)cut:(id)sender
+{
+    DDLogVerbose(@"Cut");
+}
+
+- (void)paste:(id)sender
+{
+    DDLogVerbose(@"Paste");
+}
+
 #pragma mark - Validators
 
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem
 {
-    BOOL valid = NO;
-    
-    DDLogVerbose(@"Validate");
-    if ([menuItem action] == @selector(delete:)) {
-        valid = [_sampleView hasSelection];
+    SEL action = [menuItem action];
+    if (action == @selector(delete:)
+        || action == @selector(copy:)
+        || action == @selector(cut:)) {
+        return [_sampleView hasSelection];
     }
     
-    return valid;
+    if (action == @selector(paste:)) {
+        return NO;
+    }
+    return NO;
 }
 
 - (BOOL)validateToolbarItem:(NSToolbarItem *)theItem
