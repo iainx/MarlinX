@@ -36,6 +36,8 @@ typedef struct _MLNSampleBlock {
     off_t cacheByteOffset;
 } MLNSampleBlock;
 
+#define FRAME_IN_BLOCK(b, f) (((f) >= (b)->startFrame) && ((f) < (b)->startFrame + (b)->numberOfFrames))
+
 MLNSampleBlock *MLNSampleBlockCreateBlock(MLNMapRegion *region,
                                           size_t byteLength,
                                           off_t offset,

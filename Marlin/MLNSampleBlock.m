@@ -10,6 +10,8 @@
 #import "MLNSampleBlock.h"
 #import "MLNMMapRegion.h"
 
+#pragma mark - Lifetime
+
 MLNSampleBlock *
 MLNSampleBlockCreateBlock (MLNMapRegion *region,
                            size_t byteLength,
@@ -22,6 +24,7 @@ MLNSampleBlockCreateBlock (MLNMapRegion *region,
     
     block = malloc(sizeof(MLNSampleBlock));
     
+    // FIXME: Should ref regions
     block->region = region;
     block->sampleByteLength = byteLength;
     block->byteOffset = offset;
@@ -45,10 +48,52 @@ MLNSampleBlockFree (MLNSampleBlock *block)
     if (block == NULL) {
         return;
     }
-    
+
+    // FIXME: Should unref regions
     free(block);
 }
 
+MLNSampleBlock *
+MLNSampleBlockCopy (MLNSampleBlock *block,
+                    NSUInteger startFrame)
+{
+    MLNSampleBlock *copyBlock;
+    size_t copyByteLength;
+    off_t copyOffset;
+    off_t copyCacheOffset;
+    NSUInteger frameOffset;
+    NSUInteger copyNumberOfFrames;
+    NSUInteger copyNumberOfCachePoints;
+    
+    if (block == NULL) {
+        return NULL;
+    }
+    
+    if (!FRAME_IN_BLOCK(block, startFrame)) {
+        return NULL;
+    }
+    
+    frameOffset = (startFrame - block->startFrame);
+    copyOffset = block->byteOffset + (frameOffset * sizeof(float));
+    copyNumberOfFrames = (block->numberOfFrames - frameOffset);
+    copyByteLength = copyNumberOfFrames * sizeof(float);
+
+    copyNumberOfCachePoints = copyNumberOfFrames / 256;
+    if (copyNumberOfFrames % 256 != 0) {
+        copyNumberOfCachePoints++;
+    }
+    
+    copyCacheOffset = (block->cacheByteLength - (copyNumberOfCachePoints * sizeof(MLNSampleCachePoint)));
+    
+    copyBlock = MLNSampleBlockCreateBlock(block->region, copyByteLength, copyOffset,
+                                          block->cacheRegion,
+                                          copyNumberOfCachePoints * sizeof(MLNSampleCachePoint),
+                                          block->cacheByteOffset + copyCacheOffset);
+    
+    return copyBlock;
+}
+
+#pragma mark - Data access
 const float *
 MLNSampleBlockSampleData (MLNSampleBlock *block)
 {
@@ -67,98 +112,6 @@ MLNSampleBlockSampleCacheData (MLNSampleBlock *block)
     }
     
     return (block->cacheRegion->dataRegion + block->cacheByteOffset);
-}
-
-void
-MLNSampleBlockAppendBlock (MLNSampleBlock *block,
-                           MLNSampleBlock *otherBlock)
-{
-    MLNSampleBlock *nb;
-    
-    if (block == NULL) {
-        return;
-    }
-    
-    if (otherBlock == NULL) {
-        return;
-    }
-    
-    nb = block->nextBlock;
-    
-    block->nextBlock = otherBlock;
-    
-    if (nb) {
-        nb->previousBlock = otherBlock;
-    }
-    
-    otherBlock->nextBlock = nb;
-    otherBlock->previousBlock = block;
-}
-
-void
-MLNSampleBlockPrependBlock (MLNSampleBlock *block,
-                            MLNSampleBlock *otherBlock)
-{
-    MLNSampleBlock *pb;
-    
-    if (block == NULL) {
-        return;
-    }
-    
-    if (otherBlock == NULL) {
-        return;
-    }
-    
-    pb = block->previousBlock;
-    
-    block->previousBlock = otherBlock;
-    
-    if (pb) {
-        pb->nextBlock = otherBlock;
-    }
-    
-    otherBlock->nextBlock = block;
-    otherBlock->previousBlock = pb;
-}
-
-void
-MLNSampleBlockRemoveFromList (MLNSampleBlock *block)
-{
-    if (block == NULL) {
-        return;
-    }
-    
-    if (block->previousBlock) {
-        block->previousBlock->nextBlock = block->nextBlock;
-    }
-
-    if (block->nextBlock) {
-        block->nextBlock->previousBlock = block->previousBlock;
-    }
-
-    block->previousBlock = NULL;
-    block->nextBlock = NULL;
-}
-
-void
-MLNSampleBlockRemoveBlocksFromList (MLNSampleBlock *startBlock,
-                                    MLNSampleBlock *endBlock)
-{
-    if (startBlock == NULL || endBlock == NULL) {
-        return;
-    }
-    
-    if (startBlock->previousBlock) {
-        startBlock->previousBlock->nextBlock = endBlock->nextBlock;
-    }
-    
-    if (endBlock->nextBlock) {
-        endBlock->nextBlock->previousBlock = startBlock->previousBlock;
-    }
-
-    /* Decouple the blocks from the main list */
-    startBlock->previousBlock = NULL;
-    endBlock->nextBlock = NULL;
 }
 
 NSUInteger
@@ -226,6 +179,121 @@ MLNSampleBlockSplitBlockAtFrame (MLNSampleBlock *block,
     return newBlock;
 }
 
+#pragma mark - List operations
+/**
+ * MLNSampleBlockAppendBlock:
+ *
+ * Inserts @otherBlock between @block and @block->nextBlock
+ */
+void
+MLNSampleBlockAppendBlock (MLNSampleBlock *block,
+                           MLNSampleBlock *otherBlock)
+{
+    MLNSampleBlock *nb;
+    
+    if (block == NULL) {
+        return;
+    }
+    
+    if (otherBlock == NULL) {
+        return;
+    }
+    
+    nb = block->nextBlock;
+    
+    block->nextBlock = otherBlock;
+    
+    if (nb) {
+        nb->previousBlock = otherBlock;
+    }
+    
+    otherBlock->nextBlock = nb;
+    otherBlock->previousBlock = block;
+}
+
+/**
+ * MLNSampleBlockPrependBlock:
+ *
+ * Inserts @otherBlock between @block and @block->previousBlock
+ */
+void
+MLNSampleBlockPrependBlock (MLNSampleBlock *block,
+                            MLNSampleBlock *otherBlock)
+{
+    MLNSampleBlock *pb;
+    
+    if (block == NULL) {
+        return;
+    }
+    
+    if (otherBlock == NULL) {
+        return;
+    }
+    
+    pb = block->previousBlock;
+    
+    block->previousBlock = otherBlock;
+    
+    if (pb) {
+        pb->nextBlock = otherBlock;
+    }
+    
+    otherBlock->nextBlock = block;
+    otherBlock->previousBlock = pb;
+}
+
+/**
+ * MLNSampleBlockRemoveFromList:
+ *
+ * Removes @block from the list, linking @block->previousBlock and @block->nextBlock
+ */
+void
+MLNSampleBlockRemoveFromList (MLNSampleBlock *block)
+{
+    if (block == NULL) {
+        return;
+    }
+    
+    if (block->previousBlock) {
+        block->previousBlock->nextBlock = block->nextBlock;
+    }
+
+    if (block->nextBlock) {
+        block->nextBlock->previousBlock = block->previousBlock;
+    }
+
+    block->previousBlock = NULL;
+    block->nextBlock = NULL;
+}
+
+/**
+ * MLNSampleBlockRemoveBlocksFromList:
+ *
+ * Unlinks all the blocks between @startBlock and @endBlock from the list
+ * in one operation
+ */
+void
+MLNSampleBlockRemoveBlocksFromList (MLNSampleBlock *startBlock,
+                                    MLNSampleBlock *endBlock)
+{
+    if (startBlock == NULL || endBlock == NULL) {
+        return;
+    }
+    
+    if (startBlock->previousBlock) {
+        startBlock->previousBlock->nextBlock = endBlock->nextBlock;
+    }
+    
+    if (endBlock->nextBlock) {
+        endBlock->nextBlock->previousBlock = startBlock->previousBlock;
+    }
+
+    /* Decouple the blocks from the main list */
+    startBlock->previousBlock = NULL;
+    endBlock->nextBlock = NULL;
+}
+
+#pragma mark - Debugging
 void
 MLNSampleBlockDumpBlock (MLNSampleBlock *block)
 {
