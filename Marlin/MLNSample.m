@@ -88,6 +88,22 @@ typedef struct PlaybackData {
     return self;
 }
 
+- (id)initWithChannels:(NSArray *)channelData
+{
+    self = [super init];
+    if (!self) {
+        return nil;
+    }
+    
+    _url = nil;
+    _loaded = YES;
+    
+    // Not a deep copy
+    _channelData = [channelData mutableCopy];
+    
+    return self;
+}
+
 - (void)startLoad
 {
     MLNLoadOperation *op = [[MLNLoadOperation alloc] initForSample:self];

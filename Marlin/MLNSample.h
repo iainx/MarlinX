@@ -26,6 +26,7 @@ enum {
 @property (readonly) NSURL *url;
 
 - (id)initWithURL:(NSURL *)url;
+- (id)initWithChannels:(NSArray *)channelData;
 
 - (void)play;
 - (void)stop;
