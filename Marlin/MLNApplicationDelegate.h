@@ -13,5 +13,6 @@
 @property (readonly) NSURL *cacheURL;
 
 - (int)createNewCacheFileWithExtension:(NSString *)extension;
+- (void)removeCacheFileForFd:(int)fd;
 
 @end

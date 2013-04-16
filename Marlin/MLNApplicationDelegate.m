@@ -106,4 +106,29 @@
     
     return fd;
 }
+
+- (void)removeCacheFileForFd:(int)fd
+{
+    NSFileManager *fm = [NSFileManager defaultManager];
+    MLNTemporaryFile *tfile;
+    
+    for (tfile in _cacheFiles) {
+        if ([tfile fd] == fd) {
+            NSError *error = nil;
+            
+            close([tfile fd]);
+            [fm removeItemAtPath:[tfile filePath] error:&error];
+            
+            if (error != nil) {
+                DDLogError(@"Error removing %@: %@ - %@", [tfile filePath], [error localizedDescription], [error localizedFailureReason]);
+            } else {
+                DDLogInfo(@"Deleted %@", [tfile filePath]);
+            }
+            
+            break;
+        }
+    }
+    
+    [_cacheFiles removeObject:tfile];
+}
 @end
