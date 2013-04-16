@@ -24,6 +24,11 @@
 		AE6A0F3C16BD1F1900362CC4 /* MLNSampleBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = AE6A0F3B16BD1F1900362CC4 /* MLNSampleBlock.m */; };
 		AE6FB1D816B8FF6E00139735 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = AE6FB1D716B8FF6E00139735 /* Constants.m */; };
 		AE6FB1DB16B9C57900139735 /* MLNSampleView.m in Sources */ = {isa = PBXBuildFile; fileRef = AE6FB1DA16B9C57900139735 /* MLNSampleView.m */; };
+		AE7254B2171B7EAC00B48145 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE7254B1171B7EAC00B48145 /* SenTestingKit.framework */; };
+		AE7254B3171B7EAC00B48145 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AECDE7C116B7C0C300DE94D5 /* Cocoa.framework */; };
+		AE7254B9171B7EAC00B48145 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = AE7254B7171B7EAC00B48145 /* InfoPlist.strings */; };
+		AE7254BC171B7EAC00B48145 /* MLNSampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AE7254BB171B7EAC00B48145 /* MLNSampleTests.m */; };
+		AE7254E0171E06CF00B48145 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AECDE7E416B7C3B900DE94D5 /* AudioToolbox.framework */; };
 		AECDE7C216B7C0C300DE94D5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AECDE7C116B7C0C300DE94D5 /* Cocoa.framework */; };
 		AECDE7CC16B7C0C300DE94D5 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = AECDE7CA16B7C0C300DE94D5 /* InfoPlist.strings */; };
 		AECDE7CE16B7C0C300DE94D5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = AECDE7CD16B7C0C300DE94D5 /* main.m */; };
@@ -39,6 +44,16 @@
 		AEDA842B16C88B7F001B2DD1 /* MLNApplicationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = AEDA842A16C88B7F001B2DD1 /* MLNApplicationDelegate.m */; };
 		AEDA843316C8D13E001B2DD1 /* MLNMMapRegion.m in Sources */ = {isa = PBXBuildFile; fileRef = AEDA843216C8D13E001B2DD1 /* MLNMMapRegion.m */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		AE7254E2171E08CF00B48145 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AECDE7B416B7C0C300DE94D5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AECDE7BC16B7C0C300DE94D5;
+			remoteInfo = Marlin;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		AE05C60116C246DF00A7B9D9 /* MLNSampleChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNSampleChannel.h; sourceTree = "<group>"; };
@@ -77,6 +92,13 @@
 		AE6FB1D716B8FF6E00139735 /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
 		AE6FB1D916B9C57900139735 /* MLNSampleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNSampleView.h; sourceTree = "<group>"; };
 		AE6FB1DA16B9C57900139735 /* MLNSampleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNSampleView.m; sourceTree = "<group>"; };
+		AE7254B0171B7EAC00B48145 /* MLNSampleTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MLNSampleTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AE7254B1171B7EAC00B48145 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		AE7254B6171B7EAC00B48145 /* MLNSampleTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MLNSampleTests-Info.plist"; sourceTree = "<group>"; };
+		AE7254B8171B7EAC00B48145 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		AE7254BA171B7EAC00B48145 /* MLNSampleTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNSampleTests.h; sourceTree = "<group>"; };
+		AE7254BB171B7EAC00B48145 /* MLNSampleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNSampleTests.m; sourceTree = "<group>"; };
+		AE7254BD171B7EAC00B48145 /* MLNSampleTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MLNSampleTests-Prefix.pch"; sourceTree = "<group>"; };
 		AECDE7BD16B7C0C300DE94D5 /* Marlin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Marlin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AECDE7C116B7C0C300DE94D5 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		AECDE7C416B7C0C300DE94D5 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -108,6 +130,16 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		AE7254AC171B7EAC00B48145 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AE7254E0171E06CF00B48145 /* AudioToolbox.framework in Frameworks */,
+				AE7254B2171B7EAC00B48145 /* SenTestingKit.framework in Frameworks */,
+				AE7254B3171B7EAC00B48145 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AECDE7BA16B7C0C300DE94D5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -159,10 +191,31 @@
 			name = "External Sources";
 			sourceTree = "<group>";
 		};
+		AE7254B4171B7EAC00B48145 /* MLNSampleTests */ = {
+			isa = PBXGroup;
+			children = (
+				AE7254BA171B7EAC00B48145 /* MLNSampleTests.h */,
+				AE7254BB171B7EAC00B48145 /* MLNSampleTests.m */,
+				AE7254B5171B7EAC00B48145 /* Supporting Files */,
+			);
+			path = MLNSampleTests;
+			sourceTree = "<group>";
+		};
+		AE7254B5171B7EAC00B48145 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				AE7254B6171B7EAC00B48145 /* MLNSampleTests-Info.plist */,
+				AE7254B7171B7EAC00B48145 /* InfoPlist.strings */,
+				AE7254BD171B7EAC00B48145 /* MLNSampleTests-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		AECDE7B216B7C0C300DE94D5 = {
 			isa = PBXGroup;
 			children = (
 				AECDE7C716B7C0C300DE94D5 /* Marlin */,
+				AE7254B4171B7EAC00B48145 /* MLNSampleTests */,
 				AECDE7C016B7C0C300DE94D5 /* Frameworks */,
 				AECDE7BE16B7C0C300DE94D5 /* Products */,
 			);
@@ -172,6 +225,7 @@
 			isa = PBXGroup;
 			children = (
 				AECDE7BD16B7C0C300DE94D5 /* Marlin.app */,
+				AE7254B0171B7EAC00B48145 /* MLNSampleTests.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -181,6 +235,7 @@
 			children = (
 				AECDE7E416B7C3B900DE94D5 /* AudioToolbox.framework */,
 				AECDE7C116B7C0C300DE94D5 /* Cocoa.framework */,
+				AE7254B1171B7EAC00B48145 /* SenTestingKit.framework */,
 				AECDE7C316B7C0C300DE94D5 /* Other Frameworks */,
 			);
 			name = Frameworks;
@@ -265,6 +320,25 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		AE7254AF171B7EAC00B48145 /* MLNSampleTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AE7254C0171B7EAC00B48145 /* Build configuration list for PBXNativeTarget "MLNSampleTests" */;
+			buildPhases = (
+				AE7254AB171B7EAC00B48145 /* Sources */,
+				AE7254AC171B7EAC00B48145 /* Frameworks */,
+				AE7254AD171B7EAC00B48145 /* Resources */,
+				AE7254AE171B7EAC00B48145 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AE7254E3171E08CF00B48145 /* PBXTargetDependency */,
+			);
+			name = MLNSampleTests;
+			productName = MLNSampleTests;
+			productReference = AE7254B0171B7EAC00B48145 /* MLNSampleTests.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
 		AECDE7BC16B7C0C300DE94D5 /* Marlin */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = AECDE7DE16B7C0C300DE94D5 /* Build configuration list for PBXNativeTarget "Marlin" */;
@@ -305,11 +379,20 @@
 			projectRoot = "";
 			targets = (
 				AECDE7BC16B7C0C300DE94D5 /* Marlin */,
+				AE7254AF171B7EAC00B48145 /* MLNSampleTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		AE7254AD171B7EAC00B48145 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AE7254B9171B7EAC00B48145 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AECDE7BB16B7C0C300DE94D5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -324,7 +407,31 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		AE7254AE171B7EAC00B48145 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
+		AE7254AB171B7EAC00B48145 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AE7254BC171B7EAC00B48145 /* MLNSampleTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AECDE7B916B7C0C300DE94D5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -358,7 +465,23 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		AE7254E3171E08CF00B48145 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AECDE7BC16B7C0C300DE94D5 /* Marlin */;
+			targetProxy = AE7254E2171E08CF00B48145 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
+		AE7254B7171B7EAC00B48145 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				AE7254B8171B7EAC00B48145 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
 		AECDE7CA16B7C0C300DE94D5 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -394,6 +517,42 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		AE7254BE171B7EAC00B48145 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Marlin.app/Contents/MacOS/Marlin";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = "\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MLNSampleTests/MLNSampleTests-Prefix.pch";
+				INFOPLIST_FILE = "MLNSampleTests/MLNSampleTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		AE7254BF171B7EAC00B48145 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Marlin.app/Contents/MacOS/Marlin";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = "\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MLNSampleTests/MLNSampleTests-Prefix.pch";
+				INFOPLIST_FILE = "MLNSampleTests/MLNSampleTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
 		AECDE7DC16B7C0C300DE94D5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -474,6 +633,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		AE7254C0171B7EAC00B48145 /* Build configuration list for PBXNativeTarget "MLNSampleTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AE7254BE171B7EAC00B48145 /* Debug */,
+				AE7254BF171B7EAC00B48145 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		AECDE7B716B7C0C300DE94D5 /* Build configuration list for PBXProject "Marlin" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
