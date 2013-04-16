@@ -33,6 +33,13 @@
     return self;
 }
 
+- (void)dealloc
+{
+    MLNApplicationDelegate *appDelegate = [NSApp delegate];
+    [appDelegate removeCacheFileForFd:_dataFd];
+    [appDelegate removeCacheFileForFd:_cacheFd];
+}
+
 #pragma mark - Cache generation
 
 #define SAMPLES_PER_CACHE_POINT 256
