@@ -142,14 +142,6 @@
                                                         cacheLength:&cacheByteLength];
     
     // Create a region for the new data
-    /*
-    MLNMapRegion *region = [[MLNMMapRegion alloc] initWithFd:_dataFd
-                                                         data:data
-                                                       length:byteLength];
-    MLNMapRegion *cacheRegion = [[MLNMMapRegion alloc] initWithFd:_cacheFd
-                                                              data:cacheData
-                                                            length:cacheByteLength];
-     */
     MLNMapRegion *region = MLNMapRegionCreateRegion(_dataFd, data, byteLength);
     MLNMapRegion *cacheRegion = MLNMapRegionCreateRegion(_cacheFd, cacheData, cacheByteLength);
     
@@ -158,14 +150,6 @@
     free(cacheData);
     
     // Our new block is the whole of the new region we've created
-    /*
-    MLNSampleBlock *block = [[MLNSampleBlock alloc] initWithRegion:region
-                                                            length:byteLength
-                                                        byteOffset:0
-                                                       cacheRegion:cacheRegion
-                                                       cacheLength:cacheByteLength
-                                                   cacheByteOffset:0];
-     */
     MLNSampleBlock *block = MLNSampleBlockCreateBlock(region, byteLength, 0,
                                                       cacheRegion, cacheByteLength, 0);
     [self addBlock:block];
