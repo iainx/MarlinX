@@ -44,6 +44,8 @@ MLNSampleBlock *MLNSampleBlockCreateBlock(MLNMapRegion *region,
                                           MLNMapRegion *cacheRegion,
                                           size_t cacheByteLength,
                                           off_t cacheByteOffset);
+void MLNSampleBlockFree (MLNSampleBlock *block);
+
 const float *MLNSampleBlockSampleData (MLNSampleBlock *block);
 const MLNSampleCachePoint *MLNSampleBlockSampleCacheData (MLNSampleBlock *block);
 
