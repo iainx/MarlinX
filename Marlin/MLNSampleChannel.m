@@ -35,6 +35,16 @@
 
 - (void)dealloc
 {
+    MLNSampleBlock *block;
+    
+    block = _firstBlock;
+    while (block) {
+        MLNSampleBlock *oldBlock = block;
+        
+        block = block->nextBlock;
+        MLNSampleBlockFree(oldBlock);
+    }
+    
     MLNApplicationDelegate *appDelegate = [NSApp delegate];
     [appDelegate removeCacheFileForFd:_dataFd];
     [appDelegate removeCacheFileForFd:_cacheFd];
@@ -165,6 +175,24 @@
 
 #pragma mark - Block list manipulation
 
+- (void)updateBlockCount
+{
+    MLNSampleBlock *block = _firstBlock;
+    NSUInteger count = 0;
+    NSUInteger blockCount = 0;
+    
+    while (block) {
+        block->startFrame = count;
+        count += block->numberOfFrames;
+        
+        block = block->nextBlock;
+        blockCount++;
+    }
+    
+    _numberOfFrames = count;
+    _count = blockCount;
+}
+
 - (void)addBlock:(MLNSampleBlock *)block
 {
     if (block == NULL) {
@@ -191,7 +219,7 @@
 
 - (void)removeBlock:(MLNSampleBlock *)block
 {
-    if (_firstBlock == block) {
+    if (_firstBlock == block && _lastBlock == block) {
         _firstBlock = nil;
         _lastBlock = nil;
         _count = 0;
@@ -203,10 +231,17 @@
         _lastBlock = _lastBlock->previousBlock;
     }
     
+    if (_firstBlock == block) {
+        _firstBlock = block->nextBlock;
+    }
+    
     _numberOfFrames -= block->numberOfFrames;
     
     MLNSampleBlockRemoveFromList(block);
     _count--;
+    
+    // FIXME: We could optimise this to start from the block we've just moved
+    [self updateBlockCount];
 }
 
 - (MLNSampleBlock *)sampleBlockForFrame:(NSUInteger)frame
@@ -234,31 +269,14 @@
     return nil;
 }
 
-- (void)updateBlockCount
-{
-    MLNSampleBlock *block = _firstBlock;
-    NSUInteger count = 0;
-    NSUInteger blockCount = 0;
-    
-    while (block) {
-        block->startFrame = count;
-        count += block->numberOfFrames;
-        
-        block = block->nextBlock;
-        blockCount++;
-    }
-    
-    _count = blockCount;
-}
-
 #pragma mark - Sample manipulation
 
 - (void)deleteRange:(NSRange)range
 {
-    NSUInteger lastFrame = NSMaxRange(range);
+    NSUInteger lastFrame = NSMaxRange(range) - 1;
     MLNSampleBlock *firstBlock, *lastBlock;
     
-    DDLogVerbose(@"Deleting from %lu -> %lu", range.location, NSMaxRange(range));
+    DDLogVerbose(@"Deleting from %lu -> %lu", range.location, lastFrame);
     
     // Find first block
     firstBlock = [self sampleBlockForFrame:range.location];
@@ -284,10 +302,10 @@
     
     DDLogVerbose(@"   lastBlock: %p", lastBlock);
     
-    if (NSMaxRange(range) != MLNSampleBlockLastFrame(lastBlock)) {
+    if (lastFrame != MLNSampleBlockLastFrame(lastBlock)) {
         // Split the last block on the next frame
         // Don't need to care about the next
-        MLNSampleBlockSplitBlockAtFrame(lastBlock, NSMaxRange(range) + 1);
+        MLNSampleBlockSplitBlockAtFrame(lastBlock, NSMaxRange(range));
     }
     
     if (_firstBlock == firstBlock) {
