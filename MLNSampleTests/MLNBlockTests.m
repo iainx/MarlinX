@@ -219,8 +219,6 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     for (int i = 0; i < 22050; i++) {
         STAssertEquals(data[i], (float)22050 + i, @"block1->data[%d] != %f: %f", i, (float)22050 + i, data[i]);
     }
-    MLNSampleBlockFree(block1);
-    MLNSampleBlockFree(block2);
 }
 
 - (void)testSplitFirstFrame
@@ -255,9 +253,6 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     STAssertEquals(block2->numberOfFrames, (NSUInteger)1, @"block2->numberOfFrames != 22050: Got %lu", block2->numberOfFrames);
     STAssertEquals(block2->sampleByteLength, (ssize_t)1 * sizeof(float), @"block2->sampleByteLength != %lu: Got %lu",
                    1 * sizeof(float), block2->sampleByteLength);
-    
-    MLNSampleBlockFree(block1);
-    MLNSampleBlockFree(block2);
 }
 
 - (void)testSplitInvalidFrame
@@ -302,7 +297,8 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     for (int i = 0; i < 22050; i++) {
         STAssertEquals(data[i], (float)22050 + i, @"block1->data[%d] != %f: %f", i, (float)22050 + i, data[i]);
     }
-    MLNSampleBlockFree(block1);
+
+    // Don't need to free block1 because it is owned by the channel
     MLNSampleBlockFree(block2);
 }
 
@@ -336,7 +332,8 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     for (int i = 0; i < 44100; i++) {
         STAssertEquals(data[i], (float)i, @"block1->data[%d] != %f: %f", i, (float)i, data[i]);
     }
-    MLNSampleBlockFree(block1);
+
+    // Do not need to free block1 as it is owned by the channel
     MLNSampleBlockFree(block2);
 }
 
