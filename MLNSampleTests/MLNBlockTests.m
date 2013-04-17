@@ -92,4 +92,46 @@
     MLNSampleBlockFree(block2);
     MLNSampleBlockFree(block3);
 }
+
+- (void)testRemove
+{
+    MLNSampleBlock *block1, *block2, *block3;
+    
+    block1 = MLNSampleBlockCreateBlock(NULL, 0, 0, NULL, 0, 0);
+    block2 = MLNSampleBlockCreateBlock(NULL, 0, 0, NULL, 0, 0);
+    block3 = MLNSampleBlockCreateBlock(NULL, 0, 0, NULL, 0, 0);
+
+    // Make a list of block1->block2->block3
+    // We know this works because the earlier test succeeded
+    MLNSampleBlockAppendBlock(block1, block2);
+    MLNSampleBlockAppendBlock(block2, block3);
+    
+    // Remove block2
+    MLNSampleBlockRemoveFromList(block2);
+    
+    // Check block2 is detached
+    STAssertTrue(block2->previousBlock == NULL, @"block2->previousBlock != NULL");
+    STAssertTrue(block2->nextBlock == NULL, @"block2->nextBlock != NULL");
+    
+    // Check block1 & block3 are connected
+    STAssertFalse(block1->nextBlock == NULL, @"block1->nextBlock == NULL");
+    STAssertTrue(block1->nextBlock == block3, @"block1->nextBlock != block3");
+    STAssertFalse(block3->previousBlock == NULL, @"block3->previousBlock == NULL");
+    STAssertTrue(block3->previousBlock == block1, @"block3->previousBlock != block1");
+    
+    // Remove block3
+    MLNSampleBlockRemoveFromList(block3);
+    
+    // Check block3 is detached
+    STAssertTrue(block3->previousBlock == NULL, @"block3->previousBlock != NULL");
+    STAssertTrue(block3->nextBlock == NULL, @"block3->nextBlock != NULL");
+    
+    // Check block1 is detached
+    STAssertTrue(block1->previousBlock == NULL, @"block3->previousBlock != NULL");
+    STAssertTrue(block1->nextBlock == NULL, @"block3->nextBlock != NULL");
+
+    MLNSampleBlockFree(block1);
+    MLNSampleBlockFree(block2);
+    MLNSampleBlockFree(block3);
+}
 @end
