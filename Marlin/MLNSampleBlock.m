@@ -53,46 +53,6 @@ MLNSampleBlockFree (MLNSampleBlock *block)
     free(block);
 }
 
-MLNSampleBlock *
-MLNSampleBlockCopy (MLNSampleBlock *block,
-                    NSUInteger startFrame)
-{
-    MLNSampleBlock *copyBlock;
-    size_t copyByteLength;
-    off_t copyOffset;
-    off_t copyCacheOffset;
-    NSUInteger frameOffset;
-    NSUInteger copyNumberOfFrames;
-    NSUInteger copyNumberOfCachePoints;
-    
-    if (block == NULL) {
-        return NULL;
-    }
-    
-    if (!FRAME_IN_BLOCK(block, startFrame)) {
-        return NULL;
-    }
-    
-    frameOffset = (startFrame - block->startFrame);
-    copyOffset = block->byteOffset + (frameOffset * sizeof(float));
-    copyNumberOfFrames = (block->numberOfFrames - frameOffset);
-    copyByteLength = copyNumberOfFrames * sizeof(float);
-
-    copyNumberOfCachePoints = copyNumberOfFrames / 256;
-    if (copyNumberOfFrames % 256 != 0) {
-        copyNumberOfCachePoints++;
-    }
-    
-    copyCacheOffset = (block->cacheByteLength - (copyNumberOfCachePoints * sizeof(MLNSampleCachePoint)));
-    
-    copyBlock = MLNSampleBlockCreateBlock(block->region, copyByteLength, copyOffset,
-                                          block->cacheRegion,
-                                          copyNumberOfCachePoints * sizeof(MLNSampleCachePoint),
-                                          block->cacheByteOffset + copyCacheOffset);
-    
-    return copyBlock;
-}
-
 #pragma mark - Data access
 const float *
 MLNSampleBlockSampleData (MLNSampleBlock *block)
@@ -125,6 +85,16 @@ MLNSampleBlockLastFrame(MLNSampleBlock *block)
     return (block->startFrame + block->numberOfFrames) - 1;
 }
 
+/**
+ * MLNSampleBlockSplitBlockAtFrame:
+ *
+ * Splits @block into block_a and block_b.
+ * block_a: [block->startFrame --> splitFrame - 1]
+ * block_b: [splitFrame --> block->startFrame + block->numberOfFrames]
+ *
+ * block is turned into block_a, and block_b is returned
+ * Returns: NULL on invalid @splitframe, or @block if @splitframe == block->startFrame
+ */
 MLNSampleBlock *
 MLNSampleBlockSplitBlockAtFrame (MLNSampleBlock *block,
                                  NSUInteger splitFrame)
@@ -138,6 +108,10 @@ MLNSampleBlockSplitBlockAtFrame (MLNSampleBlock *block,
     NSUInteger numberOfCachePointsInOther;
     
     if (block == NULL) {
+        return NULL;
+    }
+    
+    if (!FRAME_IN_BLOCK(block, splitFrame)) {
         return NULL;
     }
     
@@ -177,6 +151,52 @@ MLNSampleBlockSplitBlockAtFrame (MLNSampleBlock *block,
     MLNSampleBlockAppendBlock(block, newBlock);
     
     return newBlock;
+}
+
+MLNSampleBlock *
+MLNSampleBlockCopy (MLNSampleBlock *block,
+                    NSUInteger startFrame)
+{
+    MLNSampleBlock *copyBlock;
+    size_t copyByteLength;
+    off_t copyOffset;
+    off_t copyCacheOffset;
+    NSUInteger frameOffset;
+    NSUInteger copyNumberOfFrames;
+    NSUInteger copyNumberOfCachePoints;
+    
+    if (block == NULL) {
+        return NULL;
+    }
+    
+    if (startFrame == block->startFrame) {
+        return MLNSampleBlockCreateBlock(block->region, block->sampleByteLength, block->byteOffset,
+                                         block->cacheRegion, block->cacheByteLength, block->cacheByteOffset);
+    }
+    
+    if (!FRAME_IN_BLOCK(block, startFrame)) {
+        return NULL;
+    }
+    
+    frameOffset = (startFrame - block->startFrame);
+    copyOffset = block->byteOffset + (frameOffset * sizeof(float));
+    copyNumberOfFrames = (block->numberOfFrames - frameOffset);
+    copyByteLength = copyNumberOfFrames * sizeof(float);
+    
+    copyNumberOfCachePoints = copyNumberOfFrames / 256;
+    if (copyNumberOfFrames % 256 != 0) {
+        copyNumberOfCachePoints++;
+    }
+    
+    copyCacheOffset = (block->cacheByteLength - (copyNumberOfCachePoints * sizeof(MLNSampleCachePoint)));
+    
+    copyBlock = MLNSampleBlockCreateBlock(block->region, copyByteLength, copyOffset,
+                                          block->cacheRegion,
+                                          copyNumberOfCachePoints * sizeof(MLNSampleCachePoint),
+                                          block->cacheByteOffset + copyCacheOffset);
+    copyBlock->startFrame = startFrame;
+    
+    return copyBlock;
 }
 
 #pragma mark - List operations

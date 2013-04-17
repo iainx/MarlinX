@@ -74,8 +74,8 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     }
 }
 
-- (void)testSplit
+/*- (void)testSplit
 {
-    
-}
+    STFail(@"testSplit is not implemented");
+}*/
 @end

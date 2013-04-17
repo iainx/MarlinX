@@ -51,6 +51,8 @@ const MLNSampleCachePoint *MLNSampleBlockSampleCacheData (MLNSampleBlock *block)
 
 MLNSampleBlock *MLNSampleBlockSplitBlockAtFrame(MLNSampleBlock *block,
                                                 NSUInteger splitFrame);
+MLNSampleBlock *MLNSampleBlockCopy (MLNSampleBlock *block,
+                                    NSUInteger startFrame);
 
 void MLNSampleBlockAppendBlock (MLNSampleBlock *block,
                                 MLNSampleBlock *otherBlock);
