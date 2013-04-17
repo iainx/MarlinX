@@ -39,8 +39,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     [channels addObject:channel];
     
-    _testSample = [[MLNSample alloc] init];
-    [_testSample setChannelData:channels];
+    _testSample = [[MLNSample alloc] initWithChannels:channels];
 }
 
 - (void)tearDown
@@ -52,6 +51,8 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
 
 - (void)testData
 {
+    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, nil);
+    
     MLNSampleChannel *channel = [_testSample channelData][0];
     
     STAssertNotNil(channel, @"Channel is nil");
@@ -78,5 +79,8 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
 - (void)testDeleteRange
 {
     [_testSample deleteRange:NSMakeRange(100, 100)];
+    
+    // If the Channel tests have passed then the only thing this needs to test is that the sample has the correct number of frames
+    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44000, @"[_testSample numberOfFrames != 44000: %lu", [_testSample numberOfFrames]);
 }
 @end

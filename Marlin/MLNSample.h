@@ -17,7 +17,7 @@ enum {
 };
 
 @property (readwrite, weak) id<MLNSampleDelegate> delegate;
-@property (readwrite, nonatomic) NSMutableArray *channelData;
+@property (readonly, nonatomic) NSMutableArray *channelData;
 @property (readonly, getter = isLoaded) bool loaded;
 @property (readonly) NSUInteger numberOfChannels;
 @property (readwrite) NSUInteger numberOfFrames;

@@ -100,6 +100,7 @@ typedef struct PlaybackData {
     
     // Not a deep copy
     _channelData = [channelData mutableCopy];
+    _numberOfFrames = [channelData[0] numberOfFrames];
     
     return self;
 }
