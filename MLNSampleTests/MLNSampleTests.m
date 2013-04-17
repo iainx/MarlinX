@@ -11,6 +11,7 @@
 #import "MLNSampleBlock.h"
 #import "MLNSampleChannel.h"
 #import "MLNSample.h"
+#import "MLNSample+Operations.h"
 
 @implementation MLNSampleTests {
     MLNSample *_testSample;
@@ -74,4 +75,8 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     }
 }
 
+- (void)testDeleteRange
+{
+    [_testSample deleteRange:NSMakeRange(100, 100)];
+}
 @end

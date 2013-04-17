@@ -118,6 +118,38 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     STAssertEquals(block->numberOfFrames, (NSUInteger)43900, @"block->numberOfFrames != 43900: %lu", block->numberOfFrames);
 }
 
+- (void)testDeleteStart
+{
+    MLNSampleBlock *block;
+
+    _channel = [self createChannel];
+    
+    [_channel deleteRange:NSMakeRange(0, 100)];
+    
+    STAssertEquals([_channel count], (NSUInteger)1, @"[_channel count] != 1: %lu", [_channel count]);
+    block = [_channel firstBlock];
+    
+    STAssertFalse(block == NULL, @"block == NULL");
+    STAssertEquals(block->startFrame, (NSUInteger)0, @"block->startFrame != 0: %lu", block->startFrame);
+    STAssertEquals(block->numberOfFrames, (NSUInteger)BUFFER_FRAME_SIZE - 100, @"block->numberOfFrames != 44000: %lu", block->numberOfFrames);
+}
+
+- (void)testDeleteEnd
+{
+    MLNSampleBlock *block;
+    
+    _channel = [self createChannel];
+    
+    [_channel deleteRange:NSMakeRange(44000, 100)];
+    
+    STAssertEquals([_channel count], (NSUInteger)1, @"[_channel count] != 1: %lu", [_channel count]);
+    block = [_channel firstBlock];
+    
+    STAssertFalse(block == NULL, @"block == NULL");
+    STAssertEquals(block->startFrame, (NSUInteger)0, @"block->startFrame != 0: %lu", block->startFrame);
+    STAssertEquals(block->numberOfFrames, (NSUInteger)BUFFER_FRAME_SIZE - 100, @"block->numberOfFrames != 44000: %lu", block->numberOfFrames);
+}
+
 - (void)testDeleteAll
 {
     _channel = [self createChannel];
@@ -128,5 +160,17 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     STAssertEquals([_channel numberOfFrames], (NSUInteger)0, @"[_channel numberOfFrames] != 0: %lu", [_channel numberOfFrames]);
     STAssertTrue([_channel firstBlock] == NULL, @"[_channel firstBlock] != NULL");
     STAssertTrue([_channel lastBlock] == NULL, @"[_channel lastBlock] != NULL");
+}
+
+- (void)testDeleteInvalidLocation
+{
+    _channel = [self createChannel];
+    STAssertThrows([_channel deleteRange:NSMakeRange(276824, 100)], nil);
+}
+
+- (void)testDeleteInvalidLength
+{
+    _channel = [self createChannel];
+    STAssertThrows([_channel deleteRange:NSMakeRange(100, 124124123)], nil);
 }
 @end
