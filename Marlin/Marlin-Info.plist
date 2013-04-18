@@ -9,6 +9,9 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>aiff</string>
+				<string>wav</string>
+				<string>mp3</string>
 				<string>marlin</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>

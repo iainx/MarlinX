@@ -14,7 +14,7 @@
 #import "MLNSelectionAction.h"
 
 @implementation MLNDocument {
-    MLNSample *_testSample;
+    MLNSample *_sample;
 }
 
 - (id)init
@@ -84,13 +84,15 @@ static void *sampleContext = &sampleContext;
     // Doesn't like 8 channel.
     //NSURL *url = [NSURL fileURLWithPath:@"/Users/iain/Documents/6_Channel_ID.wav" isDirectory:NO];
     //NSURL *url = [NSURL fileURLWithPath:@"/Users/iain/Documents/8_Channel_ID.wav" isDirectory:NO];
-    NSURL *url = [NSURL fileURLWithPath:@"/Users/iain/Documents/2dpl.wav" isDirectory:NO];
+    //NSURL *url = [NSURL fileURLWithPath:@"/Users/iain/Documents/2dpl.wav" isDirectory:NO];
     
+    /*
     _testSample = [[MLNSample alloc] initWithURL:url];
     [_testSample addObserver:self
                   forKeyPath:@"loaded"
                      options:0
                      context:sampleContext];
+    */
     
     _overviewBarView = [[MLNOverviewBar alloc] initWithFrame:NSZeroRect];
     [_overviewBarView setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -125,10 +127,17 @@ static void *sampleContext = &sampleContext;
                                                             views:viewsDict];
     [[window contentView] addConstraints:constraints];
     
-    [_overviewBarView setSample:_testSample];
-    [_sampleView setSample:_testSample];
     [_sampleView setTranslatesAutoresizingMaskIntoConstraints:NO];
+
+    // The sample was loaded from earlier.
+    [_sample addObserver:self
+              forKeyPath:@"loaded"
+                 options:0
+                 context:sampleContext];
     
+    [_overviewBarView setSample:_sample];
+    [_sampleView setSample:_sample];
+
     [_scrollView setHasHorizontalScroller:YES];
     [_scrollView setScrollerKnobStyle:NSScrollerKnobStyleLight];
     //[_scrollView setVerticalScrollElasticity:NSScrollElasticityAllowed];
@@ -170,6 +179,7 @@ static void *sampleContext = &sampleContext;
     return nil;
 }
 
+/*
 - (BOOL)readFromData:(NSData *)data ofType:(NSString *)typeName error:(NSError **)outError
 {
     // Insert code here to read your document from the given data of the specified type. If outError != NULL, ensure that you create and set an appropriate error when returning NO.
@@ -179,17 +189,27 @@ static void *sampleContext = &sampleContext;
     @throw exception;
     return YES;
 }
+*/
+
+- (BOOL)readFromURL:(NSURL *)url ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
+{
+    DDLogVerbose(@"Opening %@", url);
+    
+    _sample = [[MLNSample alloc] initWithURL:url];
+
+    return YES;
+}
 
 #pragma mark - Menu & Toolbar actions
 
 - (void)playSample:(id)sender
 {
-    [_testSample play];
+    [_sample play];
 }
 
 - (void)stopSample:(id)sender
 {
-    [_testSample stop];
+    [_sample stop];
 }
 
 - (void)delete:(id)sender
@@ -197,7 +217,7 @@ static void *sampleContext = &sampleContext;
     NSRange selection = [_sampleView selection];
     DDLogVerbose(@"Delete selected range: %@", NSStringFromRange(selection));
     
-    [_testSample deleteRange:selection];
+    [_sample deleteRange:selection];
     [_sampleView clearSelection];
 }
 
@@ -243,7 +263,7 @@ static void *sampleContext = &sampleContext;
     BOOL valid = NO;
     
     if ([theItem action] == @selector(showInformation:)) {
-        valid = [_testSample isLoaded];
+        valid = [_sample isLoaded];
     }
     
     return valid;

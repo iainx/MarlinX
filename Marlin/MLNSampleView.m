@@ -420,7 +420,9 @@ static void *sampleContext = &sampleContext;
 - (void)sampledLoadedHandler
 {
     _intrinsicWidth = [_sample numberOfFrames] / (_framesPerPixel * 2);
-    
+
+    DDLogVerbose(@"Sample loaded handler: numberOfFrames: %lu", [_sample numberOfFrames]);
+
     [self setNeedsDisplay:YES];
     
     [self invalidateIntrinsicContentSize];
@@ -453,6 +455,7 @@ static void *sampleContext = &sampleContext;
         return;
     }
     
+    DDLogVerbose(@"SetSample: %p", sample);
     _sample = sample;
     
     [_sample setDelegate:self];
