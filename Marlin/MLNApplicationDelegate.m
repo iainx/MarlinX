@@ -27,6 +27,26 @@
 
 #pragma mark - Delegate methods
 
+- (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)sender
+{
+    NSDocumentController *dc = [NSDocumentController sharedDocumentController];
+    NSArray *urls = [dc URLsFromRunningOpenPanel];
+    
+    if (urls == nil) {
+        // FIXME: Should we just quit here?
+        return NO;
+    }
+    
+    NSUInteger urlCount = [urls count];
+    for (NSUInteger i = 0; i < urlCount; i++) {
+        DDLogVerbose(@"Url: %@, %p", urls[i], self);
+        //[dc makeDocumentWithContentsOfURL:urls[i] ofType:[dc defaultType] error:&error];
+        [dc openDocumentWithContentsOfURL:urls[i] display:YES completionHandler:NULL];
+    }
+    
+    return NO;
+}
+
 - (void)applicationWillFinishLaunching:(NSNotification *)notification
 {
     // Configure DDLog to ASL and TTY

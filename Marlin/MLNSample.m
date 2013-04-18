@@ -109,22 +109,24 @@ typedef struct PlaybackData {
 {
     MLNLoadOperation *op = [[MLNLoadOperation alloc] initForSample:self];
     NSOperationQueue *defaultQueue = [MLNSample defaultOperationQueue];
-    
+ 
+    // FIXME: Progress notification should be a delegate method
+    /*
     NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
     [nc addObserver:self
            selector:@selector(progressUpdateNotification:)
                name:kMLNProgressNotification
              object:op];
+    */
     
     [op setDelegate:self];
-    
     [defaultQueue addOperation:op];
 }
 
 - (void)progressUpdateNotification:(NSNotification *)note
 {
-    //NSDictionary *userInfo = [note userInfo];
-    //NSLog (@"Progress: %@", userInfo);
+    NSDictionary *userInfo = [note userInfo];
+    NSLog (@"Progress: %@", userInfo);
 }
 
 #pragma mark - MLNLoadOperationDelegate functions

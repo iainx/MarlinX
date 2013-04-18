@@ -193,7 +193,7 @@ static void *sampleContext = &sampleContext;
 
 - (BOOL)readFromURL:(NSURL *)url ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
 {
-    DDLogVerbose(@"Opening %@", url);
+    DDLogVerbose(@"Opening %@, %p", url, self);
     
     _sample = [[MLNSample alloc] initWithURL:url];
 
