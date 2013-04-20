@@ -8,11 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
+@class MLNCacheFile;
+
 @interface MLNApplicationDelegate : NSObject <NSApplicationDelegate>
 
 @property (readonly) NSURL *cacheURL;
 
-- (int)createNewCacheFileWithExtension:(NSString *)extension;
-- (void)removeCacheFileForFd:(int)fd;
+- (MLNCacheFile *)createNewCacheFileWithExtension:(NSString *)extension;
+- (void)removeCacheFile:(MLNCacheFile *)cacheFile;
 
 @end

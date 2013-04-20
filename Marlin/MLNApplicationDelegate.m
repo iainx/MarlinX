@@ -10,16 +10,7 @@
 #import "DDASLLogger.h"
 #import "DDTTYLogger.h"
 #import "MLNApplicationDelegate.h"
-
-@interface MLNTemporaryFile : NSObject
-
-@property (readwrite, copy) NSString *filePath;
-@property (readwrite) int fd;
-
-@end
-
-@implementation MLNTemporaryFile
-@end
+#import "MLNCacheFile.h"
 
 @implementation MLNApplicationDelegate {
     NSMutableArray *_cacheFiles;
@@ -81,7 +72,7 @@
     DDLogInfo(@"Terminating --- Cleaning up files");
     NSFileManager *fm = [NSFileManager defaultManager];
 
-    for (MLNTemporaryFile *tfile in _cacheFiles) {
+    for (MLNCacheFile *tfile in _cacheFiles) {
         NSError *error = nil;
         
         close([tfile fd]);
@@ -98,7 +89,7 @@
 }
 
 #pragma mark - Cache file tracking
-- (int)createNewCacheFileWithExtension:(NSString *)extension
+- (MLNCacheFile *)createNewCacheFileWithExtension:(NSString *)extension
 {
     int fd;
     
@@ -112,43 +103,23 @@
     if (fd == -1) {
         // FIXME: Should return &error
         DDLogError(@"Error opening %s: %d", filePath, errno);
-        return -1;
+        return nil;
     } else {
         DDLogInfo(@"Opened %s for data cache", filePath);
     }
 
     // Track the path and the fd
-    MLNTemporaryFile *tfile = [[MLNTemporaryFile alloc] init];
+    MLNCacheFile *tfile = [[MLNCacheFile alloc] init];
     [tfile setFd:fd];
     [tfile setFilePath:[cacheFileURL path]];
     
     [_cacheFiles addObject:tfile];
     
-    return fd;
+    return tfile;
 }
 
-- (void)removeCacheFileForFd:(int)fd
+- (void)removeCacheFile:(MLNCacheFile *)cacheFile
 {
-    NSFileManager *fm = [NSFileManager defaultManager];
-    MLNTemporaryFile *tfile;
-    
-    for (tfile in _cacheFiles) {
-        if ([tfile fd] == fd) {
-            NSError *error = nil;
-            
-            close([tfile fd]);
-            [fm removeItemAtPath:[tfile filePath] error:&error];
-            
-            if (error != nil) {
-                DDLogError(@"Error removing %@: %@ - %@", [tfile filePath], [error localizedDescription], [error localizedFailureReason]);
-            } else {
-                DDLogInfo(@"Deleted %@", [tfile filePath]);
-            }
-            
-            break;
-        }
-    }
-    
-    [_cacheFiles removeObject:tfile];
+    [_cacheFiles removeObject:cacheFile];
 }
 @end

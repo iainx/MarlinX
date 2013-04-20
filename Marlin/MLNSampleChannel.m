@@ -12,8 +12,8 @@
 #import "MLNMMapRegion.h"
 
 @implementation MLNSampleChannel { 
-    int _dataFd;
-    int _cacheFd;
+    MLNCacheFile *_dataFd;
+    MLNCacheFile *_cacheFd;
     BOOL _debugFinding;
 }
 
@@ -46,8 +46,8 @@
     }
     
     MLNApplicationDelegate *appDelegate = [NSApp delegate];
-    [appDelegate removeCacheFileForFd:_dataFd];
-    [appDelegate removeCacheFileForFd:_cacheFd];
+    [appDelegate removeCacheFile:_dataFd];
+    [appDelegate removeCacheFile:_cacheFd];
 }
 
 #pragma mark - Cache generation
@@ -311,7 +311,7 @@
 
 - (void)dumpChannel
 {
-    int count = 0;
+    //int count = 0;
     DDLogInfo(@"[%p] - %@ - %lu: (%lu)", self, _channelName, _count, _numberOfFrames);
 
     /*

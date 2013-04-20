@@ -7,26 +7,29 @@
 //
 
 #import "MLNMMapRegion.h"
+#import "MLNCacheFile.h"
 
 static BOOL MLNMapRegionWriteData (MLNMapRegion *region,
                                    void *data,
                                    size_t byteLength);
 
 MLNMapRegion *
-MLNMapRegionCreateRegion(int fd,
+MLNMapRegionCreateRegion(MLNCacheFile *cacheFile,
                          void *data,
                          size_t byteLength)
 {
     MLNMapRegion *newRegion;
     
     newRegion = malloc(sizeof(MLNMapRegion));
-    newRegion->fd = fd;
+    newRegion->cacheFile = cacheFile;
     
     MLNMapRegionWriteData(newRegion, data, byteLength);
     
     newRegion->byteLength = byteLength;
     
     MLNMapRegionMapData(newRegion);
+    
+    newRegion->refCount = 1;
     
     return newRegion;
 }
@@ -38,10 +41,37 @@ MLNMapRegionFree(MLNMapRegion *region)
         return;
     }
     
+    if (region->refCount != 0) {
+        DDLogCError(@"MapRegion being freed with non-zero refcount: %p - (%d)", region, region->refCount);
+    }
     munmap(region->dataRegion, region->byteLength);
 
     // FIXME: Do we need to close fd?
     free(region);
+}
+
+void
+MLNMapRegionRetain(MLNMapRegion *region)
+{
+    if (region == NULL) {
+        return;
+    }
+    
+    region->refCount++;
+}
+
+void
+MLNMapRegionRelease(MLNMapRegion *region)
+{
+    if (region == NULL) {
+        return;
+    }
+    
+    region->refCount--;
+    
+    if (region->refCount == 0) {
+        MLNMapRegionFree(region);
+    }
 }
 
 #define BUFFER_SIZE 64 * 1024
@@ -52,12 +82,13 @@ MLNMapRegionWriteData (MLNMapRegion *region,
                        size_t byteLength)
 {
     NSUInteger bytesLeft;
+    int fd = [region->cacheFile fd];
     
-    region->filePos = lseek(region->fd, 0, SEEK_CUR);
+    region->filePos = lseek(fd, 0, SEEK_CUR);
     bytesLeft = byteLength;
     while (bytesLeft) {
         size_t bytesToWrite = MIN (BUFFER_SIZE, bytesLeft);
-        ssize_t bytesWritten = write(region->fd, data, bytesLeft);
+        ssize_t bytesWritten = write(fd, data, bytesLeft);
         
         if (bytesWritten == -1) {
             if (errno == -EAGAIN) {
@@ -86,13 +117,16 @@ MLNMapRegionWriteData (MLNMapRegion *region,
 BOOL
 MLNMapRegionMapData (MLNMapRegion *region)
 {
+    int fd;
+    
     if (region == NULL) {
         return NO;
     }
     
+    fd = [region->cacheFile fd];
     region->dataRegion = mmap(NULL, region->byteLength,
                               PROT_READ | PROT_WRITE, MAP_SHARED,
-                              region->fd, region->filePos);
+                              fd, region->filePos);
     if (region->dataRegion == MAP_FAILED) {
         DDLogCError(@"Error mmapping data: %d", errno);
         

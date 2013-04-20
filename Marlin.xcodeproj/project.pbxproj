@@ -16,6 +16,7 @@
 		AE298D7F16F7CC720031334A /* ContextFilterLogFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = AE298D7616F7CC720031334A /* ContextFilterLogFormatter.m */; };
 		AE298D8016F7CC720031334A /* DispatchQueueLogFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = AE298D7816F7CC720031334A /* DispatchQueueLogFormatter.m */; };
 		AE298D8116F7CC720031334A /* README.txt in Resources */ = {isa = PBXBuildFile; fileRef = AE298D7916F7CC720031334A /* README.txt */; };
+		AE2E4437172333B8005463FB /* MLNCacheFile.m in Sources */ = {isa = PBXBuildFile; fileRef = AE2E4436172333B8005463FB /* MLNCacheFile.m */; };
 		AE31A9C916F146ED0051CF41 /* MLNSample+Operations.m in Sources */ = {isa = PBXBuildFile; fileRef = AE31A9C816F146ED0051CF41 /* MLNSample+Operations.m */; };
 		AE57CA4B170F73250043E690 /* MLNSelectionButton.m in Sources */ = {isa = PBXBuildFile; fileRef = AE57CA4A170F73250043E690 /* MLNSelectionButton.m */; };
 		AE57CA4E171040AE0043E690 /* MLNSelectionToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = AE57CA4D171040AE0043E690 /* MLNSelectionToolbar.m */; };
@@ -75,6 +76,8 @@
 		AE298D7716F7CC720031334A /* DispatchQueueLogFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DispatchQueueLogFormatter.h; sourceTree = "<group>"; };
 		AE298D7816F7CC720031334A /* DispatchQueueLogFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DispatchQueueLogFormatter.m; sourceTree = "<group>"; };
 		AE298D7916F7CC720031334A /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
+		AE2E4435172333B8005463FB /* MLNCacheFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNCacheFile.h; sourceTree = "<group>"; };
+		AE2E4436172333B8005463FB /* MLNCacheFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNCacheFile.m; sourceTree = "<group>"; };
 		AE31A9C716F146ED0051CF41 /* MLNSample+Operations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MLNSample+Operations.h"; sourceTree = "<group>"; };
 		AE31A9C816F146ED0051CF41 /* MLNSample+Operations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MLNSample+Operations.m"; sourceTree = "<group>"; };
 		AE31A9CA16F28D3E0051CF41 /* MLNSampleDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNSampleDelegate.h; sourceTree = "<group>"; };
@@ -266,6 +269,8 @@
 			children = (
 				AEDA842916C88B7F001B2DD1 /* MLNApplicationDelegate.h */,
 				AEDA842A16C88B7F001B2DD1 /* MLNApplicationDelegate.m */,
+				AE2E4435172333B8005463FB /* MLNCacheFile.h */,
+				AE2E4436172333B8005463FB /* MLNCacheFile.m */,
 				AECDE7D316B7C0C300DE94D5 /* MLNDocument.h */,
 				AECDE7D416B7C0C300DE94D5 /* MLNDocument.m */,
 				AECDE7D616B7C0C300DE94D5 /* MLNDocument.xib */,
@@ -472,6 +477,7 @@
 				AE57CA4B170F73250043E690 /* MLNSelectionButton.m in Sources */,
 				AE57CA4E171040AE0043E690 /* MLNSelectionToolbar.m in Sources */,
 				AE57CA511710EB0A0043E690 /* MLNSelectionAction.m in Sources */,
+				AE2E4437172333B8005463FB /* MLNCacheFile.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -652,6 +658,7 @@
 				AE7254BF171B7EAC00B48145 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		AECDE7B716B7C0C300DE94D5 /* Build configuration list for PBXProject "Marlin" */ = {
 			isa = XCConfigurationList;

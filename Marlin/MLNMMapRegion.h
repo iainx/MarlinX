@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class MLNCacheFile;
+
 #ifndef __MLNMAPREGION_H
 #define __MLNMAPREGION_H
 
@@ -16,11 +18,17 @@ typedef struct MLNMapRegion {
     size_t byteLength;
     BOOL mapped;
     
-    int fd;
+    __unsafe_unretained MLNCacheFile *cacheFile;
+    
     off_t filePos; // This is the position in the file that we are written to.
+    
+    int refCount;
 } MLNMapRegion;
 
-MLNMapRegion *MLNMapRegionCreateRegion (int fd,
+void MLNMapRegionRetain(MLNMapRegion *region);
+void MLNMapRegionRelease(MLNMapRegion *region);
+
+MLNMapRegion *MLNMapRegionCreateRegion (MLNCacheFile *cacheFile,
                                         void *data,
                                         size_t byteLength);
 BOOL MLNMapRegionMapData (MLNMapRegion *region);
