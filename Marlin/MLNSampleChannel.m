@@ -12,8 +12,8 @@
 #import "MLNMMapRegion.h"
 
 @implementation MLNSampleChannel { 
-    MLNCacheFile *_dataFd;
-    MLNCacheFile *_cacheFd;
+    MLNCacheFile *_dataFile;
+    MLNCacheFile *_cacheFile;
     BOOL _debugFinding;
 }
 
@@ -27,8 +27,22 @@
     // _dataFd is the file that we write the channel's raw data to
     // _cacheFd is the file that we write the channel's cached data to.
     MLNApplicationDelegate *appDelegate = [NSApp delegate];
-    _dataFd = [appDelegate createNewCacheFileWithExtension:@"data"];
-    _cacheFd = [appDelegate createNewCacheFileWithExtension:@"cachedata"];
+    _dataFile = [appDelegate createNewCacheFileWithExtension:@"data"];
+    _cacheFile = [appDelegate createNewCacheFileWithExtension:@"cachedata"];
+    
+    return self;
+}
+
+- (id)initWithDataFile:(MLNCacheFile *)dataFile
+             cacheFile:(MLNCacheFile *)cacheFile
+{
+    self = [super init];
+    if (!self) {
+        return nil;
+    }
+    
+    _dataFile = dataFile;
+    _cacheFile = cacheFile;
     
     return self;
 }
@@ -44,10 +58,6 @@
         block = block->nextBlock;
         MLNSampleBlockFree(oldBlock);
     }
-    
-    MLNApplicationDelegate *appDelegate = [NSApp delegate];
-    [appDelegate removeCacheFile:_dataFd];
-    [appDelegate removeCacheFile:_cacheFd];
 }
 
 #pragma mark - Cache generation
@@ -142,8 +152,8 @@
                                                         cacheLength:&cacheByteLength];
     
     // Create a region for the new data
-    MLNMapRegion *region = MLNMapRegionCreateRegion(_dataFd, data, byteLength);
-    MLNMapRegion *cacheRegion = MLNMapRegionCreateRegion(_cacheFd, cacheData, cacheByteLength);
+    MLNMapRegion *region = MLNMapRegionCreateRegion(_dataFile, data, byteLength);
+    MLNMapRegion *cacheRegion = MLNMapRegionCreateRegion(_cacheFile, cacheData, cacheByteLength);
     
     // Free cacheData because we're using an mmapped file for it now
     // FIXME: We could keep this around as a buffer so we don't fragment memory so much?

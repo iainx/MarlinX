@@ -20,6 +20,9 @@
 
 + (int)framesPerCachePoint;
 
+- (id)initWithDataFile:(MLNCacheFile *)dataFile
+             cacheFile:(MLNCacheFile *)cacheFile;
+
 - (MLNSampleBlock *)sampleBlockForFrame:(NSUInteger)frame;
 
 - (BOOL)addData:(float *)data
