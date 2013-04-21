@@ -301,6 +301,8 @@
     
     [channelCopy updateBlockCount];
     
+    [channelCopy dumpChannel:YES];
+    
     return channelCopy;
 }
 
@@ -353,25 +355,26 @@
 
     [self updateBlockCount];
     
-    [self dumpChannel];
+    [self dumpChannel:YES];
 }
 
 #pragma mark - Debugging
 
-- (void)dumpChannel
+- (void)dumpChannel:(BOOL)full
 {
-    //int count = 0;
     DDLogInfo(@"[%p] - %@ - %lu: (%lu)", self, _channelName, _count, _numberOfFrames);
 
-    /*
-    MLNSampleBlock *b = _firstBlock;
-    while (b) {
-        DDLogInfo(@"Block number %d", count);
-        count++;
-        
-        //[b dumpBlock];
-        b = b->nextBlock;
+    if (full) {
+        int count = 0;
+        MLNSampleBlock *b = _firstBlock;
+        while (b) {
+            DDLogInfo(@"Block number %d", count);
+            count++;
+            
+            MLNSampleBlockDumpBlock(b);
+            b = b->nextBlock;
+        }
     }
-     */
 }
+
 @end

@@ -35,5 +35,5 @@
 
 - (void)deleteRange:(NSRange)range;
 
-- (void)dumpChannel;
+- (void)dumpChannel:(BOOL)withBlocks;
 @end

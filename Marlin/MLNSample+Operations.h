@@ -11,5 +11,6 @@
 @interface MLNSample (Operations)
 
 - (void)deleteRange:(NSRange)range;
+- (NSArray *)copyRange:(NSRange)range;
 
 @end

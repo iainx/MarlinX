@@ -13,6 +13,7 @@
 @interface MLNApplicationDelegate : NSObject <NSApplicationDelegate>
 
 @property (readonly) NSURL *cacheURL;
+@property (readwrite, strong) NSArray *clipboardContent;
 
 - (MLNCacheFile *)createNewCacheFileWithExtension:(NSString *)extension;
 - (void)removeCacheFile:(MLNCacheFile *)cacheFile;

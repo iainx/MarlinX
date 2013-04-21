@@ -158,7 +158,7 @@
 
     for (int i = 0; i < _outputFormat.mChannelsPerFrame; i++) {
         MLNSampleChannel *channel = _channelArray[i];
-        [channel dumpChannel];
+        [channel dumpChannel:NO];
     }
     
     fprintf(stdout, "Loaded %lld frames\n", framesSoFar);

@@ -65,4 +65,5 @@ void MLNSampleBlockRemoveBlocksFromList (MLNSampleBlock *startBlock,
 
 NSUInteger MLNSampleBlockLastFrame(MLNSampleBlock *block);
 
+void MLNSampleBlockDumpBlock (MLNSampleBlock *block);
 #endif

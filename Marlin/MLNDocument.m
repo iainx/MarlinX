@@ -7,6 +7,7 @@
 //
 
 #import "MLNDocument.h"
+#import "MLNApplicationDelegate.h"
 #import "MLNOverviewBar.h"
 #import "MLNSample.h"
 #import "MLNSample+Operations.h"
@@ -228,12 +229,25 @@ static void *sampleContext = &sampleContext;
 
 - (void)copy:(id)sender
 {
-    DDLogVerbose(@"Copy");
+    NSRange selection = [_sampleView selection];
+    
+    NSArray *copyChannels = [_sample copyRange:selection];
+    MLNApplicationDelegate *appDelegate = [NSApp delegate];
+    
+    [appDelegate setClipboardContent:copyChannels];
 }
 
 - (void)cut:(id)sender
 {
-    DDLogVerbose(@"Cut");
+    NSRange selection = [_sampleView selection];
+
+    NSArray *copyChannels = [_sample copyRange:selection];
+    MLNApplicationDelegate *appDelegate = [NSApp delegate];
+    
+    [appDelegate setClipboardContent:copyChannels];
+
+    [_sample deleteRange:selection];
+    [_sampleView clearSelection];
 }
 
 - (void)paste:(id)sender
