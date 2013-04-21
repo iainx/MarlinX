@@ -173,4 +173,20 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     _channel = [self createChannel];
     STAssertThrows([_channel deleteRange:NSMakeRange(100, 124124123)], nil);
 }
+
+- (void)testCopyChannel
+{
+    NSUInteger startFrame, endFrame, numberOfFrames;
+    MLNSampleChannel *channelCopy;
+    
+    _channel = [self createChannel];
+    startFrame = rand() % [_channel numberOfFrames];
+    endFrame = startFrame + (rand() % ([_channel numberOfFrames] - startFrame));
+    numberOfFrames = (endFrame - startFrame) + 1;
+    
+    channelCopy = [_channel copyChannelInRange:NSMakeRange(startFrame, numberOfFrames)];
+    
+    STAssertNotNil(channelCopy, @"channelCopy is nil");
+    STAssertEquals([channelCopy numberOfFrames], numberOfFrames, @"[channelCopy numberOfFrames] != %lu: %lu", numberOfFrames, [channelCopy numberOfFrames]);
+}
 @end

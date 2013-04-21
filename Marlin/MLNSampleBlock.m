@@ -155,36 +155,43 @@ MLNSampleBlockSplitBlockAtFrame (MLNSampleBlock *block,
 
 MLNSampleBlock *
 MLNSampleBlockCopy (MLNSampleBlock *block,
-                    NSUInteger startFrame)
+                    NSUInteger startFrame,
+                    NSUInteger endFrame)
 {
     MLNSampleBlock *copyBlock;
     size_t copyByteLength;
     off_t copyOffset;
     off_t copyCacheOffset;
+    NSUInteger framesToCopy;
     NSUInteger frameOffset;
-    NSUInteger copyNumberOfFrames;
     NSUInteger copyNumberOfCachePoints;
     
     if (block == NULL) {
         return NULL;
     }
     
-    if (startFrame == block->startFrame) {
-        return MLNSampleBlockCreateBlock(block->region, block->sampleByteLength, block->byteOffset,
-                                         block->cacheRegion, block->cacheByteLength, block->cacheByteOffset);
-    }
-    
-    if (!FRAME_IN_BLOCK(block, startFrame)) {
+    if (!FRAME_IN_BLOCK(block, startFrame) || !FRAME_IN_BLOCK(block, endFrame)) {
         return NULL;
     }
     
+    if (startFrame == block->startFrame && endFrame == MLNSampleBlockLastFrame(block)) {
+        copyBlock = MLNSampleBlockCreateBlock(block->region, block->sampleByteLength, block->byteOffset,
+                                              block->cacheRegion, block->cacheByteLength, block->cacheByteOffset);
+        
+        copyBlock->startFrame = startFrame;
+        return copyBlock;
+    }
+    
+    framesToCopy = (endFrame - startFrame) + 1;
+    
     frameOffset = (startFrame - block->startFrame);
     copyOffset = block->byteOffset + (frameOffset * sizeof(float));
-    copyNumberOfFrames = (block->numberOfFrames - frameOffset);
-    copyByteLength = copyNumberOfFrames * sizeof(float);
+    //copyNumberOfFrames = (block->numberOfFrames - frameOffset);
     
-    copyNumberOfCachePoints = copyNumberOfFrames / 256;
-    if (copyNumberOfFrames % 256 != 0) {
+    copyByteLength = framesToCopy * sizeof(float);
+    
+    copyNumberOfCachePoints = framesToCopy / 256;
+    if (framesToCopy % 256 != 0) {
         copyNumberOfCachePoints++;
     }
     

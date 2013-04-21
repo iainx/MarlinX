@@ -25,4 +25,17 @@
         }
     }
 }
+
+- (NSArray *)copyRange:(NSRange)range
+{
+    NSMutableArray *channels = [NSMutableArray arrayWithCapacity:[self numberOfChannels]];
+    
+    for (MLNSampleChannel *channel in [self channelData]) {
+        MLNSampleChannel *channelCopy = [channel copyChannelInRange:range];
+        
+        [channels addObject:channelCopy];
+    }
+    
+    return channels;
+}
 @end

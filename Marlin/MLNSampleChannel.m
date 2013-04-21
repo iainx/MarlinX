@@ -265,6 +265,45 @@
 
 #pragma mark - Sample manipulation
 
+- (MLNSampleChannel *)copyChannelInRange:(NSRange)range
+{
+    NSUInteger lastFrame = NSMaxRange(range) - 1;
+    MLNSampleBlock *firstBlock, *lastBlock, *block;
+    MLNSampleChannel *channelCopy;
+    
+    firstBlock = [self sampleBlockForFrame:range.location];
+    if (firstBlock == NULL) {
+        [NSException raise:@"MLNSampleChannel" format:@"copyChannelInRange has no first block"];
+        return nil;
+    }
+    
+    lastBlock = [self sampleBlockForFrame:lastFrame];
+    if (lastBlock == NULL) {
+        [NSException raise:@"MLNSampleChannel" format:@"copyChannelInRange has no last block"];
+        return nil;
+    }
+    
+    channelCopy = [[MLNSampleChannel alloc] initWithDataFile:self->_dataFile cacheFile:self->_cacheFile];
+    block = firstBlock;
+    
+    while (block) {
+        NSUInteger startFrameInBlock = MAX(range.location, block->startFrame);
+        NSUInteger lastFrameInBlock = MIN(lastFrame, MLNSampleBlockLastFrame(block));
+        
+        MLNSampleBlock *newBlock = MLNSampleBlockCopy(firstBlock, startFrameInBlock, lastFrameInBlock);
+        [channelCopy addBlock:newBlock];
+        
+        block = block->nextBlock;
+        if (block == NULL || block->startFrame > lastFrame) {
+            break;
+        }
+    }
+    
+    [channelCopy updateBlockCount];
+    
+    return channelCopy;
+}
+
 - (void)deleteRange:(NSRange)range
 {
     NSUInteger lastFrame = NSMaxRange(range) - 1;
@@ -274,7 +313,7 @@
     
     // Find first block
     firstBlock = [self sampleBlockForFrame:range.location];
-    if (firstBlock == nil) {
+    if (firstBlock == NULL) {
         [NSException raise:@"MLNSampleChannel" format:@"deleteRange has no first block"];
         return;
     }

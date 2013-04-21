@@ -25,6 +25,8 @@
 
 - (MLNSampleBlock *)sampleBlockForFrame:(NSUInteger)frame;
 
+- (MLNSampleChannel *)copyChannelInRange:(NSRange)range;
+
 - (BOOL)addData:(float *)data
      withLength:(size_t)byteLength;
 

@@ -274,7 +274,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     block1 = [channel firstBlock];
     
-    block2 = MLNSampleBlockCopy(block1, 22050);
+    block2 = MLNSampleBlockCopy(block1, 22050, MLNSampleBlockLastFrame(block1));
 
     STAssertFalse(block2 == NULL, @"block2 == NULL");
     
@@ -302,6 +302,56 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     MLNSampleBlockFree(block2);
 }
 
+- (void)testCopyEnd
+{
+    MLNSampleChannel *channel = [self createChannel];
+    MLNSampleBlock *block1, *block2;
+    
+    block1 = [channel firstBlock];
+    
+    block2 = MLNSampleBlockCopy(block1, 0, 22049);
+    
+    STAssertFalse(block2 == NULL, @"block2 == NULL");
+    
+    STAssertEquals(block2->startFrame, (NSUInteger)0, @"block2->startFrame != 0: Got %lu", block2->startFrame);
+    STAssertEquals(block2->numberOfFrames, (NSUInteger)22050, @"block2->numberOfFrames != 22050: Got %lu", block2->numberOfFrames);
+    STAssertEquals(block2->sampleByteLength, (ssize_t)22050 * sizeof(float), @"block2->sampleByteLength != %lu: Got %lu",
+                   22050 * sizeof(float), block2->sampleByteLength);
+    
+    const float *data = MLNSampleBlockSampleData(block2);
+    for (int i = 0; i < 22050; i++) {
+        STAssertEquals(data[i], (float)i, @"block2->data[%lu] != %f: %f", i, (float)i, data[i]);
+    }
+}
+
+- (void)testCopyMiddle
+{
+    NSUInteger startFrame, endFrame, numberOfFrames;
+    
+    MLNSampleChannel *channel = [self createChannel];
+    MLNSampleBlock *block1, *block2;
+    
+    block1 = [channel firstBlock];
+    
+    startFrame = rand();
+    endFrame = startFrame + (rand() % (block1->numberOfFrames - startFrame));
+    numberOfFrames = (endFrame - startFrame) + 1;
+    
+    block2 = MLNSampleBlockCopy(block1, startFrame, endFrame);
+    
+    STAssertFalse(block2 == NULL, @"block2 == NULL");
+    
+    STAssertEquals(block2->startFrame, startFrame, @"block2->startFrame != %lu: Got %lu", startFrame, block2->startFrame);
+    STAssertEquals(block2->numberOfFrames, numberOfFrames, @"block2->numberOfFrames != %lu: Got %lu", numberOfFrames, block2->numberOfFrames);
+    STAssertEquals(block2->sampleByteLength, (ssize_t)numberOfFrames * sizeof(float), @"block2->sampleByteLength != %lu: Got %lu",
+                   numberOfFrames * sizeof(float), block2->sampleByteLength);
+    
+    const float *data = MLNSampleBlockSampleData(block2);
+    for (int i = 0; i < numberOfFrames; i++) {
+        STAssertEquals(data[i], (float)i + startFrame, @"block2->data[%lu] != %f: %f", i, (float)i + startFrame, data[i]);
+    }
+}
+
 - (void)testCopyStart
 {
     MLNSampleChannel *channel = [self createChannel];
@@ -309,7 +359,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     block1 = [channel firstBlock];
     
-    block2 = MLNSampleBlockCopy(block1, 0);
+    block2 = MLNSampleBlockCopy(block1, 0, MLNSampleBlockLastFrame(block1));
     
     STAssertFalse(block2 == NULL, @"block2 == NULL");
     
@@ -342,7 +392,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     MLNSampleBlock *block1, *block2;
     
     block1 = MLNSampleBlockCreateBlock(NULL, 44100 * sizeof(float), 0, NULL, (44100 / 256) * sizeof(MLNSampleCachePoint), 0);
-    block2 = MLNSampleBlockCopy(block1, 876235);
+    block2 = MLNSampleBlockCopy(block1, 876235, MLNSampleBlockLastFrame(block1));
     
     STAssertTrue(block2 == NULL, @"block2 != NULL");
     
