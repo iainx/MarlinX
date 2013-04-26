@@ -38,4 +38,21 @@
     
     return channels;
 }
+
+- (BOOL)canInsertChannels:(NSArray *)channels
+{
+    if ([channels count] == [self numberOfChannels]) {
+        return YES;
+    } else {
+        return NO;
+    }
+}
+
+- (void)insertChannels:(NSArray *)channels
+               atFrame:(NSUInteger)frame
+{
+    if ([channels count] != [self numberOfChannels]) {
+        return;
+    }
+}
 @end

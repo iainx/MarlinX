@@ -16,6 +16,8 @@
     NSMutableArray *_cacheFiles;
 }
 
+@synthesize clipboardContent = _clipboardContent;
+
 #pragma mark - Delegate methods
 
 - (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)sender
@@ -121,5 +123,26 @@
 - (void)removeCacheFile:(MLNCacheFile *)cacheFile
 {
     [_cacheFiles removeObject:cacheFile];
+}
+
+#pragma mark - Accessors
+- (void)setClipboardContent:(NSArray *)clipboardContent
+{
+    if (clipboardContent == _clipboardContent) {
+        return;
+    }
+    
+    _clipboardContent = clipboardContent;
+    NSPasteboard *pboard = [NSPasteboard generalPasteboard];
+
+    [pboard clearContents];
+    
+    NSString *customPBoard = @"com.sleep5.marlin.pboarddata";
+    [pboard setData:[customPBoard dataUsingEncoding:NSUTF8StringEncoding] forType:@"com.sleep5.marlin.pboardData"];
+}
+
+- (NSArray *)clipboardContent
+{
+    return _clipboardContent;
 }
 @end

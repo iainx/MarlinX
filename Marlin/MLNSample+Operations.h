@@ -13,4 +13,8 @@
 - (void)deleteRange:(NSRange)range;
 - (NSArray *)copyRange:(NSRange)range;
 
+- (BOOL)canInsertChannels:(NSArray *)channels;
+- (void)insertChannels:(NSArray *)channels
+               atFrame:(NSUInteger)frame;
+
 @end

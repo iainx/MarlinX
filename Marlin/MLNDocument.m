@@ -267,8 +267,12 @@ static void *sampleContext = &sampleContext;
     }
     
     if (action == @selector(paste:)) {
-        return NO;
+        MLNApplicationDelegate *appDelegate = [NSApp delegate];
+        if ([appDelegate clipboardContent] && [_sample canInsertChannels:[appDelegate clipboardContent]]) {
+            return YES;
+        }
     }
+    
     return NO;
 }
 
