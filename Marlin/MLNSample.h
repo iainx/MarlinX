@@ -18,9 +18,11 @@ enum {
 
 @property (readwrite, weak) id<MLNSampleDelegate> delegate;
 @property (readonly, nonatomic) NSMutableArray *channelData;
+
 @property (readonly, getter = isLoaded) bool loaded;
 @property (readonly) NSUInteger numberOfChannels;
 @property (readwrite) NSUInteger numberOfFrames;
+@property (readwrite) NSUInteger sampleRate;
 
 @property (readonly) NSInteger duration;
 @property (readonly) NSURL *url;

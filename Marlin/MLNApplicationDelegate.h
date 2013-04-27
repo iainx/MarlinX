@@ -9,11 +9,13 @@
 #import <Foundation/Foundation.h>
 
 @class MLNCacheFile;
+@class MLNPasteboardSampleData;
 
 @interface MLNApplicationDelegate : NSObject <NSApplicationDelegate>
 
 @property (readonly) NSURL *cacheURL;
-@property (readwrite, strong) NSArray *clipboardContent;
+
+@property (readwrite, strong) MLNPasteboardSampleData *clipboardContent;
 
 - (MLNCacheFile *)createNewCacheFileWithExtension:(NSString *)extension;
 - (void)removeCacheFile:(MLNCacheFile *)cacheFile;

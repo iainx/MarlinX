@@ -9,6 +9,7 @@
 #import "MLNDocument.h"
 #import "MLNApplicationDelegate.h"
 #import "MLNOverviewBar.h"
+#import "MLNPasteboardSampleData.h"
 #import "MLNSample.h"
 #import "MLNSample+Operations.h"
 #import "MLNSampleView.h"
@@ -233,8 +234,10 @@ static void *sampleContext = &sampleContext;
     
     NSArray *copyChannels = [_sample copyRange:selection];
     MLNApplicationDelegate *appDelegate = [NSApp delegate];
-    
-    [appDelegate setClipboardContent:copyChannels];
+
+    MLNPasteboardSampleData *content = [[MLNPasteboardSampleData alloc] initWithContent:copyChannels
+                                                                             sampleRate:[_sample sampleRate]];
+    [appDelegate setClipboardContent:content];
 }
 
 - (void)cut:(id)sender
@@ -244,7 +247,9 @@ static void *sampleContext = &sampleContext;
     NSArray *copyChannels = [_sample copyRange:selection];
     MLNApplicationDelegate *appDelegate = [NSApp delegate];
     
-    [appDelegate setClipboardContent:copyChannels];
+    MLNPasteboardSampleData *content = [[MLNPasteboardSampleData alloc] initWithContent:copyChannels
+                                                                             sampleRate:[_sample sampleRate]];
+    [appDelegate setClipboardContent:content];
 
     [_sample deleteRange:selection];
     [_sampleView clearSelection];

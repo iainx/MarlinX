@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 iain. All rights reserved.
 //
 
+#import "MLNPasteboardSampleData.h"
 #import "MLNSampleChannel.h"
 #import "MLNSample+Operations.h"
 
@@ -39,9 +40,13 @@
     return channels;
 }
 
-- (BOOL)canInsertChannels:(NSArray *)channels
+- (BOOL)canInsertChannels:(MLNPasteboardSampleData *)content
 {
-    if ([channels count] == [self numberOfChannels]) {
+    NSArray *channels = [content channels];
+    NSUInteger rate = [content sampleRate];
+    
+    if ([channels count] == [self numberOfChannels] &&
+        [self sampleRate] == rate) {
         return YES;
     } else {
         return NO;

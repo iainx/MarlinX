@@ -143,6 +143,10 @@ typedef struct PlaybackData {
     _numberOfFrames = [channel numberOfFrames];
     [self didChangeValueForKey:@"numberOfFrames"];
     
+    [self willChangeValueForKey:@"sampleRate"];
+    _sampleRate = format.mSampleRate;
+    [self didChangeValueForKey:@"sampleRate"];
+    
     [self willChangeValueForKey:@"numberOfChannels"];
     _numberOfChannels = _format.mChannelsPerFrame;
     [self didChangeValueForKey:@"numberOfChannels"];
