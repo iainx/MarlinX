@@ -358,6 +358,46 @@
     [self dumpChannel:YES];
 }
 
+- (void)insertChannel:(MLNSampleChannel *)channel
+              atFrame:(NSUInteger)frame
+{
+    MLNSampleBlock *insertBlock, *followBlock, *lastBlock;
+    MLNSampleBlock *copyBlockList;
+    
+    insertBlock = [self sampleBlockForFrame:frame - 1];
+    if (insertBlock == NULL) {
+        [NSException raise:@"MLNSampleChannel" format:@"insertChannel:atFrame: has no insertBlock"];
+        return;
+    }
+    
+    if (insertBlock->startFrame == frame) {
+        followBlock = insertBlock;
+        insertBlock = followBlock->previousBlock;
+    } else {
+        followBlock = MLNSampleBlockSplitBlockAtFrame(insertBlock, frame);
+    }
+    
+    copyBlockList = MLNSampleBlockListCopy([channel firstBlock]);
+    lastBlock = MLNSampleBlockListLastBlock(copyBlockList);
+    
+    if (insertBlock && followBlock) {
+        MLNSampleBlockAppendBlock(insertBlock, copyBlockList);
+        MLNSampleBlockAppendBlock(lastBlock, followBlock);
+    } else if (insertBlock == NULL && followBlock) {
+        MLNSampleBlockAppendBlock(lastBlock, followBlock);
+        
+        _firstBlock = copyBlockList;
+    } else if (insertBlock && followBlock == NULL) {
+        MLNSampleBlockAppendBlock(insertBlock, copyBlockList);
+        _lastBlock = lastBlock;
+    } else {
+        _firstBlock = copyBlockList;
+        _lastBlock = lastBlock;
+    }
+    
+    [self updateBlockCount];
+}
+
 #pragma mark - Debugging
 
 - (void)dumpChannel:(BOOL)full
