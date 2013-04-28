@@ -24,12 +24,15 @@ MLNSampleBlockCreateBlock (MLNMapRegion *region,
     
     block = malloc(sizeof(MLNSampleBlock));
     
-    // FIXME: Should ref regions
     block->region = region;
+    MLNMapRegionRetain(region);
+    
     block->sampleByteLength = byteLength;
     block->byteOffset = offset;
     
     block->cacheRegion = cacheRegion;
+    MLNMapRegionRetain(cacheRegion);
+    
     block->cacheByteLength = cacheByteLength;
     block->cacheByteOffset = cacheByteOffset;
     
@@ -49,7 +52,9 @@ MLNSampleBlockFree (MLNSampleBlock *block)
         return;
     }
 
-    // FIXME: Should unref regions
+    MLNMapRegionRelease(block->region);
+    MLNMapRegionRelease(block->cacheRegion);
+    
     free(block);
 }
 
