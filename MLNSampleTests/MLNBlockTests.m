@@ -398,4 +398,55 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     MLNSampleBlockFree(block1);
 }
+
+- (void)testCopyBlockList
+{
+    MLNSampleChannel *channel = [self createChannel];
+    MLNSampleBlock *blockList = [channel firstBlock];
+    MLNSampleBlock *copyList;
+    MLNSampleBlock *block, *copyBlock;
+    
+    for (NSUInteger split = 34100; split > 4100; split -= 10000) {
+        MLNSampleBlockSplitBlockAtFrame(blockList, split);
+    }
+    
+    copyList = MLNSampleBlockListCopy(blockList);
+    
+    NSUInteger blockCount = 0, copyCount = 0;
+    block = blockList;
+    while (block) {
+        block = block->nextBlock;
+        blockCount++;
+    }
+    
+    copyBlock = copyList;
+    while (copyBlock) {
+        copyBlock = copyBlock->nextBlock;
+        copyCount++;
+    }
+    
+    STAssertEquals(blockCount, copyCount, @"blockCount != copyCount: %lu != %lu", blockCount, copyCount);
+
+    block = blockList;
+    copyBlock = copyList;
+    
+    // Check all the blocks are equal
+    while (block && copyBlock) {
+        STAssertEquals(block->startFrame, copyBlock->startFrame, @"block->startFrame != copyBlock->startFrame: %lu != %lu", block->startFrame, copyBlock->startFrame);
+        STAssertEquals(block->numberOfFrames, copyBlock->numberOfFrames, @"block->numberOfFrames != copyBlock->numberOfFrames: %lu != %lu", block->numberOfFrames, copyBlock->numberOfFrames);
+        
+        NSUInteger k;
+        
+        for (k = 0; k < block->numberOfFrames; k++) {
+            const float *data, *copyData;
+            
+            data = MLNSampleBlockSampleData(block);
+            copyData = MLNSampleBlockSampleData(copyBlock);
+            
+            STAssertEquals(data[k], copyData[k], @"data[%lu] != copyData[%lu]: %f != %f", k, k, data[k], copyData[k]);
+        }
+        block = block->nextBlock;
+        copyBlock = copyBlock->nextBlock;
+    }
+}
 @end

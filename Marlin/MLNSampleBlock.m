@@ -221,6 +221,33 @@ MLNSampleBlockCopy (MLNSampleBlock *block,
     return copyBlock;
 }
 
+/**
+ * MLNSampleBlockCopyList:
+ *
+ * Copies all the blocks in the list
+ */
+MLNSampleBlock *
+MLNSampleBlockListCopy(MLNSampleBlock *blockList)
+{
+    MLNSampleBlock *copyList, *copyBlock, *previousBlock;
+    
+    copyBlock = MLNSampleBlockCopy(blockList, blockList->startFrame, MLNSampleBlockLastFrame(blockList));
+    copyList = copyBlock;
+    previousBlock = copyBlock;
+    
+    blockList = blockList->nextBlock;
+    while (blockList) {
+        copyBlock = MLNSampleBlockCopy(blockList, blockList->startFrame, MLNSampleBlockLastFrame(blockList));
+        
+        MLNSampleBlockAppendBlock(previousBlock, copyBlock);
+        
+        previousBlock = copyBlock;
+        blockList = blockList->nextBlock;
+    }
+    
+    return copyList;
+}
+
 #pragma mark - List operations
 /**
  * MLNSampleBlockAppendBlock:

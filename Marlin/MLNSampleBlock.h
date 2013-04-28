@@ -54,6 +54,7 @@ MLNSampleBlock *MLNSampleBlockSplitBlockAtFrame(MLNSampleBlock *block,
 MLNSampleBlock *MLNSampleBlockCopy (MLNSampleBlock *block,
                                     NSUInteger startFrame,
                                     NSUInteger endFrame);
+MLNSampleBlock *MLNSampleBlockListCopy(MLNSampleBlock *blockList);
 
 void MLNSampleBlockAppendBlock (MLNSampleBlock *block,
                                 MLNSampleBlock *otherBlock);
