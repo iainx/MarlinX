@@ -79,6 +79,16 @@ MLNSampleBlockSampleCacheData (MLNSampleBlock *block)
     return (block->cacheRegion->dataRegion + block->cacheByteOffset);
 }
 
+MLNSampleBlock *
+MLNSampleBlockListLastBlock(MLNSampleBlock *blockList)
+{
+    while (blockList) {
+        blockList = blockList->nextBlock;
+    }
+    
+    return blockList;
+}
+
 NSUInteger
 MLNSampleBlockLastFrame(MLNSampleBlock *block)
 {
