@@ -189,4 +189,8 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     STAssertNotNil(channelCopy, @"channelCopy is nil");
     STAssertEquals([channelCopy numberOfFrames], numberOfFrames, @"[channelCopy numberOfFrames] != %lu: %lu", numberOfFrames, [channelCopy numberOfFrames]);
 }
+
+- (void)testInsertChannel
+{
+}
 @end

@@ -34,6 +34,9 @@
 - (void)removeBlock:(MLNSampleBlock *)block;
 
 - (void)deleteRange:(NSRange)range;
+- (void)insertChannel:(MLNSampleChannel *)channel
+              atFrame:(NSUInteger)frame;
+
 
 - (void)dumpChannel:(BOOL)withBlocks;
 @end

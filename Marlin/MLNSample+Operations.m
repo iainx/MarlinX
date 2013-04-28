@@ -40,13 +40,11 @@
     return channels;
 }
 
-- (BOOL)canInsertChannels:(MLNPasteboardSampleData *)content
+- (BOOL)canInsertChannels:(NSArray *)channels
+               sampleRate:(NSUInteger)sampleRate
 {
-    NSArray *channels = [content channels];
-    NSUInteger rate = [content sampleRate];
-    
     if ([channels count] == [self numberOfChannels] &&
-        [self sampleRate] == rate) {
+        [self sampleRate] == sampleRate) {
         return YES;
     } else {
         return NO;
@@ -58,6 +56,13 @@
 {
     if ([channels count] != [self numberOfChannels]) {
         return;
+    }
+    
+    for (NSUInteger i = 0; i < [self numberOfChannels]; i++) {
+        MLNSampleChannel *destChannel = [self channelData][i];
+        MLNSampleChannel *srcChannel = channels[i];
+        
+        [destChannel insertChannel:srcChannel atFrame:frame];
     }
 }
 @end

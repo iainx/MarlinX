@@ -13,7 +13,8 @@
 - (void)deleteRange:(NSRange)range;
 - (NSArray *)copyRange:(NSRange)range;
 
-- (BOOL)canInsertChannels:(MLNPasteboardSampleData *)content;
+- (BOOL)canInsertChannels:(NSArray *)channels
+               sampleRate:(NSUInteger)sampleRate;
 - (void)insertChannels:(NSArray *)channels
                atFrame:(NSUInteger)frame;
 

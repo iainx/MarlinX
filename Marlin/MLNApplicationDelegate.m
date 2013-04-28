@@ -126,7 +126,7 @@
 }
 
 #pragma mark - Accessors
-- (void)setClipboardContent:(NSArray *)clipboardContent
+- (void)setClipboardContent:(MLNPasteboardSampleData *)clipboardContent
 {
     if (clipboardContent == _clipboardContent) {
         return;
@@ -141,7 +141,7 @@
     [pboard setData:[customPBoard dataUsingEncoding:NSUTF8StringEncoding] forType:@"com.sleep5.marlin.pboardData"];
 }
 
-- (NSArray *)clipboardContent
+- (MLNPasteboardSampleData *)clipboardContent
 {
     return _clipboardContent;
 }
