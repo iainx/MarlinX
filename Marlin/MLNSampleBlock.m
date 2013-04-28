@@ -337,4 +337,5 @@ MLNSampleBlockDumpBlock (MLNSampleBlock *block)
     DDLogCInfo(@"   Region: %p - (offset: %llu)", block->region, block->byteOffset);
     DDLogCInfo(@"   %lu bytes", block->sampleByteLength);
     DDLogCInfo(@"   %lu cache", block->cacheByteLength);
+    DDLogCInfo(@"   %lu -> %lu", block->startFrame, MLNSampleBlockLastFrame(block));
 }
