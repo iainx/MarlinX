@@ -176,6 +176,7 @@
     NSUInteger blockCount = 0;
     
     while (block) {
+        NSAssert(block->nextBlock != block, @"Internal consistency failed");
         block->startFrame = count;
         count += block->numberOfFrames;
         

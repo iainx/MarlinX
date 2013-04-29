@@ -83,6 +83,8 @@ MLNSampleBlock *
 MLNSampleBlockListLastBlock(MLNSampleBlock *blockList)
 {
     while (blockList) {
+        NSCAssert(blockList->nextBlock != blockList, @"Internal consistency failed");
+        
         if (blockList->nextBlock == NULL) {
             return blockList;
         }
@@ -241,6 +243,8 @@ MLNSampleBlockListCopy(MLNSampleBlock *blockList)
     
     blockList = blockList->nextBlock;
     while (blockList) {
+        NSCAssert(blockList->nextBlock != blockList, @"Internal consistency failed");
+        
         copyBlock = MLNSampleBlockCopy(blockList, blockList->startFrame, MLNSampleBlockLastFrame(blockList));
         
         MLNSampleBlockAppendBlock(previousBlock, copyBlock);
@@ -258,6 +262,7 @@ MLNSampleBlockListCopy(MLNSampleBlock *blockList)
  *
  * Inserts @otherBlock between @block and @block->nextBlock
  */
+// This is badly named: It should be insert
 void
 MLNSampleBlockAppendBlock (MLNSampleBlock *block,
                            MLNSampleBlock *otherBlock)
