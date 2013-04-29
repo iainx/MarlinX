@@ -83,10 +83,14 @@ MLNSampleBlock *
 MLNSampleBlockListLastBlock(MLNSampleBlock *blockList)
 {
     while (blockList) {
+        if (blockList->nextBlock == NULL) {
+            return blockList;
+        }
         blockList = blockList->nextBlock;
     }
     
-    return blockList;
+    // Shouldn't get here
+    return NULL;
 }
 
 NSUInteger

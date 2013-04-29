@@ -358,16 +358,21 @@
     [self dumpChannel:YES];
 }
 
-- (void)insertChannel:(MLNSampleChannel *)channel
+- (BOOL)insertChannel:(MLNSampleChannel *)channel
               atFrame:(NSUInteger)frame
 {
     MLNSampleBlock *insertBlock, *followBlock, *lastBlock;
     MLNSampleBlock *copyBlockList;
     
-    insertBlock = [self sampleBlockForFrame:frame - 1];
+    if (frame != 0) {
+        insertBlock = [self sampleBlockForFrame:frame - 1];
+    } else {
+        insertBlock = _firstBlock;
+    }
+    
     if (insertBlock == NULL) {
         [NSException raise:@"MLNSampleChannel" format:@"insertChannel:atFrame: has no insertBlock"];
-        return;
+        return NO;
     }
     
     if (insertBlock->startFrame == frame) {
@@ -382,7 +387,7 @@
     
     if (insertBlock && followBlock) {
         MLNSampleBlockAppendBlock(insertBlock, copyBlockList);
-        MLNSampleBlockAppendBlock(lastBlock, followBlock);
+        //MLNSampleBlockAppendBlock(lastBlock, followBlock);
     } else if (insertBlock == NULL && followBlock) {
         MLNSampleBlockAppendBlock(lastBlock, followBlock);
         
@@ -396,6 +401,8 @@
     }
     
     [self updateBlockCount];
+    
+    return YES;
 }
 
 #pragma mark - Debugging
