@@ -257,7 +257,11 @@ static void *sampleContext = &sampleContext;
 
 - (void)paste:(id)sender
 {
-    DDLogVerbose(@"Paste");
+    DDLogVerbose(@"Paste: %lu", [_sampleView cursorFramePosition]);
+    MLNApplicationDelegate *appDelegate = [NSApp delegate];
+    
+    MLNPasteboardSampleData *content = [appDelegate clipboardContent];
+    [_sample insertChannels:[content channels] atFrame:[_sampleView cursorFramePosition]];
 }
 
 #pragma mark - Validators

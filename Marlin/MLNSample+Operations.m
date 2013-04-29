@@ -64,5 +64,14 @@
         
         [destChannel insertChannel:srcChannel atFrame:frame];
     }
+    
+    MLNSampleChannel *aChannel = [self channelData][0];
+    [self setNumberOfFrames:[aChannel numberOfFrames]];
+    
+    if ([self delegate]) {
+        if ([[self delegate] respondsToSelector:@selector(sampleDataDidChangeInRange:)]) {
+            [[self delegate] sampleDataDidChangeInRange:NSMakeRange(frame, [aChannel numberOfFrames] - frame)];
+        }
+    }
 }
 @end
