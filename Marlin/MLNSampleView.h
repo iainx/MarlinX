@@ -19,6 +19,7 @@
 @property (readonly) BOOL hasSelection;
 @property (readonly) NSRange selection;
 @property (readwrite, strong) NSArray *selectionActions;
+@property (readonly) NSUInteger cursorFramePosition;
 
 - (void)clearSelection;
 

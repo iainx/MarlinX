@@ -32,7 +32,7 @@
     CGGradientRef _shadowGradient;
     
     NSTimer *_cursorTimer;
-    NSUInteger _cursorFramePosition;
+    //NSUInteger _cursorFramePosition;
     BOOL _drawCursor;
     
     MLNSelectionToolbar *_selectionToolbar;
