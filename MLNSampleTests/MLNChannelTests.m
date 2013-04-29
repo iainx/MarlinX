@@ -190,16 +190,68 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     STAssertEquals([channelCopy numberOfFrames], numberOfFrames, @"[channelCopy numberOfFrames] != %lu: %lu", numberOfFrames, [channelCopy numberOfFrames]);
 }
 
-- (void)testInsertChannel
+- (void)insertChannelAt:(NSUInteger)insertFrame
+     expectedBlockCount:(NSUInteger)count
 {
     MLNSampleChannel *channel2;
-    NSUInteger insertFrame;
     
     _channel = [self createChannel];
     channel2 = [self createChannel];
     
-    insertFrame = rand() % [_channel numberOfFrames];
-    [_channel insertChannel:channel2 atFrame:insertFrame];
+    BOOL result = [_channel insertChannel:channel2 atFrame:insertFrame];
+    if (result == NO) {
+        return;
+    }
+    
+    NSUInteger blockCount = 0;
+    MLNSampleBlock *block = [_channel firstBlock];
+    while (block) {
+        blockCount++;
+        block = block->nextBlock;
+    }
+    
+    STAssertEquals(blockCount, count, @"blockCount != %lu: %lu", count, blockCount);
+    block = [_channel firstBlock];
+    
+    STAssertEquals(block->startFrame, (NSUInteger)0, @"block->startFrame != 0: %lu", block->startFrame);
+    const float *data = MLNSampleBlockSampleData(block);
+    for (NSUInteger i = 0; i < insertFrame; i++) {
+        STAssertEquals(data[i], (float)i, @"data[%lu] != %f: %f", i, i, data[i]);
+    }
+    
+    if (count == 3) {
+        block = block->nextBlock;
+        data = MLNSampleBlockSampleData(block);
+        
+        STAssertEquals(block->startFrame, insertFrame, @"block->startFrame != %lu: %lu", insertFrame, block->startFrame);
+        for (NSUInteger i = 0; i < block->numberOfFrames; i++) {
+            STAssertEquals(data[i], (float)i, @"data[%lu] != %f: %f", i, i, data[i]);
+        }
+    }
+    
+    block = block->nextBlock;
+    data = MLNSampleBlockSampleData(block);
+    
+    STAssertEquals(block->startFrame, insertFrame + [channel2 numberOfFrames], @"block->startFrame != %lu: %lu", insertFrame + [channel2 numberOfFrames], block->startFrame);
+    for (NSUInteger i = 0; i < block->numberOfFrames; i++) {
+        float result = insertFrame + i;
+        
+        STAssertEquals(data[i], (float)result, @"data[%lu] != %f: %f", i, result, data[i]);
+    }
+}
+
+- (void)testInsertChannel
+{
+    MLNSampleChannel *channel2;
+    NSUInteger insertFrame = rand() % BUFFER_FRAME_SIZE;
+    
+    _channel = [self createChannel];
+    channel2 = [self createChannel];
+    
+    BOOL result = [_channel insertChannel:channel2 atFrame:insertFrame];
+    if (result == NO) {
+        return;
+    }
     
     NSUInteger blockCount = 0;
     MLNSampleBlock *block = [_channel firstBlock];
@@ -224,6 +276,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     for (NSUInteger i = 0; i < block->numberOfFrames; i++) {
         STAssertEquals(data[i], (float)i, @"data[%lu] != %f: %f", i, i, data[i]);
     }
+    
     block = block->nextBlock;
     data = MLNSampleBlockSampleData(block);
     
@@ -233,5 +286,104 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
         
         STAssertEquals(data[i], (float)result, @"data[%lu] != %f: %f", i, result, data[i]);
     }
+}
+
+- (void)testInsertStart
+{
+    MLNSampleChannel *channel2;
+    NSUInteger insertFrame = 0;
+    
+    _channel = [self createChannel];
+    channel2 = [self createChannel];
+    
+    BOOL result = [_channel insertChannel:channel2 atFrame:insertFrame];
+    if (result == NO) {
+        return;
+    }
+    
+    NSUInteger blockCount = 0;
+    MLNSampleBlock *block = [_channel firstBlock];
+    while (block) {
+        blockCount++;
+        block = block->nextBlock;
+    }
+    
+    STAssertEquals(blockCount, (NSUInteger)2, @"blockCount != 2: %lu", blockCount);
+    block = [_channel firstBlock];
+    
+    STAssertEquals(block->startFrame, (NSUInteger)0, @"block->startFrame != 0: %lu", block->startFrame);
+    const float *data = MLNSampleBlockSampleData(block);
+    for (NSUInteger i = 0; i < insertFrame; i++) {
+        STAssertEquals(data[i], (float)i, @"data[%lu] != %f: %f", i, i, data[i]);
+    }
+    
+    block = block->nextBlock;
+    data = MLNSampleBlockSampleData(block);
+    
+    STAssertEquals(block->startFrame, insertFrame + [channel2 numberOfFrames], @"block->startFrame != %lu: %lu", insertFrame + [channel2 numberOfFrames], block->startFrame);
+    for (NSUInteger i = 0; i < block->numberOfFrames; i++) {
+        float result = insertFrame + i;
+        
+        STAssertEquals(data[i], (float)result, @"data[%lu] != %f: %f", i, result, data[i]);
+    }
+}
+
+- (void)testInsertEnd
+{
+    MLNSampleChannel *channel2;
+    NSUInteger insertFrame = BUFFER_FRAME_SIZE;
+    
+    _channel = [self createChannel];
+    channel2 = [self createChannel];
+    
+    BOOL result = [_channel insertChannel:channel2 atFrame:insertFrame];
+    if (result == NO) {
+        return;
+    }
+    
+    NSUInteger blockCount = 0;
+    MLNSampleBlock *block = [_channel firstBlock];
+    while (block) {
+        blockCount++;
+        block = block->nextBlock;
+    }
+    
+    STAssertEquals(blockCount, (NSUInteger)2, @"blockCount != 2: %lu", blockCount);
+    block = [_channel firstBlock];
+    
+    STAssertEquals(block->startFrame, (NSUInteger)0, @"block->startFrame != 0: %lu", block->startFrame);
+    const float *data = MLNSampleBlockSampleData(block);
+    for (NSUInteger i = 0; i < insertFrame; i++) {
+        STAssertEquals(data[i], (float)i, @"data[%lu] != %f: %f", i, i, data[i]);
+    }
+    
+    block = block->nextBlock;
+    data = MLNSampleBlockSampleData(block);
+    
+    STAssertEquals(block->startFrame, insertFrame, @"block->startFrame != %lu: %lu", insertFrame, block->startFrame);
+    for (NSUInteger i = 0; i < block->numberOfFrames; i++) {
+        STAssertEquals(data[i], (float)i, @"data[%lu] != %f: %f", i, i, data[i]);
+    }
+    /*
+    block = block->nextBlock;
+    data = MLNSampleBlockSampleData(block);
+    
+    STAssertEquals(block->startFrame, insertFrame + [channel2 numberOfFrames], @"block->startFrame != %lu: %lu", insertFrame + [channel2 numberOfFrames], block->startFrame);
+    for (NSUInteger i = 0; i < block->numberOfFrames; i++) {
+        float result = insertFrame + i;
+        
+        STAssertEquals(data[i], (float)result, @"data[%lu] != %f: %f", i, result, data[i]);
+    }
+     */
+}
+
+- (void)testInsertInvalid
+{
+    MLNSampleChannel *channel2;
+    
+    _channel = [self createChannel];
+    channel2 = [self createChannel];
+    
+    STAssertThrows([_channel insertChannel:channel2 atFrame:BUFFER_FRAME_SIZE + rand()], nil);
 }
 @end

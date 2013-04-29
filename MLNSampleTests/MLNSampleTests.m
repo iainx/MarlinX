@@ -83,4 +83,9 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     // If the Channel tests have passed then the only thing this needs to test is that the sample has the correct number of frames
     STAssertEquals([_testSample numberOfFrames], (NSUInteger)44000, @"[_testSample numberOfFrames != 44000: %lu", [_testSample numberOfFrames]);
 }
+
+- (void)testInsertInvalid
+{
+    
+}
 @end
