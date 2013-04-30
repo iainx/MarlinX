@@ -45,6 +45,9 @@
 
 @synthesize framesPerPixel = _framesPerPixel;
 
+#define CURSOR_FADE_TIME 0.05
+#define CURSOR_PAUSE_TIME 0.14
+
 - (id)initWithFrame:(NSRect)frame
 {
     self = [super initWithFrame:frame];
@@ -58,7 +61,7 @@
     _cursorFramePosition = 0;
     _cursorOpacityDirection = NO;
     
-    [self resetCursorTimer:0.07 withSelector:@selector(increaseCursorOpacity:)];
+    [self resetCursorTimer:CURSOR_FADE_TIME withSelector:@selector(increaseCursorOpacity:)];
     
     [self setContentCompressionResistancePriority:NSLayoutPriorityRequired
                                    forOrientation:NSLayoutConstraintOrientationVertical];
@@ -1000,9 +1003,9 @@ subtractSelectionRects (NSRect a, NSRect b)
 - (void)pauseCursor:(NSTimer *)timer
 {
     if (_cursorOpacity >= 1.0) {
-        [self resetCursorTimer:0.05 withSelector:@selector(decreaseCursorOpacity:)];
+        [self resetCursorTimer:CURSOR_FADE_TIME withSelector:@selector(decreaseCursorOpacity:)];
     } else {
-        [self resetCursorTimer:0.05 withSelector:@selector(increaseCursorOpacity:)];
+        [self resetCursorTimer:CURSOR_FADE_TIME withSelector:@selector(increaseCursorOpacity:)];
     }
 }
 
@@ -1027,7 +1030,7 @@ subtractSelectionRects (NSRect a, NSRect b)
     
     if (_cursorOpacity <= 0.0 || _cursorOpacity >= 1.0) {
         _cursorOpacityDirection = !_cursorOpacityDirection;
-        [self resetCursorTimer:0.14 withSelector:@selector(pauseCursor:)];
+        [self resetCursorTimer:CURSOR_PAUSE_TIME withSelector:@selector(pauseCursor:)];
     }
 }
 
