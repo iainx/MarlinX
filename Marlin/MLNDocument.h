@@ -19,6 +19,13 @@
 @property (readwrite, strong) MLNSampleView *sampleView;
 @property (readwrite, strong) MLNOverviewBar *overviewBarView;
 
+- (IBAction)selectAll:(id)sender;
+- (IBAction)selectNone:(id)sender;
+- (IBAction)zoomIn:(id)sender;
+- (IBAction)zoomOut:(id)sender;
+- (IBAction)zoomToFit:(id)sender;
+- (IBAction)zoomToNormal:(id)sender;
+
 - (IBAction)playSample:(id)sender;
 - (IBAction)stopSample:(id)sender;
 - (IBAction)showInformation:(id)sender;
