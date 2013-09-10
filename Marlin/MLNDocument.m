@@ -268,6 +268,7 @@ static void *sampleContext = &sampleContext;
 
 - (IBAction)selectAll:(id)sender
 {
+    [_sampleView setSelection:NSMakeRange(0, [_sample numberOfFrames])];
 }
 
 - (IBAction)selectNone:(id)sender

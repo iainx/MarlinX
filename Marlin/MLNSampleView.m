@@ -704,6 +704,25 @@ static void *sampleContext = &sampleContext;
     return NSMakeRange(_selectionStartFrame, _selectionEndFrame - _selectionStartFrame);
 }
 
+- (void)setSelection:(NSRange)selection
+{
+    if (selection.length == 0) {
+        [self clearSelection];
+        return;
+    }
+    
+    NSRect oldSelectionRect = [self selectionToRect];
+    
+    _selectionStartFrame = selection.location;
+    _selectionEndFrame = NSMaxRange(selection);
+    _hasSelection = YES;
+    
+    NSRect newSelectionRect = [self selectionToRect];
+    
+    DDLogWarn(@"Selection: %lu, %lu (%@)", _selectionStartFrame, _selectionEndFrame, NSStringFromRect(newSelectionRect));
+    [self updateSelection:newSelectionRect oldSelectionRect:oldSelectionRect];
+}
+
 static NSRect
 subtractSelectionRects (NSRect a, NSRect b)
 {
@@ -734,6 +753,10 @@ subtractSelectionRects (NSRect a, NSRect b)
 
 - (NSRect)selectionToRect
 {
+    if (!_hasSelection) {
+        return NSZeroRect;
+    }
+    
     NSPoint startPoint = [self convertFrameToPoint:_selectionStartFrame];
     NSUInteger selectionFrameWidth = _selectionEndFrame - _selectionStartFrame;
     
@@ -742,6 +765,46 @@ subtractSelectionRects (NSRect a, NSRect b)
     NSRect selectionRect = NSMakeRect(startPoint.x, 0, selectionWidth.x, [self bounds].size.height);
     
     return selectionRect;
+}
+
+- (void)updateSelection:(NSRect)newSelectionRect
+       oldSelectionRect:(NSRect)oldSelectionRect
+{
+    NSRect startRect = NSMakeRect(newSelectionRect.origin.x - 5, 0, 10, newSelectionRect.size.height);
+    NSRect endRect = NSMakeRect(NSMaxX(newSelectionRect) - 5, 0, 10, newSelectionRect.size.height);
+    
+    if (_startTrackingArea) {
+        [self removeTrackingArea:_startTrackingArea];
+        _startTrackingArea = nil;
+    }
+    
+    if (_endTrackingArea) {
+        [self removeTrackingArea:_endTrackingArea];
+        _endTrackingArea = nil;
+    }
+    
+    _startTrackingArea = [[NSTrackingArea alloc] initWithRect:startRect
+                                                      options:NSTrackingCursorUpdate | NSTrackingMouseEnteredAndExited | NSTrackingActiveInActiveApp
+                                                        owner:self
+                                                     userInfo:nil];
+    _endTrackingArea = [[NSTrackingArea alloc] initWithRect:endRect
+                                                    options:NSTrackingCursorUpdate | NSTrackingMouseEnteredAndExited | NSTrackingActiveInActiveApp
+                                                      owner:self
+                                                   userInfo:nil];
+    [self addTrackingArea:_startTrackingArea];
+    [self addTrackingArea:_endTrackingArea];
+    
+    [self updateSelectionToolbarInSelectionRect:newSelectionRect];
+    [self selectionChanged];
+    
+    // Only redraw the changed selection
+    if (!NSEqualRects(oldSelectionRect, NSZeroRect)) {
+        oldSelectionRect.size.width += 0.5;
+        [self setNeedsDisplayInRect:oldSelectionRect];
+    }
+    
+    newSelectionRect.size.width += 0.5;
+    [self setNeedsDisplayInRect:newSelectionRect];
 }
 
 - (void)resizeSelection:(NSEvent *)event
@@ -789,38 +852,8 @@ subtractSelectionRects (NSRect a, NSRect b)
     
     NSRect newSelectionRect = [self selectionToRect];
     
-    NSRect startRect = NSMakeRect(newSelectionRect.origin.x - 5, 0, 10, newSelectionRect.size.height);
-    NSRect endRect = NSMakeRect(NSMaxX(newSelectionRect) - 5, 0, 10, newSelectionRect.size.height);
-    
-    if (_startTrackingArea) {
-        [self removeTrackingArea:_startTrackingArea];
-        _startTrackingArea = nil;
-    }
-    
-    if (_endTrackingArea) {
-        [self removeTrackingArea:_endTrackingArea];
-        _endTrackingArea = nil;
-    }
-    
-    _startTrackingArea = [[NSTrackingArea alloc] initWithRect:startRect
-                                                      options:NSTrackingCursorUpdate | NSTrackingMouseEnteredAndExited | NSTrackingActiveInActiveApp
-                                                        owner:self
-                                                     userInfo:nil];
-    _endTrackingArea = [[NSTrackingArea alloc] initWithRect:endRect
-                                                    options:NSTrackingCursorUpdate | NSTrackingMouseEnteredAndExited | NSTrackingActiveInActiveApp
-                                                      owner:self
-                                                   userInfo:nil];
-    [self addTrackingArea:_startTrackingArea];
-    [self addTrackingArea:_endTrackingArea];
-    
-    [self updateSelectionToolbarInSelectionRect:newSelectionRect];
-    [self selectionChanged];
-    
-    // Only redraw the changed selection
-    oldSelectionRect.size.width += 0.5;
-    newSelectionRect.size.width += 0.5;
-    [self setNeedsDisplayInRect:oldSelectionRect];
-    [self setNeedsDisplayInRect:newSelectionRect];
+    [self updateSelection:newSelectionRect
+         oldSelectionRect:oldSelectionRect];
 }
 
 - (void)clearSelection
@@ -869,7 +902,6 @@ subtractSelectionRects (NSRect a, NSRect b)
         _selectionToolbar = [[MLNSelectionToolbar alloc] initWithFrame:NSZeroRect];
         for (MLNSelectionAction *action in toolbarItems) {
             MLNSelectionButton *button = [[MLNSelectionButton alloc] initWithAction:action];
-            
             
             [_selectionToolbar addSubview:button];
         }

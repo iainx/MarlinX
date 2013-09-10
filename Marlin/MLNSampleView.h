@@ -17,7 +17,7 @@
 @property (readwrite, nonatomic) NSUInteger framesPerPixel; // framesPerPoint in this retina age?
 @property (readwrite, weak) id<MLNSampleViewDelegate> delegate;
 @property (readonly) BOOL hasSelection;
-@property (readonly) NSRange selection;
+@property (readwrite) NSRange selection;
 @property (readwrite, strong) NSArray *selectionActions;
 @property (readonly) NSUInteger cursorFramePosition;
 
