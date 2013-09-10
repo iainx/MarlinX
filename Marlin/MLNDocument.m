@@ -266,6 +266,35 @@ static void *sampleContext = &sampleContext;
     [_sample insertChannels:[content channels] atFrame:[_sampleView cursorFramePosition]];
 }
 
+- (IBAction)selectAll:(id)sender
+{
+}
+
+- (IBAction)selectNone:(id)sender
+{
+    
+}
+
+- (IBAction)zoomIn:(id)sender
+{
+    
+}
+
+- (IBAction)zoomOut:(id)sender
+{
+    
+}
+
+- (IBAction)zoomToFit:(id)sender
+{
+    
+}
+
+- (IBAction)zoomToNormal:(id)sender
+{
+    
+}
+
 #pragma mark - Validators
 
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem
@@ -288,7 +317,25 @@ static void *sampleContext = &sampleContext;
         }
     }
     
-    return NO;
+    if (action == @selector(selectAll:)) {
+        return YES;
+    }
+    
+    if (action == @selector(selectNone:)) {
+        return [_sampleView hasSelection];
+    }
+    
+    if (action == @selector(zoomToFit:)) {
+        if ([_sampleView hasSelection]) {
+            [menuItem setTitle:@"Zoom To Selection"];
+        } else {
+            [menuItem setTitle:@"Zoom To Fit"];
+        }
+        
+        return YES;
+    }
+    
+    return YES;
 }
 
 - (BOOL)validateToolbarItem:(NSToolbarItem *)theItem

@@ -429,8 +429,12 @@ static void *sampleContext = &sampleContext;
 
 - (void)sampledLoadedHandler
 {
-    _intrinsicWidth = [_sample numberOfFrames] / (_framesPerPixel * 2);
-
+    CGFloat iw = [_sample numberOfFrames] / (_framesPerPixel);
+    NSSize size = NSMakeSize(iw, 10);
+    NSSize scaledSize = [self convertSizeToBacking:size];
+    
+    _intrinsicWidth = scaledSize.width;
+    
     DDLogVerbose(@"Sample loaded handler: numberOfFrames: %lu", [_sample numberOfFrames]);
 
     [self setNeedsDisplay:YES];
