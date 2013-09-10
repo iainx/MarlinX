@@ -24,7 +24,7 @@
 - (void)clearSelection;
 
 - (void)moveCursorTo:(NSUInteger)cursorFrame;
-- (void)centerOnCursor;
+- (void)centreOnCursor;
 
 - (void)dumpCacheImage;
 

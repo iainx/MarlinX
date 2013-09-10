@@ -1065,7 +1065,7 @@ subtractSelectionRects (NSRect a, NSRect b)
     [self setNeedsDisplayInRect:cursorRect];
 }
 
-- (void)centerOnCursor
+- (void)centreOnCursor
 {
     NSPoint cursorPoint = [self convertFrameToPoint:_cursorFramePosition];
     NSScrollView *scrollView = [self enclosingScrollView];

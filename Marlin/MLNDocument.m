@@ -391,6 +391,6 @@ selectionDidChange:(NSRange)selection
 - (void)overviewBar:(MLNOverviewBar *)bar didSelectFrame:(NSUInteger)frame
 {
     [_sampleView moveCursorTo:frame];
-    [_sampleView centerOnCursor];
+    [_sampleView centreOnCursor];
 }
 @end
