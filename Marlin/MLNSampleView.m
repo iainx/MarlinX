@@ -613,7 +613,7 @@ static void *sampleContext = &sampleContext;
                     [self selectionChanged];
 
                     // Move the cursor
-                    [self moveCursor:possibleStartFrame];
+                    [self moveCursorTo:possibleStartFrame];
 
                     [self removeTrackingArea:_startTrackingArea];
                     [self removeTrackingArea:_endTrackingArea];
@@ -1040,7 +1040,7 @@ subtractSelectionRects (NSRect a, NSRect b)
     }
 }
 
-- (void)moveCursor:(NSUInteger)cursorFrame
+- (void)moveCursorTo:(NSUInteger)cursorFrame
 {
     NSPoint cursorPoint = [self convertFrameToPoint:_cursorFramePosition];
     
@@ -1059,6 +1059,18 @@ subtractSelectionRects (NSRect a, NSRect b)
     
     _cursorOpacity = CURSOR_MAX_OPACITY;
     [self setNeedsDisplayInRect:cursorRect];
+}
+
+- (void)centerOnCursor
+{
+    NSPoint cursorPoint = [self convertFrameToPoint:_cursorFramePosition];
+    NSScrollView *scrollView = [self enclosingScrollView];
+    NSClipView *clipView = (NSClipView *)[scrollView contentView];
+    
+    NSRect cvBounds = [clipView bounds];
+    float halfWidth = NSWidth(cvBounds) / 2;
+    
+    [self scrollPoint:NSMakePoint(MAX(0, cursorPoint.x - halfWidth), 0.0)];
 }
 
 #pragma mark - MLNSampleDelegate methods

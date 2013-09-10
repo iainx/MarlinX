@@ -98,6 +98,8 @@ static void *sampleContext = &sampleContext;
     
     _overviewBarView = [[MLNOverviewBar alloc] initWithFrame:NSZeroRect];
     [_overviewBarView setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [_overviewBarView setDelegate:self];
+    
     _scrollView = [[NSScrollView alloc] initWithFrame:NSZeroRect];
     [_scrollView setTranslatesAutoresizingMaskIntoConstraints:NO];
     
@@ -338,4 +340,10 @@ selectionDidChange:(NSRange)selection
     return nil;
 }
 
+#pragma mark - Overview Bar Delegate
+- (void)overviewBar:(MLNOverviewBar *)bar didSelectFrame:(NSUInteger)frame
+{
+    [_sampleView moveCursorTo:frame];
+    [_sampleView centerOnCursor];
+}
 @end

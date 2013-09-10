@@ -8,11 +8,12 @@
 
 #import <Cocoa/Cocoa.h>
 #import "MLNSampleViewDelegate.h"
+#import "MLNOverviewBarDelegate.h"
 
 @class MLNSampleView;
 @class MLNOverviewBar;
 
-@interface MLNDocument : NSDocument <MLNSampleViewDelegate>
+@interface MLNDocument : NSDocument <MLNSampleViewDelegate, MLNOverviewBarDelegate>
 
 @property (readwrite, weak) IBOutlet NSToolbar *toolbar;
 @property (readwrite, strong) NSScrollView *scrollView;

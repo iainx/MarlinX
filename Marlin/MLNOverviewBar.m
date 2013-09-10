@@ -247,6 +247,17 @@ static void *sampleContext = &sampleContext;
     return borderRect;
 }
 
+#pragma mark - Event handling
+
+- (void)mouseDown:(NSEvent *)theEvent
+{
+    NSPoint point = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    NSPoint scaledPoint = [self convertPointToBacking:point];
+    NSUInteger selectedFrame = _framesPerPixel * (NSInteger)scaledPoint.x;
+    
+    [_delegate overviewBar:self didSelectFrame:selectedFrame];
+}
+
 #pragma mark - Accessors
 
 - (void)setFrameSize:(NSSize)newSize

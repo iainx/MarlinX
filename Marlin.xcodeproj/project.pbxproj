@@ -30,7 +30,6 @@
 		AE7254B3171B7EAC00B48145 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AECDE7C116B7C0C300DE94D5 /* Cocoa.framework */; };
 		AE7254B9171B7EAC00B48145 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = AE7254B7171B7EAC00B48145 /* InfoPlist.strings */; };
 		AE7254BC171B7EAC00B48145 /* MLNSampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AE7254BB171B7EAC00B48145 /* MLNSampleTests.m */; };
-		AE7254E0171E06CF00B48145 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AECDE7E416B7C3B900DE94D5 /* AudioToolbox.framework */; };
 		AE7254E6171E197D00B48145 /* MLNBlockTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AE7254E5171E197D00B48145 /* MLNBlockTests.m */; };
 		AE7254E9171F425700B48145 /* MLNChannelTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AE7254E8171F425700B48145 /* MLNChannelTests.m */; };
 		AECDE7C216B7C0C300DE94D5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AECDE7C116B7C0C300DE94D5 /* Cocoa.framework */; };
@@ -111,6 +110,7 @@
 		AE7254E5171E197D00B48145 /* MLNBlockTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNBlockTests.m; sourceTree = "<group>"; };
 		AE7254E7171F425700B48145 /* MLNChannelTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNChannelTests.h; sourceTree = "<group>"; };
 		AE7254E8171F425700B48145 /* MLNChannelTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNChannelTests.m; sourceTree = "<group>"; };
+		AEC19AC517DF5BF200226CD9 /* MLNOverviewBarDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNOverviewBarDelegate.h; sourceTree = "<group>"; };
 		AECDE7BD16B7C0C300DE94D5 /* Marlin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Marlin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AECDE7C116B7C0C300DE94D5 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		AECDE7C416B7C0C300DE94D5 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -146,7 +146,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AE7254E0171E06CF00B48145 /* AudioToolbox.framework in Frameworks */,
 				AE7254B2171B7EAC00B48145 /* SenTestingKit.framework in Frameworks */,
 				AE7254B3171B7EAC00B48145 /* Cocoa.framework in Frameworks */,
 			);
@@ -282,6 +281,7 @@
 				AECDE7D916B7C0C300DE94D5 /* MainMenu.xib */,
 				AED56DD3170A5406005E2573 /* MLNOverviewBar.h */,
 				AED56DD4170A5406005E2573 /* MLNOverviewBar.m */,
+				AEC19AC517DF5BF200226CD9 /* MLNOverviewBarDelegate.h */,
 				AECDE7E116B7C26800DE94D5 /* MLNSample.h */,
 				AECDE7E216B7C26800DE94D5 /* MLNSample.m */,
 				AE31A9CA16F28D3E0051CF41 /* MLNSampleDelegate.h */,
@@ -297,13 +297,13 @@
 				AEDA843216C8D13E001B2DD1 /* MLNMMapRegion.m */,
 				AE6FB1D916B9C57900139735 /* MLNSampleView.h */,
 				AE6FB1DA16B9C57900139735 /* MLNSampleView.m */,
+				AE5AB6AF16E5759E008D0AE4 /* MLNSampleViewDelegate.h */,
 				AE57CA4F1710EB0A0043E690 /* MLNSelectionAction.h */,
 				AE57CA501710EB0A0043E690 /* MLNSelectionAction.m */,
 				AE57CA49170F73250043E690 /* MLNSelectionButton.h */,
 				AE57CA4A170F73250043E690 /* MLNSelectionButton.m */,
 				AE57CA4C171040AE0043E690 /* MLNSelectionToolbar.h */,
 				AE57CA4D171040AE0043E690 /* MLNSelectionToolbar.m */,
-				AE5AB6AF16E5759E008D0AE4 /* MLNSampleViewDelegate.h */,
 				AECDE7E616B7D59C00DE94D5 /* MLNLoadOperation.h */,
 				AECDE7E716B7D59C00DE94D5 /* MLNLoadOperation.m */,
 				AE6FB1D416B8FC9200139735 /* MLNLoadOperationDelegate.h */,
