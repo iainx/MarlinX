@@ -22,6 +22,11 @@
     MLNSampleBlock *block = [channel sampleBlockForFrame:startFrame];
     int i = 0;
     
+    if (block == NULL) {
+        DDLogError(@"Block is NULL for %lu", startFrame);
+        return 0;
+    }
+    
     // If fpp is < framesPerCachePoint then we need to use the raw data, rather than the precalculated cache data
     // FIXME: These should be able to be consolidated because they're essentially the same thing
     // just using different data sources
