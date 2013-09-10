@@ -272,7 +272,7 @@ static void *sampleContext = &sampleContext;
 
 - (IBAction)selectNone:(id)sender
 {
-    
+    [_sampleView clearSelection];
 }
 
 - (IBAction)zoomIn:(id)sender
