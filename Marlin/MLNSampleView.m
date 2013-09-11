@@ -918,8 +918,11 @@ subtractSelectionRects (NSRect a, NSRect b)
                                                                          views:viewsDict];
         _toolbarConstraints = [NSMutableArray arrayWithArray:constraints];
         [self addConstraints:_toolbarConstraints];
+ 
+        // The X constraint is set correctly below.
+        _toolbarXConstraint = nil;
     }
-    
+
     NSSize intrinsicSize = [_selectionToolbar intrinsicContentSize];
     CGFloat widthIfTheToolbarWasHorizontal = [_selectionToolbar isHorizontal] ? intrinsicSize.width : intrinsicSize.height;
 
@@ -958,6 +961,8 @@ subtractSelectionRects (NSRect a, NSRect b)
             
             [self addConstraint:_toolbarXConstraint];
         } else {
+            // Toolbar is already vertical.
+            
             // Check if the toolbar is on the correct side
             BOOL changeSide = NO;
             
@@ -995,7 +1000,9 @@ subtractSelectionRects (NSRect a, NSRect b)
                 }
                 [self addConstraint:_toolbarXConstraint];
             } else {
+                // Don't need to change the side, just set the constant
                 CGFloat newConstant;
+                
                 if (!_toolbarIsOnRight) {
                     newConstant = newSelectionRect.origin.x - 3;
                 } else {
@@ -1007,7 +1014,18 @@ subtractSelectionRects (NSRect a, NSRect b)
         }
     } else {
         if ([_selectionToolbar isHorizontal]) {
-            [_toolbarXConstraint setConstant:NSMaxX(newSelectionRect) - 10];
+            if (_toolbarXConstraint == nil) {
+                _toolbarXConstraint = [NSLayoutConstraint constraintWithItem:_selectionToolbar
+                                                                   attribute:NSLayoutAttributeRight
+                                                                   relatedBy:NSLayoutRelationEqual
+                                                                      toItem:self
+                                                                   attribute:NSLayoutAttributeLeft
+                                                                  multiplier:0
+                                                                    constant:NSMaxX(newSelectionRect) - 10];
+                [self addConstraint:_toolbarXConstraint];
+            } else {
+                [_toolbarXConstraint setConstant:NSMaxX(newSelectionRect) - 10];
+            }
         } else {
             // Switch to horizontal and reposition
             [_selectionToolbar setHorizontal:YES];
