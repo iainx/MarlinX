@@ -21,6 +21,11 @@
 @property (readwrite, strong) NSArray *selectionActions;
 @property (readonly) NSUInteger cursorFramePosition;
 
+- (void)zoomIn;
+- (void)zoomOut;
+- (void)zoomToFit;
+- (void)zoomToNormal;
+
 - (void)clearSelection;
 
 - (void)moveCursorTo:(NSUInteger)cursorFrame;

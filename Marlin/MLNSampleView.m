@@ -50,6 +50,8 @@
 #define CURSOR_MIN_OPACITY 0.60
 #define CURSOR_MAX_OPACITY 0.85
 
+#define DEFAULT_FRAMES_PER_PIXEL 128
+
 - (id)initWithFrame:(NSRect)frame
 {
     self = [super initWithFrame:frame];
@@ -57,7 +59,7 @@
         return nil;
     }
     
-    _framesPerPixel = 128;
+    _framesPerPixel = DEFAULT_FRAMES_PER_PIXEL;
     _summedMagnificationLevel = 0;
     _drawCursor = YES;
     _cursorFramePosition = 0;
@@ -494,6 +496,10 @@ static void *sampleContext = &sampleContext;
         return;
     }
     
+    if (framesPerPixel < 1) {
+        framesPerPixel = 1;
+    }
+    
     _framesPerPixel = framesPerPixel;
     _intrinsicWidth = [_sample numberOfFrames] / (_framesPerPixel * 2);
     
@@ -697,6 +703,50 @@ static void *sampleContext = &sampleContext;
     [self scrollPoint:CGPointMake(newPosition, 0)];
 }
 
+#pragma mark - Zoom handling
+
+- (void)updateScrollPositionForNewZoom:(NSUInteger)newFramesPerPixel
+{
+    NSScrollView *scrollView = [self enclosingScrollView];
+    NSClipView *clipView = [scrollView contentView];
+    
+    NSUInteger zoomFrame = [clipView bounds].origin.x * _framesPerPixel;
+    
+    [self setFramesPerPixel:newFramesPerPixel];
+    
+    NSUInteger newPosition = (zoomFrame / newFramesPerPixel);
+    [self scrollPoint:NSMakePoint(newPosition, 0)];
+}
+
+- (void)zoomIn
+{
+    NSUInteger newFramesPerPixel = _framesPerPixel / 2;
+    
+    [self updateScrollPositionForNewZoom:newFramesPerPixel];
+}
+
+- (void)zoomOut
+{
+    NSUInteger newFramesPerPixel = _framesPerPixel * 2;
+    
+    [self updateScrollPositionForNewZoom:newFramesPerPixel];
+}
+
+- (void)zoomToFit
+{
+    NSScrollView *scrollView = [self enclosingScrollView];
+    NSClipView *clipView = [scrollView contentView];
+    
+    NSRect scaledWidth = [self convertRectToBacking:[clipView bounds]];
+    
+    NSUInteger newFramesPerPixel = [_sample numberOfFrames] / scaledWidth.size.width;
+    [self updateScrollPositionForNewZoom:newFramesPerPixel];
+}
+
+- (void)zoomToNormal
+{
+    [self updateScrollPositionForNewZoom:DEFAULT_FRAMES_PER_PIXEL];
+}
 #pragma mark - Selection handling
 
 - (NSRange)selection

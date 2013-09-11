@@ -36,6 +36,7 @@
 }
 
 static void *sampleContext = &sampleContext;
+static void *sampleViewContext = &sampleViewContext;
 
 - (NSRange)boundsToVisibleSampleRange:(NSRect)bounds
 {
@@ -55,7 +56,7 @@ static void *sampleContext = &sampleContext;
                         change:(NSDictionary *)change
                        context:(void *)context
 {
-    if (context != sampleContext) {
+    if (context != sampleContext && context != sampleViewContext) {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
     
@@ -64,6 +65,13 @@ static void *sampleContext = &sampleContext;
         
         NSRange visibleRange = [self boundsToVisibleSampleRange:[[_scrollView contentView] bounds]];
         [_overviewBarView setVisibleRange:visibleRange];
+        return;
+    }
+    
+    if ([keyPath isEqualToString:@"framesPerPixel"]) {
+        NSRange visibleRange = [self boundsToVisibleSampleRange:[[_scrollView contentView] bounds]];
+        [_overviewBarView setVisibleRange:visibleRange];
+        return;
     }
 }
 
@@ -141,6 +149,11 @@ static void *sampleContext = &sampleContext;
     
     [_overviewBarView setSample:_sample];
     [_sampleView setSample:_sample];
+    
+    [_sampleView addObserver:self
+                  forKeyPath:@"framesPerPixel"
+                     options:NSKeyValueObservingOptionNew
+                     context:sampleViewContext];
 
     [_scrollView setHasHorizontalScroller:YES];
     [_scrollView setScrollerKnobStyle:NSScrollerKnobStyleLight];
@@ -278,22 +291,22 @@ static void *sampleContext = &sampleContext;
 
 - (IBAction)zoomIn:(id)sender
 {
-    
+    [_sampleView zoomIn];
 }
 
 - (IBAction)zoomOut:(id)sender
 {
-    
+    [_sampleView zoomOut];
 }
 
 - (IBAction)zoomToFit:(id)sender
 {
-    
+    [_sampleView zoomToFit];
 }
 
 - (IBAction)zoomToNormal:(id)sender
 {
-    
+    [_sampleView zoomToNormal];
 }
 
 #pragma mark - Validators

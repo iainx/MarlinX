@@ -226,6 +226,14 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		AEC19AC617E0B69500226CD9 /* XIB */ = {
+			isa = PBXGroup;
+			children = (
+				AECDE7D916B7C0C300DE94D5 /* MainMenu.xib */,
+			);
+			name = XIB;
+			sourceTree = "<group>";
+		};
 		AECDE7B216B7C0C300DE94D5 = {
 			isa = PBXGroup;
 			children = (
@@ -278,7 +286,6 @@
 				AECDE7D316B7C0C300DE94D5 /* MLNDocument.h */,
 				AECDE7D416B7C0C300DE94D5 /* MLNDocument.m */,
 				AECDE7D616B7C0C300DE94D5 /* MLNDocument.xib */,
-				AECDE7D916B7C0C300DE94D5 /* MainMenu.xib */,
 				AED56DD3170A5406005E2573 /* MLNOverviewBar.h */,
 				AED56DD4170A5406005E2573 /* MLNOverviewBar.m */,
 				AEC19AC517DF5BF200226CD9 /* MLNOverviewBarDelegate.h */,
@@ -309,6 +316,7 @@
 				AE6FB1D416B8FC9200139735 /* MLNLoadOperationDelegate.h */,
 				AE6FB1D616B8FF6E00139735 /* Constants.h */,
 				AE6FB1D716B8FF6E00139735 /* Constants.m */,
+				AEC19AC617E0B69500226CD9 /* XIB */,
 				AE5AB6C916E93623008D0AE4 /* External Sources */,
 				AECDE7C816B7C0C300DE94D5 /* Supporting Files */,
 			);

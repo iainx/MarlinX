@@ -2,9 +2,9 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="8.00">
 	<data>
 		<int key="IBDocument.SystemTarget">1080</int>
-		<string key="IBDocument.SystemVersion">12D78</string>
+		<string key="IBDocument.SystemVersion">12E55</string>
 		<string key="IBDocument.InterfaceBuilderVersion">3084</string>
-		<string key="IBDocument.AppKitVersion">1187.37</string>
+		<string key="IBDocument.AppKitVersion">1187.39</string>
 		<string key="IBDocument.HIToolboxVersion">626.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -736,14 +736,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
-						<string key="label">zoomIn:</string>
-						<reference key="source" ref="1014"/>
-						<reference key="destination" ref="612900165"/>
-					</object>
-					<int key="connectionID">561</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
 						<string key="label">zoomOut:</string>
 						<reference key="source" ref="1014"/>
 						<reference key="destination" ref="1066543063"/>
@@ -765,6 +757,14 @@
 						<reference key="destination" ref="27085497"/>
 					</object>
 					<int key="connectionID">564</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">zoomIn:</string>
+						<reference key="source" ref="1014"/>
+						<reference key="destination" ref="612900165"/>
+					</object>
+					<int key="connectionID">565</int>
 				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1161,11 +1161,6 @@
 						<reference key="parent" ref="661486165"/>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">554</int>
-						<reference key="object" ref="612900165"/>
-						<reference key="parent" ref="460647861"/>
-					</object>
-					<object class="IBObjectRecord">
 						<int key="objectID">555</int>
 						<reference key="object" ref="1066543063"/>
 						<reference key="parent" ref="460647861"/>
@@ -1178,6 +1173,11 @@
 					<object class="IBObjectRecord">
 						<int key="objectID">557</int>
 						<reference key="object" ref="27085497"/>
+						<reference key="parent" ref="460647861"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">554</int>
+						<reference key="object" ref="612900165"/>
 						<reference key="parent" ref="460647861"/>
 					</object>
 				</array>
@@ -1250,7 +1250,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">564</int>
+			<int key="maxID">565</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
