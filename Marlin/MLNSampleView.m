@@ -389,7 +389,7 @@ getIncrementForFramesPerPixel (NSUInteger framesPerPixel)
         
         for (j = i + minorGap, iter = 0; j < i + increment; j += minorGap, iter++) {
             CGPoint minorPoint = [self convertFrameToPoint:j];
-            CGFloat length = (iter == 5) ? 3.5 : 2;
+            CGFloat length = (iter == 4) ? 3.5 : 2;
             
             if (onlyDrawTop == NO) {
                 CGContextMoveToPoint(context, minorPoint.x + 0.5, dirtyRect.origin.y);
