@@ -32,6 +32,7 @@
 		AE7254BC171B7EAC00B48145 /* MLNSampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AE7254BB171B7EAC00B48145 /* MLNSampleTests.m */; };
 		AE7254E6171E197D00B48145 /* MLNBlockTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AE7254E5171E197D00B48145 /* MLNBlockTests.m */; };
 		AE7254E9171F425700B48145 /* MLNChannelTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AE7254E8171F425700B48145 /* MLNChannelTests.m */; };
+		AEC19ACB17E141A700226CD9 /* Marlin.iconset in Resources */ = {isa = PBXBuildFile; fileRef = AEC19ACA17E141A700226CD9 /* Marlin.iconset */; };
 		AECDE7C216B7C0C300DE94D5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AECDE7C116B7C0C300DE94D5 /* Cocoa.framework */; };
 		AECDE7CC16B7C0C300DE94D5 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = AECDE7CA16B7C0C300DE94D5 /* InfoPlist.strings */; };
 		AECDE7CE16B7C0C300DE94D5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = AECDE7CD16B7C0C300DE94D5 /* main.m */; };
@@ -111,6 +112,7 @@
 		AE7254E7171F425700B48145 /* MLNChannelTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNChannelTests.h; sourceTree = "<group>"; };
 		AE7254E8171F425700B48145 /* MLNChannelTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNChannelTests.m; sourceTree = "<group>"; };
 		AEC19AC517DF5BF200226CD9 /* MLNOverviewBarDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNOverviewBarDelegate.h; sourceTree = "<group>"; };
+		AEC19ACA17E141A700226CD9 /* Marlin.iconset */ = {isa = PBXFileReference; lastKnownFileType = folder.iconset; path = Marlin.iconset; sourceTree = "<group>"; };
 		AECDE7BD16B7C0C300DE94D5 /* Marlin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Marlin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AECDE7C116B7C0C300DE94D5 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		AECDE7C416B7C0C300DE94D5 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -234,6 +236,14 @@
 			name = XIB;
 			sourceTree = "<group>";
 		};
+		AEC19AC717E13F9200226CD9 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				AEC19ACA17E141A700226CD9 /* Marlin.iconset */,
+			);
+			name = Images;
+			sourceTree = "<group>";
+		};
 		AECDE7B216B7C0C300DE94D5 = {
 			isa = PBXGroup;
 			children = (
@@ -319,6 +329,7 @@
 				AEC19AC617E0B69500226CD9 /* XIB */,
 				AE5AB6C916E93623008D0AE4 /* External Sources */,
 				AECDE7C816B7C0C300DE94D5 /* Supporting Files */,
+				AEC19AC717E13F9200226CD9 /* Images */,
 			);
 			path = Marlin;
 			sourceTree = "<group>";
@@ -430,6 +441,7 @@
 				AECDE7D816B7C0C300DE94D5 /* MLNDocument.xib in Resources */,
 				AECDE7DB16B7C0C300DE94D5 /* MainMenu.xib in Resources */,
 				AE298D8116F7CC720031334A /* README.txt in Resources */,
+				AEC19ACB17E141A700226CD9 /* Marlin.iconset in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
