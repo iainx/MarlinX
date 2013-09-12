@@ -10,6 +10,7 @@
 #import "MLNLoadOperationDelegate.h"
 #import "MLNSampleDelegate.h"
 
+@class MLNLoadOperation;
 @interface MLNSample : NSObject <MLNLoadOperationDelegate>
 
 enum {
@@ -26,6 +27,8 @@ enum {
 
 @property (readonly) NSInteger duration;
 @property (readonly) NSURL *url;
+
+@property (readonly) MLNLoadOperation *loadOperation;
 
 - (id)initWithURL:(NSURL *)url;
 - (id)initWithChannels:(NSArray *)channelData;

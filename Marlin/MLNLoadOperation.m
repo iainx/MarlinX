@@ -28,6 +28,10 @@
         return nil;
     }
 
+    [self setPrimaryText:@"Loading"];
+    [self setSecondaryText:@"Something something"];
+    [self setProgress:0];
+    
     __weak MLNLoadOperation *weakSelf = self;
     
     [self setCompletionBlock:^{
@@ -150,6 +154,7 @@
         framesSoFar += frameCount;
         float percentage = ((float)framesSoFar / (float)totalFrameCount) * 100.0;
         
+        [self setProgress:(int)percentage];
         [self sendProgressOnMainThread:percentage
                          operationName:@"Loading sample"
                            framesSoFar:framesSoFar

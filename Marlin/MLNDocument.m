@@ -10,12 +10,17 @@
 #import "MLNApplicationDelegate.h"
 #import "MLNOverviewBar.h"
 #import "MLNPasteboardSampleData.h"
+#import "MLNLoadOperation.h"
 #import "MLNSample.h"
 #import "MLNSample+Operations.h"
 #import "MLNSampleView.h"
 #import "MLNSelectionAction.h"
+#import "MLNProgressViewController.h"
+#import "Constants.h"
 
 @implementation MLNDocument {
+    MLNProgressViewController *_progressViewController;
+    NSView *_progressView;
     MLNSample *_sample;
 }
 
@@ -65,6 +70,12 @@ static void *sampleViewContext = &sampleViewContext;
         
         NSRange visibleRange = [self boundsToVisibleSampleRange:[[_scrollView contentView] bounds]];
         [_overviewBarView setVisibleRange:visibleRange];
+        
+        [_progressView removeFromSuperview];
+        _progressView = nil;
+        
+        // FIXME: Do we need to nil out the viewcontroller? We don't need it anymore do we?
+        // I suppose we could reuse it for Save/Export
         return;
     }
     
@@ -86,27 +97,13 @@ static void *sampleViewContext = &sampleViewContext;
 - (void)windowControllerDidLoadNib:(NSWindowController *)aController
 {
     [super windowControllerDidLoadNib:aController];
-    // Add any code here that needs to be executed once the windowController has loaded the document's window.
-
-    //NSURL *url = [NSURL fileURLWithPath:@"/Users/iain/Desktop/Change of Scenery rado edit.wav" isDirectory:NO];
-    //NSURL *url = [NSURL fileURLWithPath:@"/Users/iain/sine.wav" isDirectory:NO];
-    
-    // Doesn't like 8 channel.
-    //NSURL *url = [NSURL fileURLWithPath:@"/Users/iain/Documents/6_Channel_ID.wav" isDirectory:NO];
-    //NSURL *url = [NSURL fileURLWithPath:@"/Users/iain/Documents/8_Channel_ID.wav" isDirectory:NO];
-    //NSURL *url = [NSURL fileURLWithPath:@"/Users/iain/Documents/2dpl.wav" isDirectory:NO];
-    
-    /*
-    _testSample = [[MLNSample alloc] initWithURL:url];
-    [_testSample addObserver:self
-                  forKeyPath:@"loaded"
-                     options:0
-                     context:sampleContext];
-    */
     
     _overviewBarView = [[MLNOverviewBar alloc] initWithFrame:NSZeroRect];
     [_overviewBarView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [_overviewBarView setDelegate:self];
+    
+    _progressViewController = [[MLNProgressViewController alloc] init];
+    _progressView = [_progressViewController view];
     
     _scrollView = [[NSScrollView alloc] initWithFrame:NSZeroRect];
     [_scrollView setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -117,10 +114,12 @@ static void *sampleViewContext = &sampleViewContext;
     NSWindow *window = [aController window];
     [[window contentView] addSubview:_overviewBarView];
     [[window contentView] addSubview:_scrollView];
+    [[window contentView] addSubview:_progressView];
     
     NSDictionary *viewsDict = @{@"overviewBarView": _overviewBarView,
                                 @"scrollView": _scrollView,
-                                @"sampleView": _sampleView};
+                                @"sampleView": _sampleView,
+                                @"progressView": _progressView};
     NSArray *constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[overviewBarView][scrollView]-40-|"
                                                                    options:0
                                                                    metrics:nil
@@ -133,6 +132,12 @@ static void *sampleViewContext = &sampleViewContext;
                                                             views:viewsDict];
     [[window contentView] addConstraints:constraints];
 
+    constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"|[progressView]|"
+                                                          options:0
+                                                          metrics:nil
+                                                            views:viewsDict];
+    [[window contentView] addConstraints:constraints];
+    
     constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"|[scrollView]|"
                                                           options:0
                                                           metrics:nil
@@ -140,12 +145,14 @@ static void *sampleViewContext = &sampleViewContext;
     [[window contentView] addConstraints:constraints];
     
     [_sampleView setTranslatesAutoresizingMaskIntoConstraints:NO];
-
-    // The sample was loaded from earlier.
+    
     [_sample addObserver:self
               forKeyPath:@"loaded"
                  options:0
                  context:sampleContext];
+    
+    MLNLoadOperation *operation = [_sample loadOperation];
+    [_progressViewController setRepresentedObject:operation];
     
     [_overviewBarView setSample:_sample];
     [_sampleView setSample:_sample];
@@ -213,7 +220,7 @@ static void *sampleViewContext = &sampleViewContext;
     DDLogVerbose(@"Opening %@, %p", url, self);
     
     _sample = [[MLNSample alloc] initWithURL:url];
-
+    
     return YES;
 }
 

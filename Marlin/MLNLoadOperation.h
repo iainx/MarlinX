@@ -14,6 +14,9 @@
 @interface MLNLoadOperation : NSOperation
 
 @property (readwrite, weak) id<MLNLoadOperationDelegate> delegate;
+@property (readwrite) int progress;
+@property (readwrite, strong) NSString *primaryText;
+@property (readwrite, strong) NSString *secondaryText;
 
 - (id)initForSample:(MLNSample *)sample;
 

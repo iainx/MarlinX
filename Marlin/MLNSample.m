@@ -107,7 +107,7 @@ typedef struct PlaybackData {
 
 - (void)startLoad
 {
-    MLNLoadOperation *op = [[MLNLoadOperation alloc] initForSample:self];
+    _loadOperation = [[MLNLoadOperation alloc] initForSample:self];
     NSOperationQueue *defaultQueue = [MLNSample defaultOperationQueue];
  
     // FIXME: Progress notification should be a delegate method
@@ -119,8 +119,8 @@ typedef struct PlaybackData {
              object:op];
     */
     
-    [op setDelegate:self];
-    [defaultQueue addOperation:op];
+    [_loadOperation setDelegate:self];
+    [defaultQueue addOperation:_loadOperation];
 }
 
 - (void)progressUpdateNotification:(NSNotification *)note

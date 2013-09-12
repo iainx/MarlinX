@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		AE05C60316C246DF00A7B9D9 /* MLNSampleChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = AE05C60216C246DF00A7B9D9 /* MLNSampleChannel.m */; };
 		AE071B89172B542A0089278E /* MLNPasteboardSampleData.m in Sources */ = {isa = PBXBuildFile; fileRef = AE071B88172B542A0089278E /* MLNPasteboardSampleData.m */; };
+		AE24E45B17E1D14F00B67469 /* MLNProgressViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AE24E45917E1D14F00B67469 /* MLNProgressViewController.m */; };
+		AE24E45C17E1D14F00B67469 /* MLNProgressViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = AE24E45A17E1D14F00B67469 /* MLNProgressViewController.xib */; };
 		AE298D7A16F7CC720031334A /* DDAbstractDatabaseLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = AE298D6B16F7CC720031334A /* DDAbstractDatabaseLogger.m */; };
 		AE298D7B16F7CC720031334A /* DDASLLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = AE298D6D16F7CC720031334A /* DDASLLogger.m */; };
 		AE298D7C16F7CC720031334A /* DDFileLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = AE298D6F16F7CC720031334A /* DDFileLogger.m */; };
@@ -64,6 +66,9 @@
 		AE05C60216C246DF00A7B9D9 /* MLNSampleChannel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNSampleChannel.m; sourceTree = "<group>"; };
 		AE071B87172B542A0089278E /* MLNPasteboardSampleData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNPasteboardSampleData.h; sourceTree = "<group>"; };
 		AE071B88172B542A0089278E /* MLNPasteboardSampleData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNPasteboardSampleData.m; sourceTree = "<group>"; };
+		AE24E45817E1D14F00B67469 /* MLNProgressViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNProgressViewController.h; sourceTree = "<group>"; };
+		AE24E45917E1D14F00B67469 /* MLNProgressViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNProgressViewController.m; sourceTree = "<group>"; };
+		AE24E45A17E1D14F00B67469 /* MLNProgressViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MLNProgressViewController.xib; sourceTree = "<group>"; };
 		AE298D6A16F7CC720031334A /* DDAbstractDatabaseLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDAbstractDatabaseLogger.h; sourceTree = "<group>"; };
 		AE298D6B16F7CC720031334A /* DDAbstractDatabaseLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDAbstractDatabaseLogger.m; sourceTree = "<group>"; };
 		AE298D6C16F7CC720031334A /* DDASLLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDASLLogger.h; sourceTree = "<group>"; };
@@ -231,6 +236,7 @@
 		AEC19AC617E0B69500226CD9 /* XIB */ = {
 			isa = PBXGroup;
 			children = (
+				AE24E45A17E1D14F00B67469 /* MLNProgressViewController.xib */,
 				AECDE7D916B7C0C300DE94D5 /* MainMenu.xib */,
 			);
 			name = XIB;
@@ -296,6 +302,8 @@
 				AECDE7D316B7C0C300DE94D5 /* MLNDocument.h */,
 				AECDE7D416B7C0C300DE94D5 /* MLNDocument.m */,
 				AECDE7D616B7C0C300DE94D5 /* MLNDocument.xib */,
+				AE24E45817E1D14F00B67469 /* MLNProgressViewController.h */,
+				AE24E45917E1D14F00B67469 /* MLNProgressViewController.m */,
 				AED56DD3170A5406005E2573 /* MLNOverviewBar.h */,
 				AED56DD4170A5406005E2573 /* MLNOverviewBar.m */,
 				AEC19AC517DF5BF200226CD9 /* MLNOverviewBarDelegate.h */,
@@ -442,6 +450,7 @@
 				AECDE7DB16B7C0C300DE94D5 /* MainMenu.xib in Resources */,
 				AE298D8116F7CC720031334A /* README.txt in Resources */,
 				AEC19ACB17E141A700226CD9 /* Marlin.iconset in Resources */,
+				AE24E45C17E1D14F00B67469 /* MLNProgressViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -504,6 +513,7 @@
 				AE57CA511710EB0A0043E690 /* MLNSelectionAction.m in Sources */,
 				AE2E4437172333B8005463FB /* MLNCacheFile.m in Sources */,
 				AE071B89172B542A0089278E /* MLNPasteboardSampleData.m in Sources */,
+				AE24E45B17E1D14F00B67469 /* MLNProgressViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
