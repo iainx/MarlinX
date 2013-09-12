@@ -11,6 +11,7 @@
 		AE071B89172B542A0089278E /* MLNPasteboardSampleData.m in Sources */ = {isa = PBXBuildFile; fileRef = AE071B88172B542A0089278E /* MLNPasteboardSampleData.m */; };
 		AE24E45B17E1D14F00B67469 /* MLNProgressViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AE24E45917E1D14F00B67469 /* MLNProgressViewController.m */; };
 		AE24E45C17E1D14F00B67469 /* MLNProgressViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = AE24E45A17E1D14F00B67469 /* MLNProgressViewController.xib */; };
+		AE24E45F17E221C400B67469 /* auto-version.pl in Resources */ = {isa = PBXBuildFile; fileRef = AE24E45E17E221C400B67469 /* auto-version.pl */; };
 		AE298D7A16F7CC720031334A /* DDAbstractDatabaseLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = AE298D6B16F7CC720031334A /* DDAbstractDatabaseLogger.m */; };
 		AE298D7B16F7CC720031334A /* DDASLLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = AE298D6D16F7CC720031334A /* DDASLLogger.m */; };
 		AE298D7C16F7CC720031334A /* DDFileLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = AE298D6F16F7CC720031334A /* DDFileLogger.m */; };
@@ -69,6 +70,7 @@
 		AE24E45817E1D14F00B67469 /* MLNProgressViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNProgressViewController.h; sourceTree = "<group>"; };
 		AE24E45917E1D14F00B67469 /* MLNProgressViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNProgressViewController.m; sourceTree = "<group>"; };
 		AE24E45A17E1D14F00B67469 /* MLNProgressViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MLNProgressViewController.xib; sourceTree = "<group>"; };
+		AE24E45E17E221C400B67469 /* auto-version.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = "auto-version.pl"; sourceTree = "<group>"; };
 		AE298D6A16F7CC720031334A /* DDAbstractDatabaseLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDAbstractDatabaseLogger.h; sourceTree = "<group>"; };
 		AE298D6B16F7CC720031334A /* DDAbstractDatabaseLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDAbstractDatabaseLogger.m; sourceTree = "<group>"; };
 		AE298D6C16F7CC720031334A /* DDASLLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDASLLogger.h; sourceTree = "<group>"; };
@@ -350,6 +352,7 @@
 				AECDE7CD16B7C0C300DE94D5 /* main.m */,
 				AECDE7CF16B7C0C300DE94D5 /* Marlin-Prefix.pch */,
 				AECDE7D016B7C0C300DE94D5 /* Credits.rtf */,
+				AE24E45E17E221C400B67469 /* auto-version.pl */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -393,6 +396,7 @@
 				AECDE7B916B7C0C300DE94D5 /* Sources */,
 				AECDE7BA16B7C0C300DE94D5 /* Frameworks */,
 				AECDE7BB16B7C0C300DE94D5 /* Resources */,
+				AE24E45D17E2219B00B67469 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -451,12 +455,26 @@
 				AE298D8116F7CC720031334A /* README.txt in Resources */,
 				AEC19ACB17E141A700226CD9 /* Marlin.iconset in Resources */,
 				AE24E45C17E1D14F00B67469 /* MLNProgressViewController.xib in Resources */,
+				AE24E45F17E221C400B67469 /* auto-version.pl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		AE24E45D17E2219B00B67469 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#if [ ${CONFIGURATION} != \"Debug\" ]\n#then\n/usr/bin/perl \"${PROJECT_DIR}/Marlin/auto-version.pl\" \"${PRODUCT_NAME}\" \"${PROJECT_DIR}\"\n#fi";
+		};
 		AE7254AE171B7EAC00B48145 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
