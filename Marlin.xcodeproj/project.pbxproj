@@ -239,6 +239,7 @@
 			isa = PBXGroup;
 			children = (
 				AE24E45A17E1D14F00B67469 /* MLNProgressViewController.xib */,
+				AECDE7D616B7C0C300DE94D5 /* MLNDocument.xib */,
 				AECDE7D916B7C0C300DE94D5 /* MainMenu.xib */,
 			);
 			name = XIB;
@@ -303,7 +304,6 @@
 				AE2E4436172333B8005463FB /* MLNCacheFile.m */,
 				AECDE7D316B7C0C300DE94D5 /* MLNDocument.h */,
 				AECDE7D416B7C0C300DE94D5 /* MLNDocument.m */,
-				AECDE7D616B7C0C300DE94D5 /* MLNDocument.xib */,
 				AE24E45817E1D14F00B67469 /* MLNProgressViewController.h */,
 				AE24E45917E1D14F00B67469 /* MLNProgressViewController.m */,
 				AED56DD3170A5406005E2573 /* MLNOverviewBar.h */,
