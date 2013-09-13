@@ -300,8 +300,8 @@ static const int GUTTER_SIZE = 24;
 
 - (void)drawSelectionFrameInRect:(NSRect)rect
 {
+    NSRect outerRect = NSInsetRect(rect, -5.0, 0.0);
     CGFloat x1, y1, x2, y2, midY, handleTopY, handleBottomY;
-    
     NSBezierPath *outerPath = [[NSBezierPath alloc] init];
     
     NSPoint topRight, rightTop, rightBottom, bottomRight;
@@ -312,12 +312,12 @@ static const int GUTTER_SIZE = 24;
     NSPoint leftHandleLeftTop, leftHandleTop, leftHandleRightTop;
     NSPoint leftHandleLeftBottom, leftHandleBottom, leftHandleRightBottom;
     
-    x1 = rect.origin.x;
-    y1 = rect.origin.y;
-    x2 = NSMaxX(rect);
-    y2 = NSMaxY(rect);
+    x1 = outerRect.origin.x;
+    y1 = outerRect.origin.y;
+    x2 = NSMaxX(outerRect);
+    y2 = NSMaxY(outerRect);
     
-    midY = NSMidY(rect);
+    midY = NSMidY(outerRect);
     handleBottomY = midY - 20.0;
     handleTopY = midY + 20.0;
     
@@ -392,7 +392,7 @@ static const int GUTTER_SIZE = 24;
     NSBezierPath *innerPath;
     
     [outerPath setWindingRule:NSEvenOddWindingRule];
-    NSRect innerSelectionRect = NSInsetRect(rect, 5.0, 5.0);
+    NSRect innerSelectionRect = NSInsetRect(rect, 0.0, 5.0);
     innerPath = [NSBezierPath bezierPathWithRoundedRect:innerSelectionRect
                                                 xRadius:4.0 yRadius:4.0];
     
@@ -927,14 +927,14 @@ subtractSelectionRects (NSRect a, NSRect b)
 // Take into consideration the handles of the visible selection
 - (NSRect)selectionRectToDirtyRect:(NSRect)selectionRect
 {
-    return NSInsetRect(selectionRect, -5.0, 0.0);
+    return NSInsetRect(selectionRect, -10.0, 0.0);
 }
 
 - (void)updateSelection:(NSRect)newSelectionRect
        oldSelectionRect:(NSRect)oldSelectionRect
 {
-    NSRect startRect = NSMakeRect(newSelectionRect.origin.x - 5, 0, 10, newSelectionRect.size.height);
-    NSRect endRect = NSMakeRect(NSMaxX(newSelectionRect) - 5, 0, 10, newSelectionRect.size.height);
+    NSRect startRect = NSMakeRect(newSelectionRect.origin.x - 10, 0, 10, newSelectionRect.size.height);
+    NSRect endRect = NSMakeRect(NSMaxX(newSelectionRect), 0, 10, newSelectionRect.size.height);
     
     if (_startTrackingArea) {
         [self removeTrackingArea:_startTrackingArea];
