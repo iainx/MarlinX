@@ -222,10 +222,11 @@ static const int GUTTER_SIZE = 24;
     }
     
     NSBezierPath *selectionPath = nil;
+    NSRect selectionRect;
     
     // Draw the background of the selection before we draw the waveform so it is behind.
     if (_hasSelection) {
-        NSRect selectionRect = [self selectionToRect];
+        selectionRect = [self selectionToRect];
         
         if (NSIntersectsRect(selectionRect, dirtyRect)) {
             NSColor *selectionBackgroundColour = [NSColor colorWithCalibratedRed:0.2 green:0.2 blue:0.6 alpha:0.75];
@@ -236,7 +237,7 @@ static const int GUTTER_SIZE = 24;
             selectionRect.size.width -= 1;
             selectionRect.size.height -= 1;
             
-            selectionPath = [NSBezierPath bezierPathWithRoundedRect:selectionRect xRadius:5 yRadius:5];
+            selectionPath = [NSBezierPath bezierPathWithRoundedRect:selectionRect xRadius:4.0 yRadius:4.0];
             
             [selectionPath fill];
         }
@@ -282,8 +283,7 @@ static const int GUTTER_SIZE = 24;
     // Draw the outline of the selection over the waveform
     // Checking selectionPath will let us know if the background of the selection needed to be draw
     if (selectionPath) {
-        [[NSColor blackColor] set];
-        [selectionPath stroke];
+        [self drawSelectionPath:selectionPath inRect:selectionRect];
     }
     
     if (_drawCursor && _hasSelection == NO) {
@@ -296,6 +296,114 @@ static const int GUTTER_SIZE = 24;
             NSRectFillUsingOperation(cursorRect, NSCompositeSourceOver);
         }
     }
+}
+
+- (void)drawSelectionPath:(NSBezierPath *)path
+                   inRect:(NSRect)rect
+{
+    CGFloat x1, y1, x2, y2, midY, handleTopY, handleBottomY;
+    
+    NSBezierPath *outerPath = [[NSBezierPath alloc] init];
+    
+    NSPoint topRight, rightTop, rightBottom, bottomRight;
+    NSPoint topLeft, leftTop, bottomLeft, leftBottom;
+    
+    NSPoint rightHandleLeftTop, rightHandleTop, rightHandleRightTop;
+    NSPoint rightHandleRightBottom, rightHandleBottom, rightHandleLeftBottom;
+    NSPoint leftHandleLeftTop, leftHandleTop, leftHandleRightTop;
+    NSPoint leftHandleLeftBottom, leftHandleBottom, leftHandleRightBottom;
+    
+    x1 = rect.origin.x;
+    y1 = rect.origin.y;
+    x2 = NSMaxX(rect);
+    y2 = NSMaxY(rect);
+    
+    midY = NSMidY(rect);
+    handleBottomY = midY - 20.0;
+    handleTopY = midY + 20.0;
+    
+    topRight = NSMakePoint(x2 - 5, y2);
+    rightTop = NSMakePoint(x2, y2 - 5);
+    rightBottom = NSMakePoint(x2, y1 + 5);
+    bottomRight = NSMakePoint(x2 - 5, y1);
+    
+    topLeft = NSMakePoint(x1 + 5, y2);
+    leftTop = NSMakePoint(x1, y2 - 5);
+    leftBottom = NSMakePoint(x1, y1 + 5);
+    bottomLeft = NSMakePoint(x1 + 5, y1);
+    
+    // Handle points
+    rightHandleLeftTop = NSMakePoint(x2, handleTopY + 2);
+    rightHandleTop = NSMakePoint(x2 + 2, handleTopY);
+    rightHandleRightTop = NSMakePoint(x2 + 4, handleTopY - 2);
+    
+    rightHandleRightBottom = NSMakePoint(x2 + 4, handleBottomY + 2);
+    rightHandleBottom = NSMakePoint(x2 + 2, handleBottomY);
+    rightHandleLeftBottom = NSMakePoint(x2, handleBottomY - 2);
+    
+    leftHandleLeftTop = NSMakePoint(x1 - 4, handleTopY - 2);
+    leftHandleTop = NSMakePoint(x1 - 2, handleTopY);
+    leftHandleRightTop = NSMakePoint(x1, handleTopY + 2);
+    
+    leftHandleLeftBottom = NSMakePoint(x1 - 4, handleBottomY + 2);
+    leftHandleBottom = NSMakePoint(x1 - 2, handleBottomY);
+    leftHandleRightBottom = NSMakePoint(x1, handleBottomY - 2);
+    
+    // Top line
+    [outerPath moveToPoint:topLeft];
+    [outerPath lineToPoint:topRight];
+    
+    // Top right corner
+    [outerPath appendBezierPathWithArcFromPoint:NSMakePoint(x2, y2) toPoint:rightTop radius:5.0];
+    
+    // Right side
+    [outerPath lineToPoint:rightHandleLeftTop];
+    
+    [outerPath appendBezierPathWithArcFromPoint:NSMakePoint(x2, handleTopY) toPoint:rightHandleTop radius:2.0];
+    [outerPath appendBezierPathWithArcFromPoint:NSMakePoint(x2 + 4, handleTopY) toPoint:rightHandleRightTop radius:2.0];
+    [outerPath lineToPoint:rightHandleRightBottom];
+    [outerPath appendBezierPathWithArcFromPoint:NSMakePoint(x2 + 4, handleBottomY) toPoint:rightHandleBottom radius:2.0];
+    [outerPath appendBezierPathWithArcFromPoint:NSMakePoint(x2, handleBottomY) toPoint:rightHandleLeftBottom radius:2.0];
+
+    [outerPath lineToPoint:rightBottom];
+    
+    // Bottom right corner
+    [outerPath appendBezierPathWithArcFromPoint:NSMakePoint(x2, y1) toPoint:bottomRight radius:5.0];
+    
+    // Bottom line
+    [outerPath lineToPoint:bottomLeft];
+    
+    // Bottom left corner
+    [outerPath appendBezierPathWithArcFromPoint:NSMakePoint(x1, y1) toPoint:leftBottom radius:5.0];
+    
+    // Left side
+    [outerPath lineToPoint:leftHandleRightBottom];
+    
+    [outerPath appendBezierPathWithArcFromPoint:NSMakePoint(x1, handleBottomY) toPoint:leftHandleBottom radius:2.0];
+    [outerPath appendBezierPathWithArcFromPoint:NSMakePoint(x1 - 4, handleBottomY) toPoint:leftHandleLeftBottom radius:2.0];
+    [outerPath lineToPoint:leftHandleLeftTop];
+    [outerPath appendBezierPathWithArcFromPoint:NSMakePoint(x1 - 4, handleTopY) toPoint:leftHandleTop radius:2.0];
+    [outerPath appendBezierPathWithArcFromPoint:NSMakePoint(x1, handleTopY) toPoint:leftHandleRightTop radius:2.0];
+    
+    [outerPath lineToPoint:leftTop];
+    
+    // Top left corner
+    [outerPath appendBezierPathWithArcFromPoint:NSMakePoint(x1, y2) toPoint:topLeft radius:5.0];
+    
+    NSBezierPath *innerPath;
+    
+    [outerPath setWindingRule:NSEvenOddWindingRule];
+    NSRect innerSelectionRect = NSInsetRect(rect, 5.0, 5.0);
+    innerPath = [NSBezierPath bezierPathWithRoundedRect:innerSelectionRect
+                                                xRadius:4.0 yRadius:4.0];
+    
+    [outerPath appendBezierPath:[innerPath bezierPathByReversingPath]];
+    
+    [[NSColor colorWithCalibratedRed:0.566 green:0.666 blue:0.796 alpha:1.000] set];
+    [outerPath fill];
+
+    [[NSColor blackColor] set];
+    [outerPath stroke];
 }
 
 - (void)drawNameForChannel:(NSUInteger)channel
@@ -633,7 +741,7 @@ static void *sampleContext = &sampleContext;
                     [self removeSelectionToolbar];
                     
                     selectionRect.size.width += 0.5;
-                    [self setNeedsDisplayInRect:selectionRect];
+                    [self setNeedsDisplayInRect:[self selectionRectToDirtyRect:selectionRect]];
                 }
                 return;
                 
@@ -817,6 +925,12 @@ subtractSelectionRects (NSRect a, NSRect b)
     return selectionRect;
 }
 
+// Take into consideration the handles of the visible selection
+- (NSRect)selectionRectToDirtyRect:(NSRect)selectionRect
+{
+    return NSInsetRect(selectionRect, -5.0, 0.0);
+}
+
 - (void)updateSelection:(NSRect)newSelectionRect
        oldSelectionRect:(NSRect)oldSelectionRect
 {
@@ -850,11 +964,11 @@ subtractSelectionRects (NSRect a, NSRect b)
     // Only redraw the changed selection
     if (!NSEqualRects(oldSelectionRect, NSZeroRect)) {
         oldSelectionRect.size.width += 0.5;
-        [self setNeedsDisplayInRect:oldSelectionRect];
+        [self setNeedsDisplayInRect:[self selectionRectToDirtyRect:oldSelectionRect]];
     }
     
     newSelectionRect.size.width += 0.5;
-    [self setNeedsDisplayInRect:newSelectionRect];
+    [self setNeedsDisplayInRect:[self selectionRectToDirtyRect:newSelectionRect]];
 }
 
 - (void)resizeSelection:(NSEvent *)event
@@ -925,7 +1039,7 @@ subtractSelectionRects (NSRect a, NSRect b)
     _endTrackingArea = nil;
     
     selectionRect.size.width += 0.5;
-    [self setNeedsDisplayInRect:selectionRect];
+    [self setNeedsDisplayInRect:[self selectionRectToDirtyRect:selectionRect]];
     DDLogVerbose(@"Mouse up: No drag %@", NSStringFromRect(selectionRect));
 }
 
