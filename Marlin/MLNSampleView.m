@@ -282,8 +282,8 @@ static const int GUTTER_SIZE = 24;
 
     // Draw the outline of the selection over the waveform
     // Checking selectionPath will let us know if the background of the selection needed to be draw
-    if (selectionPath) {
-        [self drawSelectionPath:selectionPath inRect:selectionRect];
+    if (_hasSelection && NSIntersectsRect(dirtyRect, [self selectionRectToDirtyRect:selectionRect]) == YES) {
+        [self drawSelectionFrameInRect:selectionRect];
     }
     
     if (_drawCursor && _hasSelection == NO) {
@@ -298,8 +298,7 @@ static const int GUTTER_SIZE = 24;
     }
 }
 
-- (void)drawSelectionPath:(NSBezierPath *)path
-                   inRect:(NSRect)rect
+- (void)drawSelectionFrameInRect:(NSRect)rect
 {
     CGFloat x1, y1, x2, y2, midY, handleTopY, handleBottomY;
     
