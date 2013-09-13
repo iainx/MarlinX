@@ -1050,6 +1050,8 @@ subtractSelectionRects (NSRect a, NSRect b)
     _toolbarXConstraint = nil;
 }
 
+#define X_DISTANCE_FROM_OUTER_FRAME 10.0
+#define X_DISTANCE_FROM_INNER_FRAME 5.0
 - (void)updateSelectionToolbarInSelectionRect:(NSRect)newSelectionRect
 {
     if (_selectionToolbar == nil) {
@@ -1102,14 +1104,14 @@ subtractSelectionRects (NSRect a, NSRect b)
             [self removeConstraint:_toolbarXConstraint];
             
             // Now we work out which side of the selection it should be on
-            if ((NSMaxX(newSelectionRect) + intrinsicSize.width + 3) > NSMaxX([self bounds])) {
+            if ((NSMaxX(newSelectionRect) + intrinsicSize.width + X_DISTANCE_FROM_OUTER_FRAME) > NSMaxX([self bounds])) {
                 _toolbarXConstraint = [NSLayoutConstraint constraintWithItem:_selectionToolbar
                                                                    attribute:NSLayoutAttributeRight
                                                                    relatedBy:NSLayoutRelationEqual
                                                                       toItem:self
                                                                    attribute:NSLayoutAttributeLeft
                                                                   multiplier:0
-                                                                    constant:newSelectionRect.origin.x - 3];
+                                                                    constant:newSelectionRect.origin.x - X_DISTANCE_FROM_OUTER_FRAME];
                 _toolbarIsOnRight = NO;
             } else {
                 _toolbarXConstraint = [NSLayoutConstraint constraintWithItem:_selectionToolbar
@@ -1118,7 +1120,7 @@ subtractSelectionRects (NSRect a, NSRect b)
                                                                       toItem:self
                                                                    attribute:NSLayoutAttributeLeft
                                                                   multiplier:0
-                                                                    constant:NSMaxX(newSelectionRect) + 3];
+                                                                    constant:NSMaxX(newSelectionRect) + X_DISTANCE_FROM_OUTER_FRAME];
                 _toolbarIsOnRight = YES;
             }
             
@@ -1129,7 +1131,7 @@ subtractSelectionRects (NSRect a, NSRect b)
             // Check if the toolbar is on the correct side
             BOOL changeSide = NO;
             
-            if ((NSMaxX(newSelectionRect) + intrinsicSize.width + 3) > NSMaxX([self bounds])) {
+            if ((NSMaxX(newSelectionRect) + intrinsicSize.width + X_DISTANCE_FROM_OUTER_FRAME) > NSMaxX([self bounds])) {
                 if (_toolbarIsOnRight) {
                     changeSide = YES;
                 }
@@ -1149,7 +1151,7 @@ subtractSelectionRects (NSRect a, NSRect b)
                                                                           toItem:self
                                                                        attribute:NSLayoutAttributeLeft
                                                                       multiplier:0
-                                                                        constant:newSelectionRect.origin.x - 3];
+                                                                        constant:newSelectionRect.origin.x - X_DISTANCE_FROM_OUTER_FRAME];
                     _toolbarIsOnRight = NO;
                 } else {
                     _toolbarXConstraint = [NSLayoutConstraint constraintWithItem:_selectionToolbar
@@ -1158,7 +1160,7 @@ subtractSelectionRects (NSRect a, NSRect b)
                                                                           toItem:self
                                                                        attribute:NSLayoutAttributeLeft
                                                                       multiplier:0
-                                                                        constant:NSMaxX(newSelectionRect) + 3];
+                                                                        constant:NSMaxX(newSelectionRect) + X_DISTANCE_FROM_OUTER_FRAME];
                     _toolbarIsOnRight = YES;
                 }
                 [self addConstraint:_toolbarXConstraint];
@@ -1167,9 +1169,9 @@ subtractSelectionRects (NSRect a, NSRect b)
                 CGFloat newConstant;
                 
                 if (!_toolbarIsOnRight) {
-                    newConstant = newSelectionRect.origin.x - 3;
+                    newConstant = newSelectionRect.origin.x - X_DISTANCE_FROM_OUTER_FRAME;
                 } else {
-                    newConstant = NSMaxX(newSelectionRect) + 3;
+                    newConstant = NSMaxX(newSelectionRect) + X_DISTANCE_FROM_OUTER_FRAME;
                 }
                 
                 [_toolbarXConstraint setConstant:newConstant];
@@ -1184,10 +1186,10 @@ subtractSelectionRects (NSRect a, NSRect b)
                                                                       toItem:self
                                                                    attribute:NSLayoutAttributeLeft
                                                                   multiplier:0
-                                                                    constant:NSMaxX(newSelectionRect) - 10];
+                                                                    constant:NSMaxX(newSelectionRect) - X_DISTANCE_FROM_INNER_FRAME];
                 [self addConstraint:_toolbarXConstraint];
             } else {
-                [_toolbarXConstraint setConstant:NSMaxX(newSelectionRect) - 10];
+                [_toolbarXConstraint setConstant:NSMaxX(newSelectionRect) - X_DISTANCE_FROM_INNER_FRAME];
             }
         } else {
             // Switch to horizontal and reposition
@@ -1200,7 +1202,7 @@ subtractSelectionRects (NSRect a, NSRect b)
                                                                   toItem:self
                                                                attribute:NSLayoutAttributeLeft
                                                               multiplier:0
-                                                                constant:NSMaxX(newSelectionRect) - 10];
+                                                                constant:NSMaxX(newSelectionRect) - X_DISTANCE_FROM_INNER_FRAME];
             [self addConstraint:_toolbarXConstraint];
         }
     }
