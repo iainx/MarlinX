@@ -52,14 +52,35 @@
     return YES;
 }
 
+#define TOOLBAR_PADDING 5.0
+#define TOOLBAR_SPACING 2.0
+
 - (NSSize)intrinsicContentSize
 {
-    //return NSMakeSize(NSViewNoInstrinsicMetric, NSViewNoInstrinsicMetric);
-    if (_horizontal) {
-        return NSMakeSize(100.0, 30.0);
-    } else {
-        return NSMakeSize(30.0, 100.0);
+    NSArray *subviews = [self subviews];
+    
+    CGFloat width, height;
+    
+    for (NSView *subview in subviews) {
+        NSSize ics = [subview intrinsicContentSize];
+        
+        if (_horizontal) {
+            width += ics.width;
+            height = MAX (height, ics.height);
+        } else {
+            width = MAX (width, ics.width);
+            height += ics.height;
+        }
     }
+    
+    if (_horizontal) {
+        width += (TOOLBAR_PADDING * 2) + (TOOLBAR_SPACING * ([subviews count] - 1));
+        height += (TOOLBAR_PADDING * 2);
+    } else {
+        width += (TOOLBAR_PADDING * 2);
+        height += (TOOLBAR_PADDING * 2) + (TOOLBAR_SPACING * ([subviews count] - 1));
+    }
+    return NSMakeSize(width, height);
 }
 
 - (NSString *)visualFormat:(NSString *)visualFormat
@@ -77,6 +98,8 @@
 
 - (void)updateConstraints
 {
+    NSDictionary *metrics = @{@"toolbarPadding": [NSNumber numberWithFloat:TOOLBAR_PADDING],
+                              @"toolbarSpacing": [NSNumber numberWithFloat:TOOLBAR_SPACING]};
     [super updateConstraints];
     
     if (_constraints == nil) {
@@ -90,36 +113,36 @@
             viewsDict[@"currentView"] = currentView;
             
             if (previousView == nil) {
-                vf = [self visualFormat:@"|-5-[currentView]" isVerticalByDefault:NO];
+                vf = [self visualFormat:@"|-toolbarPadding-[currentView]" isVerticalByDefault:NO];
                 NSArray *c = [NSLayoutConstraint constraintsWithVisualFormat:vf
                                                                      options:0
-                                                                     metrics:nil
+                                                                     metrics:metrics
                                                                        views:viewsDict];
                 [constraints addObjectsFromArray:c];
             } else {
                 viewsDict[@"previousView"] = previousView;
-                vf = [self visualFormat:@"[previousView]-2-[currentView]" isVerticalByDefault:NO];
+                vf = [self visualFormat:@"[previousView]-toolbarSpacing-[currentView]" isVerticalByDefault:NO];
                 NSArray *c = [NSLayoutConstraint constraintsWithVisualFormat:vf
                                                                      options:0
-                                                                     metrics:nil
+                                                                     metrics:metrics
                                                                        views:viewsDict];
                 [constraints addObjectsFromArray:c];
             }
             
-            vf = [self visualFormat:@"|-5-[currentView]-5-|" isVerticalByDefault:YES];
+            vf = [self visualFormat:@"|-toolbarPadding-[currentView]-toolbarPadding-|" isVerticalByDefault:YES];
             [constraints addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:vf
                                                                                      options:0
-                                                                                     metrics:nil
+                                                                                     metrics:metrics
                                                                                        views:viewsDict]];
             
             previousView = currentView;
         }
         
         if ([[self subviews] count] > 0) {
-            vf = [self visualFormat:@"[currentView]-5-|" isVerticalByDefault:NO];
+            vf = [self visualFormat:@"[currentView]-toolbarPadding-|" isVerticalByDefault:NO];
             [constraints addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:vf
                                                                                      options:0
-                                                                                     metrics:nil
+                                                                                     metrics:metrics
                                                                                        views:viewsDict]];
         }
         
