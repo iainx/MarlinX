@@ -612,6 +612,12 @@ static void *sampleContext = &sampleContext;
     
     [self setNeedsDisplay:YES];
     [self invalidateIntrinsicContentSize];
+    
+    if (_hasSelection) {
+        NSRect selectionRect = [self selectionToRect];
+        [self repositionSelectionResizeTrackingAreas:selectionRect];
+        [self updateSelectionToolbarInSelectionRect:selectionRect];        
+    }
 }
 
 - (NSUInteger)framesPerPixel
@@ -625,7 +631,9 @@ static void *sampleContext = &sampleContext;
     
     // If we have a toolbar, then we may need to reposition it
     if (_hasSelection) {
-        [self updateSelectionToolbarInSelectionRect:[self selectionToRect]];
+        NSRect selectionRect = [self selectionToRect];
+        [self repositionSelectionResizeTrackingAreas:selectionRect];
+        [self updateSelectionToolbarInSelectionRect:selectionRect];
     }
 }
 #pragma mark - Events
@@ -930,8 +938,7 @@ subtractSelectionRects (NSRect a, NSRect b)
     return NSInsetRect(selectionRect, -10.0, 0.0);
 }
 
-- (void)updateSelection:(NSRect)newSelectionRect
-       oldSelectionRect:(NSRect)oldSelectionRect
+- (void)repositionSelectionResizeTrackingAreas:(NSRect)newSelectionRect
 {
     NSRect startRect = NSMakeRect(newSelectionRect.origin.x - 10, 0, 10, newSelectionRect.size.height);
     NSRect endRect = NSMakeRect(NSMaxX(newSelectionRect), 0, 10, newSelectionRect.size.height);
@@ -956,6 +963,12 @@ subtractSelectionRects (NSRect a, NSRect b)
                                                    userInfo:nil];
     [self addTrackingArea:_startTrackingArea];
     [self addTrackingArea:_endTrackingArea];
+}
+
+- (void)updateSelection:(NSRect)newSelectionRect
+       oldSelectionRect:(NSRect)oldSelectionRect
+{
+    [self repositionSelectionResizeTrackingAreas:newSelectionRect];
     
     [self updateSelectionToolbarInSelectionRect:newSelectionRect];
     [self selectionChanged];
