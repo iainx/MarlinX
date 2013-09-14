@@ -10,8 +10,4 @@
 
 @interface MLNProgressViewController : NSViewController
 
-@property (readwrite, weak) IBOutlet NSTextField *primaryLabel;
-@property (readwrite, weak) IBOutlet NSTextField *secondaryLabel;
-@property (readwrite, weak) IBOutlet NSProgressIndicator *progressIndicator;
-
 @end
