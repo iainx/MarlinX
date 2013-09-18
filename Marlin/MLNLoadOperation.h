@@ -8,15 +8,13 @@
 
 #import <Foundation/Foundation.h>
 #import "MLNLoadOperationDelegate.h"
+#import "MLNOperation.h"
 
 @class MLNSample;
 
-@interface MLNLoadOperation : NSOperation
+@interface MLNLoadOperation : MLNOperation
 
 @property (readwrite, weak) id<MLNLoadOperationDelegate> delegate;
-@property (readwrite) int progress;
-@property (readwrite, strong) NSString *primaryText;
-@property (readwrite, strong) NSString *secondaryText;
 
 - (id)initForSample:(MLNSample *)sample;
 

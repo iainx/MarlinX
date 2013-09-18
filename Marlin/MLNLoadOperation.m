@@ -21,6 +21,8 @@
     NSError *_error;
 }
 
+@dynamic delegate;
+
 - (id)initForSample:(MLNSample *)sample
 {
     self = [super init];
@@ -48,8 +50,8 @@
     if (check_status_is_error(status, "ExtAudioFileOpenURL")) {
         _error = make_error(status, "ExtAudioFileOpenURL", __PRETTY_FUNCTION__, __LINE__);
         
-        if (_error && [_delegate respondsToSelector:@selector(didFailLoadWithError:)]) {
-            [_delegate didFailLoadWithError:_error];
+        if (_error && [[self delegate] respondsToSelector:@selector(didFailLoadWithError:)]) {
+            [[self delegate] didFailLoadWithError:_error];
         }
 
         self = nil;
@@ -187,37 +189,18 @@ cleanup:
 
 - (void)updateSampleOnMainThread:(id)object
 {
-    if (_error && [_delegate respondsToSelector:@selector(didFailLoadWithError:)]) {
-        [_delegate didFailLoadWithError:_error];
+    if (_error && [[self delegate] respondsToSelector:@selector(didFailLoadWithError:)]) {
+        [[self delegate] didFailLoadWithError:_error];
         
         _error = nil;
         return;
     }
     
-    if ([_delegate respondsToSelector:@selector(sampleDidLoadData:description:)]) {
-        [_delegate sampleDidLoadData:_channelArray description:_outputFormat];
+    if ([[self delegate] respondsToSelector:@selector(sampleDidLoadData:description:)]) {
+        [[self delegate] sampleDidLoadData:_channelArray description:_outputFormat];
     }
-}
-
-#pragma mark - Sending notifications
-
-- (void)sendNotificationOnMainThread:(NSNotification *)note
-{
-    [[NSNotificationCenter defaultCenter] postNotification:note];
-}
-
-- (void)sendProgressOnMainThread:(float)percentage
-                   operationName:(NSString *)operationName
-                     framesSoFar:(SInt64)framesSoFar
-                     totalFrames:(SInt64)totalFrames
-{
-    NSDictionary *userInfo = @{kMLNProgressPercentage : @(percentage), kMLNProgressFramesSoFar: @(framesSoFar), kMLNProgressTotalFrames: @(totalFrames), kMLNProgressOperationName: operationName};
     
-    [self performSelectorOnMainThread:@selector(sendNotificationOnMainThread:)
-                           withObject:[NSNotification notificationWithName:kMLNProgressNotification
-                                                                    object:self
-                                                                  userInfo:userInfo]
-                        waitUntilDone:NO];
+    [super operationDidFinish];
 }
 
 #pragma mark - Utility functions

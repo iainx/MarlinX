@@ -8,8 +8,9 @@
 
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
+#import "MLNOperationDelegate.h"
 
-@protocol MLNLoadOperationDelegate <NSObject>
+@protocol MLNLoadOperationDelegate <NSObject, MLNOperationDelegate>
 
 - (void)sampleDidLoadData:(NSMutableArray *)channelData description:(AudioStreamBasicDescription)asbd;
 - (void)didFailLoadWithError:(NSError *)error;

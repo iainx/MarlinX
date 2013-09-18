@@ -167,6 +167,56 @@
     return YES;
 }
 
+- (size_t)fillBuffer:(float *)data
+       withLength:(size_t)byteLength
+        fromFrame:(NSUInteger)frame
+{
+    MLNSampleBlock *block;
+    NSUInteger framesWanted;
+    NSUInteger framesAdded = 0;
+    NSUInteger frameInBlock;
+    off_t byteInBlock;
+    const float *blockData;
+    
+    if (frame > _numberOfFrames) {
+        return 0;
+    }
+    
+    block = [self sampleBlockForFrame:frame];
+    if (block == nil) {
+        return 0;
+    }
+    
+    frameInBlock = (frame - block->startFrame);
+    byteInBlock = frameInBlock * sizeof(float);
+    
+    framesWanted = byteLength / sizeof(float);
+    
+    blockData = MLNSampleBlockSampleData(block);
+    while (framesWanted > 0) {
+        NSUInteger framesToCopy = MIN(framesWanted, block->numberOfFrames - frameInBlock);
+        
+        memcpy(data + framesAdded, blockData + frameInBlock, framesToCopy * sizeof(float));
+        
+        framesWanted -= framesToCopy;
+        framesAdded += framesToCopy;
+        
+        if (framesWanted == 0) {
+            break;
+        }
+        
+        block = block->nextBlock;
+        if (block == NULL) {
+            break;
+        }
+        
+        blockData = MLNSampleBlockSampleData(block);
+        frameInBlock = byteInBlock = 0;
+    }
+    
+    return framesAdded * sizeof(float);
+}
+
 #pragma mark - Block list manipulation
 
 - (void)updateBlockCount

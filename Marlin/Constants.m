@@ -10,8 +10,10 @@
 
 NSString *const kMLNSampleErrorDomain = @"com.sleepfive.Marlin.Sample";
 
-NSString *const kMLNProgressNotification = @"com.sleepfive.Marlin.LoadOperation.Progress";
+NSString *const kMLNProgressNotification = @"com.sleepfive.Marlin.Operation.Progress";
 NSString *const kMLNProgressOperationName = @"operationName";
 NSString *const kMLNProgressFramesSoFar = @"framesSoFar";
 NSString *const kMLNProgressTotalFrames = @"totalFrames";
 NSString *const kMLNProgressPercentage = @"percentage";
+
+NSString *const kMLNSampleDataDidChangeInRange = @"com.sleepfive.Marlin.Sample.DataDidChangeInRange";

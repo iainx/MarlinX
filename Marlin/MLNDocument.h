@@ -7,19 +7,22 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "MLNExportPanelControllerDelegate.h"
+#import "MLNSampleDelegate.h"
 #import "MLNSampleViewDelegate.h"
 #import "MLNOverviewBarDelegate.h"
 
 @class MLNSampleView;
 @class MLNOverviewBar;
 
-@interface MLNDocument : NSDocument <MLNSampleViewDelegate, MLNOverviewBarDelegate>
+@interface MLNDocument : NSDocument <MLNExportPanelControllerDelegate, MLNSampleViewDelegate, MLNOverviewBarDelegate, MLNSampleDelegate>
 
 @property (readwrite, weak) IBOutlet NSToolbar *toolbar;
 @property (readwrite, strong) NSScrollView *scrollView;
 @property (readwrite, strong) MLNSampleView *sampleView;
 @property (readwrite, strong) MLNOverviewBar *overviewBarView;
 
+- (IBAction)exportDocumentAs:(id)sender;
 - (IBAction)selectAll:(id)sender;
 - (IBAction)selectNone:(id)sender;
 - (IBAction)zoomIn:(id)sender;

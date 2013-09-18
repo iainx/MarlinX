@@ -15,6 +15,7 @@
 #import "MLNSelectionAction.h"
 #import "MLNSelectionButton.h"
 #import "MLNSelectionToolbar.h"
+#import "Constants.h"
 
 @implementation MLNSampleView {
     CGFloat _intrinsicWidth;
@@ -75,8 +76,18 @@
     return self;
 }
 
+- (void)removeObserversFromSample:(MLNSample *)sample
+{
+    NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+    
+    if (_sample) {
+        [nc removeObserver:self name:kMLNSampleDataDidChangeInRange object:_sample];
+    }
+}
+
 - (void)dealloc
 {
+    [self removeObserversFromSample:_sample];
     CGGradientRelease(_shadowGradient);
 }
 
@@ -577,11 +588,16 @@ static void *sampleContext = &sampleContext;
     if (sample == _sample) {
         return;
     }
+
+    [self removeObserversFromSample:_sample];
     
-    DDLogVerbose(@"SetSample: %p", sample);
     _sample = sample;
-    
-    [_sample setDelegate:self];
+
+    NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+    [nc addObserver:self
+           selector:@selector(sampleDataDidChangeInRange:)
+               name:kMLNSampleDataDidChangeInRange
+             object:sample];
     
     if ([_sample isLoaded]) {
         [self sampledLoadedHandler];
@@ -636,6 +652,21 @@ static void *sampleContext = &sampleContext;
         [self updateSelectionToolbarInSelectionRect:selectionRect];
     }
 }
+
+#pragma mark - Notifications
+- (void)sampleDataDidChangeInRange:(NSNotification *)note
+{
+    NSDictionary *userInfo = [note userInfo];
+    NSValue *value = userInfo[@"range"];
+    NSRange range = [value rangeValue];
+    
+    NSRect changedRect = NSMakeRect(range.location / _framesPerPixel, 0,
+                                    range.length / _framesPerPixel, [self bounds].size.height);
+    
+    DDLogVerbose(@"Sample changed: %@ %@", NSStringFromRange(range), NSStringFromRect(changedRect));
+    [self setNeedsDisplayInRect:changedRect];
+}
+
 #pragma mark - Events
 
 - (NSUInteger)convertPointToFrame:(NSPoint)point
@@ -1306,16 +1337,9 @@ subtractSelectionRects (NSRect a, NSRect b)
 }
 
 #pragma mark - MLNSampleDelegate methods
+/*
 
-- (void)sampleDataDidChangeInRange:(NSRange)range
-{
-    NSRect changedRect = NSMakeRect(range.location / _framesPerPixel, 0,
-                                    range.length / _framesPerPixel, [self bounds].size.height);
-    
-    DDLogVerbose(@"Sample changed: %@ %@", NSStringFromRange(range), NSStringFromRect(changedRect));
-    [self setNeedsDisplayInRect:changedRect];
-}
-
+*/
 #pragma mark - Debugging
 
 // Writes a CGImageRef to a PNG file

@@ -9,8 +9,20 @@
 #import "MLNPasteboardSampleData.h"
 #import "MLNSampleChannel.h"
 #import "MLNSample+Operations.h"
+#import "Constants.h"
 
 @implementation MLNSample (Operations)
+
+- (void)postChangeInRangeNotification:(NSRange)range
+{
+    NSDictionary *userInfo = @{@"range": [NSValue valueWithRange:range]};
+    NSNotification *note = [NSNotification notificationWithName:kMLNSampleDataDidChangeInRange
+                                                         object:self
+                                                       userInfo:userInfo];
+    
+    NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+    [nc postNotification:note];
+}
 
 - (void)deleteRange:(NSRange)range
 {
@@ -20,11 +32,7 @@
     
     [self setNumberOfFrames:[self numberOfFrames] - range.length];
     
-    if ([self delegate]) {
-        if ([[self delegate] respondsToSelector:@selector(sampleDataDidChangeInRange:)]) {
-            [[self delegate] sampleDataDidChangeInRange:range];
-        }
-    }
+    [self postChangeInRangeNotification:range];
 }
 
 - (NSArray *)copyRange:(NSRange)range
@@ -68,10 +76,6 @@
     MLNSampleChannel *aChannel = [self channelData][0];
     [self setNumberOfFrames:[aChannel numberOfFrames]];
     
-    if ([self delegate]) {
-        if ([[self delegate] respondsToSelector:@selector(sampleDataDidChangeInRange:)]) {
-            [[self delegate] sampleDataDidChangeInRange:NSMakeRange(frame, [aChannel numberOfFrames] - frame)];
-        }
-    }
+    [self postChangeInRangeNotification:NSMakeRange(frame, [aChannel numberOfFrames] - frame)];
 }
 @end

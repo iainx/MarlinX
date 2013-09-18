@@ -8,10 +8,9 @@
 
 #import <Cocoa/Cocoa.h>
 #import "MLNSampleViewDelegate.h"
-#import "MLNSampleDelegate.h"
 
 @class MLNSample;
-@interface MLNSampleView : NSView <MLNSampleDelegate>
+@interface MLNSampleView : NSView
 
 @property (readwrite, nonatomic, strong) MLNSample *sample;
 @property (readwrite, nonatomic) NSUInteger framesPerPixel; // framesPerPoint in this retina age?

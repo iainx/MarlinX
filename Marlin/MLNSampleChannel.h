@@ -29,6 +29,9 @@
 
 - (BOOL)addData:(float *)data
      withLength:(size_t)byteLength;
+- (size_t)fillBuffer:(float *)data
+       withLength:(size_t)byteLength
+        fromFrame:(NSUInteger)frame;
 
 - (void)addBlock:(MLNSampleBlock *)block;
 - (void)removeBlock:(MLNSampleBlock *)block;

@@ -16,12 +16,16 @@
 #import "MLNSampleView.h"
 #import "MLNSelectionAction.h"
 #import "MLNProgressViewController.h"
+#import "MLNExportPanelController.h"
 #import "Constants.h"
 
 @implementation MLNDocument {
     MLNProgressViewController *_progressViewController;
     NSView *_progressView;
     MLNSample *_sample;
+    
+    NSWindowController *_currentSheetController;
+    NSWindow *_currentSheet;
 }
 
 - (id)init
@@ -42,6 +46,15 @@
 
 static void *sampleContext = &sampleContext;
 static void *sampleViewContext = &sampleViewContext;
+
+- (NSWindow*)documentWindow
+{
+    if([[self windowControllers] count] == 1)
+    {
+        return [[[self windowControllers] objectAtIndex:0] window];
+    }
+    return nil;
+}
 
 - (NSRange)boundsToVisibleSampleRange:(NSRect)bounds
 {
@@ -71,11 +84,6 @@ static void *sampleViewContext = &sampleViewContext;
         NSRange visibleRange = [self boundsToVisibleSampleRange:[[_scrollView contentView] bounds]];
         [_overviewBarView setVisibleRange:visibleRange];
         
-        [_progressView removeFromSuperview];
-        _progressView = nil;
-        
-        // FIXME: Do we need to nil out the viewcontroller? We don't need it anymore do we?
-        // I suppose we could reuse it for Save/Export
         return;
     }
     
@@ -151,7 +159,7 @@ static void *sampleViewContext = &sampleViewContext;
                  options:0
                  context:sampleContext];
     
-    MLNLoadOperation *operation = [_sample loadOperation];
+    MLNOperation *operation = [_sample currentOperation];
     [_progressViewController setRepresentedObject:operation];
     
     [_overviewBarView setSample:_sample];
@@ -220,10 +228,59 @@ static void *sampleViewContext = &sampleViewContext;
     DDLogVerbose(@"Opening %@, %p", url, self);
     
     _sample = [[MLNSample alloc] initWithURL:url];
+    [_sample setDelegate:self];
     
     return YES;
 }
 
+- (void)didEndExportSheet:(NSWindow *)sheet
+               returnCode:(NSInteger)returnCode
+              contextInfo:(void *)contextInfo
+{
+    [_currentSheet orderOut:self];
+    _currentSheet = nil;
+    _currentSheetController = nil;
+}
+
+- (void)exportPanelController:(MLNExportPanelController *)controller
+              didSelectFormat:(NSDictionary *)formatDetails
+{
+    [NSApp endSheet:_currentSheet];
+    
+    if (_currentSheet != nil) {
+        DDLogError(@"_currentSheet is not nil");
+    }
+    
+    NSSavePanel *savePanel = [NSSavePanel savePanel];
+    [savePanel beginSheetModalForWindow:[self documentWindow] completionHandler:^(NSInteger result) {
+        if (result == NSFileHandlingPanelCancelButton) {
+            return;
+        } else {
+            DDLogVerbose(@"%@ - %@", [savePanel URL], formatDetails);
+            
+            [_sample startExportTo:[savePanel URL] asFormat:formatDetails];
+        }
+    }];
+}
+
+- (void)exportPanelControllerCancelled:(MLNExportPanelController *)controller
+{
+    [NSApp endSheet:_currentSheet];
+}
+
+- (IBAction)exportDocumentAs:(id)sender
+{
+    _currentSheetController = [[MLNExportPanelController alloc] init];
+    [(MLNExportPanelController *)_currentSheetController setDelegate:self];
+    
+    _currentSheet = [_currentSheetController window];
+    
+    [NSApp beginSheet:_currentSheet
+       modalForWindow:[self documentWindow]
+        modalDelegate:self
+       didEndSelector:@selector(didEndExportSheet:returnCode:contextInfo:)
+          contextInfo:NULL];
+}
 #pragma mark - Menu & Toolbar actions
 
 - (void)playSample:(id)sender
@@ -368,6 +425,25 @@ static void *sampleViewContext = &sampleViewContext;
     }
     
     return valid;
+}
+
+#pragma mark - Sample delegate
+- (void)sample:(MLNSample *)sample operationDidStart:(MLNOperation *)operation
+{
+    DDLogVerbose(@"Operation started");
+    
+    [_progressView setHidden:NO];
+    [_progressViewController setRepresentedObject:operation];
+    
+    [_sampleView setHidden:YES];
+}
+
+- (void)sample:(MLNSample *)sample operationDidEnd:(MLNOperation *)operation
+{
+    DDLogVerbose(@"Operation ended");
+    
+    [_progressView setHidden:YES];
+    [_sampleView setHidden:NO];
 }
 
 #pragma mark - Sample View delegate

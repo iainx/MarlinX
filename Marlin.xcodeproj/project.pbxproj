@@ -50,6 +50,10 @@
 		AED56DD5170A5406005E2573 /* MLNOverviewBar.m in Sources */ = {isa = PBXBuildFile; fileRef = AED56DD4170A5406005E2573 /* MLNOverviewBar.m */; };
 		AEDA842B16C88B7F001B2DD1 /* MLNApplicationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = AEDA842A16C88B7F001B2DD1 /* MLNApplicationDelegate.m */; };
 		AEDA843316C8D13E001B2DD1 /* MLNMMapRegion.m in Sources */ = {isa = PBXBuildFile; fileRef = AEDA843216C8D13E001B2DD1 /* MLNMMapRegion.m */; };
+		AEEE7E9F17E71B8700ECA24B /* MLNExportPanelController.xib in Resources */ = {isa = PBXBuildFile; fileRef = AEEE7E9D17E71B8700ECA24B /* MLNExportPanelController.xib */; };
+		AEEE7EA217E725FA00ECA24B /* MLNExportPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = AEEE7EA117E725FA00ECA24B /* MLNExportPanelController.m */; };
+		AEEE7EA617E7607F00ECA24B /* MLNExportOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = AEEE7EA517E7607F00ECA24B /* MLNExportOperation.m */; };
+		AEEE7EA917E7642F00ECA24B /* MLNOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = AEEE7EA817E7642F00ECA24B /* MLNOperation.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -91,6 +95,7 @@
 		AE31A9C716F146ED0051CF41 /* MLNSample+Operations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MLNSample+Operations.h"; sourceTree = "<group>"; };
 		AE31A9C816F146ED0051CF41 /* MLNSample+Operations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MLNSample+Operations.m"; sourceTree = "<group>"; };
 		AE31A9CA16F28D3E0051CF41 /* MLNSampleDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNSampleDelegate.h; sourceTree = "<group>"; };
+		AE4E854317E9E5C9001AECED /* MLNOperationDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNOperationDelegate.h; sourceTree = "<group>"; };
 		AE57CA49170F73250043E690 /* MLNSelectionButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNSelectionButton.h; sourceTree = "<group>"; };
 		AE57CA4A170F73250043E690 /* MLNSelectionButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNSelectionButton.m; sourceTree = "<group>"; };
 		AE57CA4C171040AE0043E690 /* MLNSelectionToolbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNSelectionToolbar.h; sourceTree = "<group>"; };
@@ -148,6 +153,14 @@
 		AEDA842A16C88B7F001B2DD1 /* MLNApplicationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNApplicationDelegate.m; sourceTree = "<group>"; };
 		AEDA843116C8D13E001B2DD1 /* MLNMMapRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNMMapRegion.h; sourceTree = "<group>"; };
 		AEDA843216C8D13E001B2DD1 /* MLNMMapRegion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNMMapRegion.m; sourceTree = "<group>"; };
+		AEEE7E9D17E71B8700ECA24B /* MLNExportPanelController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MLNExportPanelController.xib; sourceTree = "<group>"; };
+		AEEE7EA017E725FA00ECA24B /* MLNExportPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNExportPanelController.h; sourceTree = "<group>"; };
+		AEEE7EA117E725FA00ECA24B /* MLNExportPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNExportPanelController.m; sourceTree = "<group>"; };
+		AEEE7EA317E7573D00ECA24B /* MLNExportPanelControllerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNExportPanelControllerDelegate.h; sourceTree = "<group>"; };
+		AEEE7EA417E7607F00ECA24B /* MLNExportOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNExportOperation.h; sourceTree = "<group>"; };
+		AEEE7EA517E7607F00ECA24B /* MLNExportOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNExportOperation.m; sourceTree = "<group>"; };
+		AEEE7EA717E7642F00ECA24B /* MLNOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = MLNOperation.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; wrapsLines = 1; };
+		AEEE7EA817E7642F00ECA24B /* MLNOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = MLNOperation.m; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; wrapsLines = 1; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -238,6 +251,7 @@
 		AEC19AC617E0B69500226CD9 /* XIB */ = {
 			isa = PBXGroup;
 			children = (
+				AEEE7E9D17E71B8700ECA24B /* MLNExportPanelController.xib */,
 				AE24E45A17E1D14F00B67469 /* MLNProgressViewController.xib */,
 				AECDE7D616B7C0C300DE94D5 /* MLNDocument.xib */,
 				AECDE7D916B7C0C300DE94D5 /* MainMenu.xib */,
@@ -304,6 +318,9 @@
 				AE2E4436172333B8005463FB /* MLNCacheFile.m */,
 				AECDE7D316B7C0C300DE94D5 /* MLNDocument.h */,
 				AECDE7D416B7C0C300DE94D5 /* MLNDocument.m */,
+				AEEE7EA017E725FA00ECA24B /* MLNExportPanelController.h */,
+				AEEE7EA117E725FA00ECA24B /* MLNExportPanelController.m */,
+				AEEE7EA317E7573D00ECA24B /* MLNExportPanelControllerDelegate.h */,
 				AE24E45817E1D14F00B67469 /* MLNProgressViewController.h */,
 				AE24E45917E1D14F00B67469 /* MLNProgressViewController.m */,
 				AED56DD3170A5406005E2573 /* MLNOverviewBar.h */,
@@ -331,9 +348,14 @@
 				AE57CA4A170F73250043E690 /* MLNSelectionButton.m */,
 				AE57CA4C171040AE0043E690 /* MLNSelectionToolbar.h */,
 				AE57CA4D171040AE0043E690 /* MLNSelectionToolbar.m */,
+				AEEE7EA717E7642F00ECA24B /* MLNOperation.h */,
+				AEEE7EA817E7642F00ECA24B /* MLNOperation.m */,
+				AE4E854317E9E5C9001AECED /* MLNOperationDelegate.h */,
 				AECDE7E616B7D59C00DE94D5 /* MLNLoadOperation.h */,
 				AECDE7E716B7D59C00DE94D5 /* MLNLoadOperation.m */,
 				AE6FB1D416B8FC9200139735 /* MLNLoadOperationDelegate.h */,
+				AEEE7EA417E7607F00ECA24B /* MLNExportOperation.h */,
+				AEEE7EA517E7607F00ECA24B /* MLNExportOperation.m */,
 				AE6FB1D616B8FF6E00139735 /* Constants.h */,
 				AE6FB1D716B8FF6E00139735 /* Constants.m */,
 				AEC19AC617E0B69500226CD9 /* XIB */,
@@ -456,6 +478,7 @@
 				AEC19ACB17E141A700226CD9 /* Marlin.iconset in Resources */,
 				AE24E45C17E1D14F00B67469 /* MLNProgressViewController.xib in Resources */,
 				AE24E45F17E221C400B67469 /* auto-version.pl in Resources */,
+				AEEE7E9F17E71B8700ECA24B /* MLNExportPanelController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -532,6 +555,9 @@
 				AE2E4437172333B8005463FB /* MLNCacheFile.m in Sources */,
 				AE071B89172B542A0089278E /* MLNPasteboardSampleData.m in Sources */,
 				AE24E45B17E1D14F00B67469 /* MLNProgressViewController.m in Sources */,
+				AEEE7EA217E725FA00ECA24B /* MLNExportPanelController.m in Sources */,
+				AEEE7EA617E7607F00ECA24B /* MLNExportOperation.m in Sources */,
+				AEEE7EA917E7642F00ECA24B /* MLNOperation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

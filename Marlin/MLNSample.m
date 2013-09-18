@@ -12,6 +12,7 @@
 #import "MLNSampleChannel.h"
 #import "MLNSampleBlock.h"
 #import "MLNLoadOperation.h"
+#import "MLNExportOperation.h"
 
 #import "pa_ringbuffer.h"
 
@@ -107,20 +108,23 @@ typedef struct PlaybackData {
 
 - (void)startLoad
 {
-    _loadOperation = [[MLNLoadOperation alloc] initForSample:self];
+    _currentOperation = [[MLNLoadOperation alloc] initForSample:self];
     NSOperationQueue *defaultQueue = [MLNSample defaultOperationQueue];
- 
-    // FIXME: Progress notification should be a delegate method
-    /*
-    NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-    [nc addObserver:self
-           selector:@selector(progressUpdateNotification:)
-               name:kMLNProgressNotification
-             object:op];
-    */
     
-    [_loadOperation setDelegate:self];
-    [defaultQueue addOperation:_loadOperation];
+    [_currentOperation setDelegate:self];
+    [defaultQueue addOperation:_currentOperation];
+    
+    [_delegate sample:self operationDidStart:_currentOperation];
+}
+
+- (void)startExportTo:(NSURL *)url asFormat:(NSDictionary *)format
+{
+    _currentOperation = [[MLNExportOperation alloc] initWithSample:self URL:url format:format];
+    NSOperationQueue *defaultQueue = [MLNSample defaultOperationQueue];
+    
+    [_currentOperation setDelegate:self];
+    [defaultQueue addOperation:_currentOperation];
+    [_delegate sample:self operationDidStart:_currentOperation];
 }
 
 - (void)progressUpdateNotification:(NSNotification *)note
@@ -129,6 +133,12 @@ typedef struct PlaybackData {
     NSLog (@"Progress: %@", userInfo);
 }
 
+#pragma mark - MLNOperationDelegate functions
+
+- (void)operationDidFinish:(MLNOperation *)operation
+{
+    [_delegate sample:self operationDidEnd:operation];
+}
 #pragma mark - MLNLoadOperationDelegate functions
 
 - (void)sampleDidLoadData:(NSMutableArray *)channelData

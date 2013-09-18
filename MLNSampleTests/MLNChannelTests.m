@@ -386,4 +386,32 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     STAssertThrows([_channel insertChannel:channel2 atFrame:BUFFER_FRAME_SIZE + rand()], nil);
 }
+
+#define TEST_BUFFER_SIZE 1024
+
+- (void)testFillBuffer
+{
+    float *buffer;
+    size_t byteSize;
+    
+    _channel = [self createChannel];
+    
+    buffer = malloc(TEST_BUFFER_SIZE * sizeof(float));
+    
+    byteSize = [_channel fillBuffer:buffer withLength:TEST_BUFFER_SIZE * sizeof(float) fromFrame:0];
+    STAssertEquals(byteSize, TEST_BUFFER_SIZE * sizeof(float), @"");
+
+    for (int i = 0; i < (byteSize / sizeof(float)); i++) {
+        STAssertEquals(buffer[i], (float)i, @"");
+    }
+
+    NSUInteger startFrame = [_channel numberOfFrames] - 10;
+
+    byteSize = [_channel fillBuffer:buffer withLength:TEST_BUFFER_SIZE fromFrame:[_channel numberOfFrames] - 10];
+    STAssertEquals(byteSize / sizeof(float), (size_t)10, @"");
+
+    for (int i = 0; i < byteSize / sizeof(float); i++) {
+        STAssertEquals(buffer[i], (float)startFrame + i, @"");
+    }
+}
 @end

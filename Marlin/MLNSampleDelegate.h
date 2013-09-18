@@ -8,8 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
+@class MLNSample;
+@class MLNOperation;
+
 @protocol MLNSampleDelegate <NSObject>
 
+- (void)sample:(MLNSample *)sample operationDidStart:(MLNOperation *)operation;
+- (void)sample:(MLNSample *)sample operationDidEnd:(MLNOperation *)operation;
 - (void)sampleDataDidChangeInRange:(NSRange)range;
 
 @end
