@@ -28,6 +28,22 @@
     NSWindow *_currentSheet;
 }
 
++ (NSArray *)readableTypes
+{
+    UInt32 size;
+    NSArray *all;
+    OSStatus err;
+    
+    err = AudioFileGetGlobalInfoSize(kAudioFileGlobalInfo_AllUTIs, 0, NULL, &size);
+    if (err == noErr)
+        err = AudioFileGetGlobalInfo(kAudioFileGlobalInfo_AllUTIs, 0, NULL, &size, &all);
+    
+    if (err == noErr)
+        NSLog(@"UTIs: %@", all);
+    
+    return all;
+}
+
 - (id)init
 {
     self = [super init];
