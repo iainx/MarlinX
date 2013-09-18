@@ -162,6 +162,12 @@ static void *sampleViewContext = &sampleViewContext;
                                                             views:viewsDict];
     [[window contentView] addConstraints:constraints];
     
+    constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[progressView]-40-|"
+                                                          options:0
+                                                          metrics:nil
+                                                            views:viewsDict];
+    [[window contentView] addConstraints:constraints];
+    
     constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"|[scrollView]|"
                                                           options:0
                                                           metrics:nil
