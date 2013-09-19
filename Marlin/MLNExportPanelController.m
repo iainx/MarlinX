@@ -21,9 +21,11 @@ struct _exportableTypeDetails {
     char *blurb;
     UInt32 formatID;
     AudioFileTypeID typeID;
+    BOOL bigEndian;
 } etDetails[] = {
-    {"M4A", "Create a compressed M4A file with some loss of quality", kAudioFormatMPEG4AAC, kAudioFileM4AType},
-    {"WAV", "Create an uncompressed WAV file with no loss of quality", kAudioFormatLinearPCM, kAudioFileWAVEType},
+    {"M4A", "Create a compressed M4A file with some loss of quality", kAudioFormatMPEG4AAC, kAudioFileM4AType, NO},
+    {"WAV", "Create an uncompressed WAV file with no loss of quality", kAudioFormatLinearPCM, kAudioFileWAVEType, NO},
+    {"AIFF", "Create an uncompressed AIFF file with no loss of quality", kAudioFormatLinearPCM, kAudioFileAIFFType, YES},
     {NULL, NULL}
 };
 
@@ -37,6 +39,7 @@ struct _exportableTypeDetails {
         [type setInfo:[NSString stringWithUTF8String:etDetails[i].blurb]];
         [type setFormatID:etDetails[i].formatID];
         [type setTypeID:etDetails[i].typeID];
+        [type setBigEndian:etDetails[i].bigEndian];
         
         [(NSMutableArray *)_exportableTypes addObject:type];
     }

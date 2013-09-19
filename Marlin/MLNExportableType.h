@@ -15,6 +15,7 @@
 @property (readwrite) NSString *info;
 @property (readwrite) UInt32 formatID;
 @property (readwrite) AudioFileTypeID typeID;
+@property (readwrite, getter = isBigEndian) BOOL bigEndian;
 
 - (id)initWithName:(NSString *)name;
 @end

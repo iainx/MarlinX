@@ -57,6 +57,10 @@
         _outputFormat.mFramesPerPacket = 1;
         _outputFormat.mBytesPerFrame = _outputFormat.mBytesPerPacket;
         _outputFormat.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger | kLinearPCMFormatFlagIsPacked;
+        
+        if ([exportableType isBigEndian]) {
+            _outputFormat.mFormatFlags |= kLinearPCMFormatFlagIsBigEndian;
+        }
     } else {
         size = sizeof(_outputFormat);
         err = AudioFormatGetProperty(kAudioFormatProperty_FormatInfo, 0, NULL, &size, &_outputFormat);
