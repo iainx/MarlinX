@@ -7,12 +7,21 @@
 //
 
 #import "MLNExportPanelController.h"
+#import "MLNExportableType.h"
+#import "MLNExportableTypeView.h"
 
-@implementation MLNExportPanelController
+@implementation MLNExportPanelController {
+    NSUInteger _currentSelection;
+}
+
+static void *exportableTypesContext = &exportableTypesContext;
 
 - (id)init
 {
     self = [super initWithWindowNibName:@"MLNExportPanelController"];
+    
+    _exportableTypes = @[[[MLNExportableType alloc] initWithName:@"M4A"], [[MLNExportableType alloc] initWithName:@"WAV"]];
+    
     return self;
 }
 
@@ -20,7 +29,44 @@
 {
     [super windowDidLoad];
     
-    // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
+    [self setItemAtIndex:[_exportableTypesController selectionIndex] selected:YES];
+    [_exportableTypesController addObserver:self
+                                 forKeyPath:@"selectionIndexes"
+                                    options:NSKeyValueObservingOptionNew
+                                    context:exportableTypesContext];
+}
+
+- (void)setItemAtIndex:(NSUInteger)idx selected:(BOOL)selected
+{
+    NSCollectionViewItem *item;
+    MLNExportableTypeView *view;
+
+    item = [_collectionView itemAtIndex:idx];
+    view = (MLNExportableTypeView *)[item view];
+    
+    DDLogVerbose(@"%@ -> %@", item, view);
+    [view setSelected:selected];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary *)change
+                       context:(void *)context
+{
+    if (context != exportableTypesContext) {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+        return;
+    }
+    
+    if ([keyPath isEqualToString:@"selectionIndexes"]) {
+        DDLogVerbose(@"Selection changed to: %lu", [_exportableTypesController selectionIndex]);
+        
+        [self setItemAtIndex:_currentSelection selected:NO];
+        [self setItemAtIndex:[_exportableTypesController selectionIndex] selected:YES];
+        
+        _currentSelection = [_exportableTypesController selectionIndex];
+        return;
+    }
 }
 
 - (IBAction)cancelSheet:(id)sender
@@ -33,4 +79,6 @@
     NSDictionary *formatDetails = @{@"type": @"MP3"};
     [_delegate exportPanelController:self didSelectFormat:formatDetails];
 }
+
+
 @end

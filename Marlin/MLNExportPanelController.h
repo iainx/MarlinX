@@ -9,9 +9,13 @@
 #import <Cocoa/Cocoa.h>
 #import "MLNExportPanelControllerDelegate.h"
 
-@interface MLNExportPanelController : NSWindowController
+@interface MLNExportPanelController : NSWindowController <NSCollectionViewDelegate>
 
 @property (readwrite, weak) id<MLNExportPanelControllerDelegate> delegate;
+
+@property (readwrite, weak) IBOutlet NSCollectionView *collectionView;
+@property (readwrite, weak) IBOutlet NSArrayController *exportableTypesController;
+@property (readonly, strong) NSArray *exportableTypes;
 
 - (IBAction)cancelSheet:(id)sender;
 - (IBAction)selectFormat:(id)sender;
