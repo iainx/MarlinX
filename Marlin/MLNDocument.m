@@ -44,6 +44,11 @@
     return all;
 }
 
++ (NSArray *)writableTypes
+{
+    return @[@"com.microsoft.waveform-audio", @"public.mpeg-4-audio"];
+}
+
 - (id)init
 {
     self = [super init];
