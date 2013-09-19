@@ -16,11 +16,30 @@
 
 static void *exportableTypesContext = &exportableTypesContext;
 
+struct _exportableTypeDetails {
+    char *name;
+    char *blurb;
+    UInt32 formatID;
+    AudioFileTypeID typeID;
+} etDetails[] = {
+    {"M4A", "Create a compressed M4A file with some loss of quality", kAudioFormatMPEG4AAC, kAudioFileM4AType},
+    {"WAV", "Create an uncompressed WAV file with no loss of quality", kAudioFormatLinearPCM, kAudioFileWAVEType},
+    {NULL, NULL}
+};
+
 - (id)init
 {
     self = [super initWithWindowNibName:@"MLNExportPanelController"];
     
-    _exportableTypes = @[[[MLNExportableType alloc] initWithName:@"M4A"], [[MLNExportableType alloc] initWithName:@"WAV"]];
+    _exportableTypes = [NSMutableArray array];
+    for (int i = 0; etDetails[i].name; i++) {
+        MLNExportableType *type = [[MLNExportableType alloc] initWithName:[NSString stringWithUTF8String:etDetails[i].name]];
+        [type setInfo:[NSString stringWithUTF8String:etDetails[i].blurb]];
+        [type setFormatID:etDetails[i].formatID];
+        [type setTypeID:etDetails[i].typeID];
+        
+        [(NSMutableArray *)_exportableTypes addObject:type];
+    }
     
     return self;
 }
@@ -59,8 +78,6 @@ static void *exportableTypesContext = &exportableTypesContext;
     }
     
     if ([keyPath isEqualToString:@"selectionIndexes"]) {
-        DDLogVerbose(@"Selection changed to: %lu", [_exportableTypesController selectionIndex]);
-        
         [self setItemAtIndex:_currentSelection selected:NO];
         [self setItemAtIndex:[_exportableTypesController selectionIndex] selected:YES];
         
@@ -76,7 +93,7 @@ static void *exportableTypesContext = &exportableTypesContext;
 
 - (IBAction)selectFormat:(id)sender
 {
-    NSDictionary *formatDetails = @{@"type": @"MP3"};
+    NSDictionary *formatDetails = @{@"formatDetails": _exportableTypes[_currentSelection]};
     [_delegate exportPanelController:self didSelectFormat:formatDetails];
 }
 

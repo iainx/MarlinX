@@ -6,12 +6,15 @@
 //  Copyright (c) 2013 iain. All rights reserved.
 //
 
+#import <AudioToolbox/AudioToolbox.h>
 #import <Foundation/Foundation.h>
 
 @interface MLNExportableType : NSObject
 
 @property (readonly) NSString *name;
-@property (readonly) NSString *info;
+@property (readwrite) NSString *info;
+@property (readwrite) UInt32 formatID;
+@property (readwrite) AudioFileTypeID typeID;
 
 - (id)initWithName:(NSString *)name;
 @end

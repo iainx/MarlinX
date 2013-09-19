@@ -58,21 +58,21 @@
         <window title="Choose File Format" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="133">
             <windowStyleMask key="styleMask" titled="YES" documentModal="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="139" y="81" width="308" height="141"/>
+            <rect key="contentRect" x="139" y="81" width="457" height="160"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
             <view key="contentView" id="134">
-                <rect key="frame" x="0.0" y="0.0" width="308" height="141"/>
+                <rect key="frame" x="0.0" y="0.0" width="457" height="160"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <scrollView borderType="line" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" hasVerticalScroller="NO" usesPredominantAxisScrolling="NO" horizontalScrollElasticity="none" verticalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="3">
-                        <rect key="frame" x="20" y="51" width="268" height="70"/>
+                        <rect key="frame" x="20" y="72" width="417" height="68"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="DWw-A0-TrP">
-                            <rect key="frame" x="1" y="1" width="266" height="68"/>
+                            <rect key="frame" x="1" y="1" width="415" height="66"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <collectionView focusRingType="none" selectable="YES" maxNumberOfRows="1" id="4">
-                                    <rect key="frame" x="0.0" y="0.0" width="266" height="68"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="415" height="66"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <color key="primaryBackgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
                                     <connections>
@@ -94,7 +94,7 @@
                         </scroller>
                     </scrollView>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="20">
-                        <rect key="frame" x="224" y="13" width="70" height="32"/>
+                        <rect key="frame" x="373" y="13" width="70" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="Next" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="21">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -105,7 +105,7 @@
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="24">
-                        <rect key="frame" x="142" y="13" width="82" height="32"/>
+                        <rect key="frame" x="291" y="13" width="82" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="25">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -118,6 +118,18 @@ Gw
                             <action selector="cancelSheet:" target="-2" id="174"/>
                         </connections>
                     </button>
+                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Y2V-EK-vnB">
+                        <rect key="frame" x="20" y="45" width="420" height="17"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="This is the blurb" id="FeB-xr-7hb">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                        <connections>
+                            <binding destination="Omo-07-sUd" name="value" keyPath="selection.info" id="Pls-Sa-Pid"/>
+                        </connections>
+                    </textField>
                 </subviews>
                 <constraints>
                     <constraint firstItem="3" firstAttribute="top" secondItem="134" secondAttribute="top" constant="20" symbolic="YES" id="135"/>
@@ -126,8 +138,11 @@ Gw
                     <constraint firstAttribute="bottom" secondItem="24" secondAttribute="bottom" constant="20" symbolic="YES" id="139"/>
                     <constraint firstItem="20" firstAttribute="leading" secondItem="24" secondAttribute="trailing" constant="12" symbolic="YES" id="140"/>
                     <constraint firstAttribute="trailing" secondItem="20" secondAttribute="trailing" constant="20" symbolic="YES" id="145"/>
-                    <constraint firstItem="24" firstAttribute="top" secondItem="3" secondAttribute="bottom" constant="10" id="161"/>
                     <constraint firstAttribute="bottom" secondItem="20" secondAttribute="bottom" constant="20" symbolic="YES" id="168"/>
+                    <constraint firstItem="Y2V-EK-vnB" firstAttribute="top" secondItem="3" secondAttribute="bottom" constant="10" id="A3k-D4-ZTP"/>
+                    <constraint firstItem="24" firstAttribute="top" secondItem="Y2V-EK-vnB" secondAttribute="bottom" constant="4" id="URC-xP-1Uw"/>
+                    <constraint firstItem="Y2V-EK-vnB" firstAttribute="leading" secondItem="134" secondAttribute="leading" constant="23" id="XuT-MT-kUn"/>
+                    <constraint firstItem="Y2V-EK-vnB" firstAttribute="trailing" secondItem="20" secondAttribute="trailing" id="yid-G5-32R"/>
                 </constraints>
             </view>
         </window>

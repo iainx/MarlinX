@@ -28,4 +28,9 @@
     return self;
 }
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"MLNExportableType: %@", _name];
+}
+
 @end

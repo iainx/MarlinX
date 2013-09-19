@@ -9,6 +9,7 @@
 #include <AudioToolbox/AudioToolbox.h>
 
 #import "MLNExportOperation.h"
+#import "MLNExportableType.h"
 #import "MLNSample.h"
 #import "MLNSampleChannel.h"
 
@@ -45,9 +46,10 @@
     _url = url;
     _format = format;
     
+    MLNExportableType *exportableType = format[@"formatDetails"];
+    
     _outputFormat.mSampleRate = [sample sampleRate];
-    //_outputFormat.mFormatID = kAudioFormatLinearPCM;
-    _outputFormat.mFormatID = kAudioFormatMPEG4AAC;
+    _outputFormat.mFormatID = [exportableType formatID];
     _outputFormat.mChannelsPerFrame = (UInt32)[sample numberOfChannels];
     if (_outputFormat.mFormatID == kAudioFormatLinearPCM) {
         _outputFormat.mBitsPerChannel = 16;
@@ -65,14 +67,8 @@
     }
     
     CFURLRef urlRef = (__bridge CFURLRef)_url;
-    AudioFileTypeID filetype;
-    
-    if (_outputFormat.mFormatID == kAudioFormatLinearPCM) {
-        filetype = kAudioFileWAVEType;
-    } else {
-        filetype = kAudioFileM4AType;
-    }
-    err = ExtAudioFileCreateWithURL(urlRef, filetype, &(_outputFormat),
+
+    err = ExtAudioFileCreateWithURL(urlRef, [exportableType typeID], &(_outputFormat),
                                     NULL, kAudioFileFlags_EraseFile, &(_outputFile));
     if (check_status_is_error(err, "ExtAudioFileCreateWithURL")) {
         self = nil;
