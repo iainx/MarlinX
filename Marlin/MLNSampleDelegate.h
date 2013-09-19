@@ -15,6 +15,5 @@
 
 - (void)sample:(MLNSample *)sample operationDidStart:(MLNOperation *)operation;
 - (void)sample:(MLNSample *)sample operationDidEnd:(MLNOperation *)operation;
-- (void)sampleDataDidChangeInRange:(NSRange)range;
 
 @end
