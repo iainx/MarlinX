@@ -325,7 +325,7 @@ static void *sampleViewContext = &sampleViewContext;
     NSRange selection = [_sampleView selection];
     DDLogVerbose(@"Delete selected range: %@", NSStringFromRange(selection));
     
-    [_sample deleteRange:selection];
+    [_sample deleteRange:selection withError:nil];
     [_sampleView clearSelection];
 }
 
@@ -333,7 +333,7 @@ static void *sampleViewContext = &sampleViewContext;
 {
     NSRange selection = [_sampleView selection];
     
-    [_sample cropRange:selection];
+    [_sample cropRange:selection withError:nil];
     [_sampleView clearSelection];
 }
 
@@ -346,7 +346,7 @@ static void *sampleViewContext = &sampleViewContext;
 {
     NSRange selection = [_sampleView selection];
     
-    NSArray *copyChannels = [_sample copyRange:selection];
+    NSArray *copyChannels = [_sample copyRange:selection withError:nil];
     MLNApplicationDelegate *appDelegate = [NSApp delegate];
 
     MLNPasteboardSampleData *content = [[MLNPasteboardSampleData alloc] initWithContent:copyChannels
@@ -358,14 +358,14 @@ static void *sampleViewContext = &sampleViewContext;
 {
     NSRange selection = [_sampleView selection];
 
-    NSArray *copyChannels = [_sample copyRange:selection];
+    NSArray *copyChannels = [_sample copyRange:selection withError:nil];
     MLNApplicationDelegate *appDelegate = [NSApp delegate];
     
     MLNPasteboardSampleData *content = [[MLNPasteboardSampleData alloc] initWithContent:copyChannels
                                                                              sampleRate:[_sample sampleRate]];
     [appDelegate setClipboardContent:content];
 
-    [_sample deleteRange:selection];
+    [_sample deleteRange:selection withError:nil];
     [_sampleView clearSelection];
 }
 
@@ -375,7 +375,7 @@ static void *sampleViewContext = &sampleViewContext;
     MLNApplicationDelegate *appDelegate = [NSApp delegate];
     
     MLNPasteboardSampleData *content = [appDelegate clipboardContent];
-    [_sample insertChannels:[content channels] atFrame:[_sampleView cursorFramePosition]];
+    [_sample insertChannels:[content channels] atFrame:[_sampleView cursorFramePosition] withError:nil];
 }
 
 - (IBAction)selectAll:(id)sender

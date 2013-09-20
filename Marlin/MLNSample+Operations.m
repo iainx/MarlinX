@@ -24,11 +24,11 @@
     [nc postNotification:note];
 }
 
-- (void)deleteRange:(NSRange)range
+- (BOOL)deleteRange:(NSRange)range
+          withError:(NSError **)error
 {
     if (![self containsRange:range]) {
-        DDLogVerbose(@"Contains range failed");
-        return;
+        return NO;
     }
     
     for (MLNSampleChannel *channel in [self channelData]) {
@@ -38,9 +38,12 @@
     [self setNumberOfFrames:[self numberOfFrames] - range.length];
     
     [self postChangeInRangeNotification:range];
+    
+    return YES;
 }
 
 - (NSArray *)copyRange:(NSRange)range
+             withError:(NSError **)error
 {
     if (![self containsRange:range]) {
         return nil;
@@ -68,11 +71,12 @@
     }
 }
 
-- (void)insertChannels:(NSArray *)channels
+- (BOOL)insertChannels:(NSArray *)channels
                atFrame:(NSUInteger)frame
+             withError:(NSError **)error
 {
     if ([channels count] != [self numberOfChannels]) {
-        return;
+        return NO;
     }
     
     for (NSUInteger i = 0; i < [self numberOfChannels]; i++) {
@@ -86,27 +90,23 @@
     [self setNumberOfFrames:[aChannel numberOfFrames]];
     
     [self postChangeInRangeNotification:NSMakeRange(frame, [aChannel numberOfFrames] - frame)];
+    
+    return YES;
 }
 
-- (void)cropRange:(NSRange)range
+- (BOOL)cropRange:(NSRange)range
+        withError:(NSError **)error
 {
     if (![self containsRange:range]) {
-        return;
+        return NO;
     }
-    
-    NSRange testRange = NSMakeRange(0, 2);
-    DDLogVerbose(@"Range: %@, %lu", NSStringFromRange(testRange), NSMaxRange(testRange));
     
     NSRange startRange = NSMakeRange(0, range.location);
     NSRange endRange = NSMakeRange(NSMaxRange(range), [self numberOfFrames] - NSMaxRange(range));
     
-    DDLogVerbose(@"Deleting %@ and %@", NSStringFromRange(startRange), NSStringFromRange(endRange));
+    [self deleteRange:endRange withError:nil];
+    [self deleteRange:startRange withError:nil];
     
-    [self deleteRange:endRange];
-    
-    DDLogVerbose(@"After deleting %@ -> %lu frames left", NSStringFromRange(endRange), [self numberOfFrames]);
-    [self deleteRange:startRange];
-    
-    DDLogVerbose(@"After deleting %@ -> %lu frames left", NSStringFromRange(startRange), [self numberOfFrames]);
+    return YES;
 }
 @end

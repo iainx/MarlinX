@@ -10,13 +10,14 @@
 
 @interface MLNSample (Operations)
 
-- (void)deleteRange:(NSRange)range;
-- (NSArray *)copyRange:(NSRange)range;
+- (BOOL)deleteRange:(NSRange)range withError:(NSError **)error;
+- (NSArray *)copyRange:(NSRange)range withError:(NSError **)error;
 
 - (BOOL)canInsertChannels:(NSArray *)channels
                sampleRate:(NSUInteger)sampleRate;
-- (void)insertChannels:(NSArray *)channels
-               atFrame:(NSUInteger)frame;
-- (void)cropRange:(NSRange)range;
+- (BOOL)insertChannels:(NSArray *)channels
+               atFrame:(NSUInteger)frame
+             withError:(NSError **)error;
+- (BOOL)cropRange:(NSRange)range withError:(NSError **)error;
 
 @end
