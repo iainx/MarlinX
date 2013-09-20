@@ -26,6 +26,11 @@
 
 - (void)deleteRange:(NSRange)range
 {
+    if (![self containsRange:range]) {
+        DDLogVerbose(@"Contains range failed");
+        return;
+    }
+    
     for (MLNSampleChannel *channel in [self channelData]) {
         [channel deleteRange:range];
     }
@@ -37,6 +42,10 @@
 
 - (NSArray *)copyRange:(NSRange)range
 {
+    if (![self containsRange:range]) {
+        return nil;
+    }
+    
     NSMutableArray *channels = [NSMutableArray arrayWithCapacity:[self numberOfChannels]];
     
     for (MLNSampleChannel *channel in [self channelData]) {
@@ -77,5 +86,27 @@
     [self setNumberOfFrames:[aChannel numberOfFrames]];
     
     [self postChangeInRangeNotification:NSMakeRange(frame, [aChannel numberOfFrames] - frame)];
+}
+
+- (void)cropRange:(NSRange)range
+{
+    if (![self containsRange:range]) {
+        return;
+    }
+    
+    NSRange testRange = NSMakeRange(0, 2);
+    DDLogVerbose(@"Range: %@, %lu", NSStringFromRange(testRange), NSMaxRange(testRange));
+    
+    NSRange startRange = NSMakeRange(0, range.location);
+    NSRange endRange = NSMakeRange(NSMaxRange(range), [self numberOfFrames] - NSMaxRange(range));
+    
+    DDLogVerbose(@"Deleting %@ and %@", NSStringFromRange(startRange), NSStringFromRange(endRange));
+    
+    [self deleteRange:endRange];
+    
+    DDLogVerbose(@"After deleting %@ -> %lu frames left", NSStringFromRange(endRange), [self numberOfFrames]);
+    [self deleteRange:startRange];
+    
+    DDLogVerbose(@"After deleting %@ -> %lu frames left", NSStringFromRange(startRange), [self numberOfFrames]);
 }
 @end

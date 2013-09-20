@@ -421,6 +421,15 @@ MyAQOutputCallback (void *userData,
     [self disposePlayer];
 }
 
+- (BOOL)containsRange:(NSRange)range
+{
+    if (range.location >= _numberOfFrames || NSMaxRange(range) - 1 >= _numberOfFrames) {
+        return NO;
+    }
+    
+    return YES;
+}
+
 #pragma mark - Utility functions
 
 static void

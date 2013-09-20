@@ -329,6 +329,14 @@ static void *sampleViewContext = &sampleViewContext;
     [_sampleView clearSelection];
 }
 
+- (IBAction)crop:(id)sender
+{
+    NSRange selection = [_sampleView selection];
+    
+    [_sample cropRange:selection];
+    [_sampleView clearSelection];
+}
+
 - (IBAction)showInformation:(id)sender
 {
     
@@ -406,6 +414,7 @@ static void *sampleViewContext = &sampleViewContext;
 {
     SEL action = [menuItem action];
     if (action == @selector(delete:)
+        || action == @selector(crop:)
         || action == @selector(copy:)
         || action == @selector(cut:)) {
         return [_sampleView hasSelection];

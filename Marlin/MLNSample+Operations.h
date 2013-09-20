@@ -17,5 +17,6 @@
                sampleRate:(NSUInteger)sampleRate;
 - (void)insertChannels:(NSArray *)channels
                atFrame:(NSUInteger)frame;
+- (void)cropRange:(NSRange)range;
 
 @end

@@ -32,6 +32,9 @@
 
 - (IBAction)playSample:(id)sender;
 - (IBAction)stopSample:(id)sender;
+
+- (IBAction)crop:(id)sender;
+
 - (IBAction)showInformation:(id)sender;
 
 @end

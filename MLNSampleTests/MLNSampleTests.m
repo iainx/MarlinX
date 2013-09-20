@@ -21,6 +21,8 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
 
 - (void)setUp
 {
+    srand((unsigned int)time(NULL));
+    
     [super setUp];
     
     NSMutableArray *channels = [NSMutableArray array];
@@ -87,5 +89,18 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
 - (void)testInsertInvalid
 {
     
+}
+
+- (void)testCropRange
+{
+    NSUInteger start = rand() % [_testSample numberOfFrames];
+    NSUInteger length = rand() % ([_testSample numberOfFrames] - start);
+    
+    NSRange range = NSMakeRange(start, length);
+    
+    [_testSample cropRange:NSMakeRange(start, length)];
+    
+    // Crop is just 2 channel deletes, so if the channel tests passed then we just need to check the number of frames
+    STAssertEquals([_testSample numberOfFrames], length, @"Range is %@", NSStringFromRange(range));
 }
 @end

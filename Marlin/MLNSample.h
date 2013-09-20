@@ -38,4 +38,6 @@ enum {
 - (void)play;
 - (void)stop;
 
+- (BOOL)containsRange:(NSRange)range;
+
 @end
