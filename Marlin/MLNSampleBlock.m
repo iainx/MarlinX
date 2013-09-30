@@ -371,6 +371,21 @@ MLNSampleBlockRemoveBlocksFromList (MLNSampleBlock *startBlock,
     endBlock->nextBlock = NULL;
 }
 
+NSUInteger
+MLNSampleBlockListNumberOfFrames (MLNSampleBlock *startBlock)
+{
+    NSUInteger count = startBlock->numberOfFrames;
+    MLNSampleBlock *block;
+    
+    block = startBlock->nextBlock;
+    while (block) {
+        count += block->numberOfFrames;
+        block = block->nextBlock;
+    }
+    
+    return count;
+}
+
 #pragma mark - Debugging
 void
 MLNSampleBlockDumpBlock (MLNSampleBlock *block)

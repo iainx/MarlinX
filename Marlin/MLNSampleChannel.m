@@ -357,7 +357,7 @@
     return channelCopy;
 }
 
-- (void)deleteRange:(NSRange)range
+- (MLNSampleBlock *)deleteRange:(NSRange)range
 {
     NSUInteger lastFrame = NSMaxRange(range) - 1;
     MLNSampleBlock *firstBlock, *lastBlock;
@@ -368,7 +368,7 @@
     firstBlock = [self sampleBlockForFrame:range.location];
     if (firstBlock == NULL) {
         [NSException raise:@"MLNSampleChannel" format:@"deleteRange has no first block"];
-        return;
+        return NULL;
     }
     
     DDLogVerbose(@"   firstBlock: %p", firstBlock);
@@ -383,7 +383,7 @@
     lastBlock = [self sampleBlockForFrame:lastFrame];
     if (lastBlock == nil) {
         [NSException raise:@"MLNSampleChannel" format:@"deleteRange last frame out of range: %@", NSStringFromRange(range)];
-        return;
+        return NULL;
     }
     
     DDLogVerbose(@"   lastBlock: %p", lastBlock);
@@ -403,17 +403,19 @@
     }
     DDLogVerbose(@"Need to remove blocks from %p -> %p", firstBlock, lastBlock);
     MLNSampleBlockRemoveBlocksFromList(firstBlock, lastBlock);
-
+    
     [self updateBlockCount];
     
     [self dumpChannel:YES];
+    
+    return firstBlock;
 }
 
-- (BOOL)insertChannel:(MLNSampleChannel *)channel
-              atFrame:(NSUInteger)frame
+- (void)insertBlockList:(MLNSampleBlock *)blockList
+                atFrame:(NSUInteger)frame
 {
-    MLNSampleBlock *insertBlock, *followBlock, *lastBlock;
-    MLNSampleBlock *copyBlockList;
+    MLNSampleBlock *insertBlock, *followBlock;
+    MLNSampleBlock *lastBlock = MLNSampleBlockListLastBlock(blockList);
     
     if (frame != 0) {
         insertBlock = [self sampleBlockForFrame:frame - 1];
@@ -423,7 +425,7 @@
     
     if (insertBlock == NULL) {
         [NSException raise:@"MLNSampleChannel" format:@"insertChannel:atFrame: has no insertBlock"];
-        return NO;
+        return;
     }
     
     if (insertBlock->startFrame == frame) {
@@ -433,26 +435,32 @@
         followBlock = MLNSampleBlockSplitBlockAtFrame(insertBlock, frame);
     }
     
-    copyBlockList = MLNSampleBlockListCopy([channel firstBlock]);
-    lastBlock = MLNSampleBlockListLastBlock(copyBlockList);
-    
     if (insertBlock && followBlock) {
-        MLNSampleBlockAppendBlock(insertBlock, copyBlockList);
+        MLNSampleBlockAppendBlock(insertBlock, blockList);
         //MLNSampleBlockAppendBlock(lastBlock, followBlock);
     } else if (insertBlock == NULL && followBlock) {
         MLNSampleBlockAppendBlock(lastBlock, followBlock);
         
-        _firstBlock = copyBlockList;
+        _firstBlock = blockList;
     } else if (insertBlock && followBlock == NULL) {
-        MLNSampleBlockAppendBlock(insertBlock, copyBlockList);
+        MLNSampleBlockAppendBlock(insertBlock, blockList);
         _lastBlock = lastBlock;
     } else {
-        _firstBlock = copyBlockList;
+        _firstBlock = blockList;
         _lastBlock = lastBlock;
     }
     
     [self updateBlockCount];
+}
+
+- (BOOL)insertChannel:(MLNSampleChannel *)channel
+              atFrame:(NSUInteger)frame
+{
+
+    MLNSampleBlock *copyBlockList;
     
+    copyBlockList = MLNSampleBlockListCopy([channel firstBlock]);
+    [self insertBlockList:copyBlockList atFrame:frame];
     return YES;
 }
 

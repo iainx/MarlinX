@@ -25,21 +25,53 @@
 }
 
 - (BOOL)deleteRange:(NSRange)range
-          withError:(NSError **)error
+        undoManager:(NSUndoManager *)undoManager
 {
     if (![self containsRange:range]) {
         return NO;
     }
     
+    NSMutableArray *deletedBlocks = [NSMutableArray arrayWithCapacity:[self numberOfChannels]];
+    
     for (MLNSampleChannel *channel in [self channelData]) {
-        [channel deleteRange:range];
+        MLNSampleBlock *blockList = [channel deleteRange:range];
+        [deletedBlocks addObject:[NSValue valueWithPointer:blockList]];
     }
     
     [self setNumberOfFrames:[self numberOfFrames] - range.length];
     
     [self postChangeInRangeNotification:range];
     
+    [[undoManager prepareWithInvocationTarget:self] insertBlocks:deletedBlocks
+                                                         atFrame:range.location
+                                                 withUndoManager:undoManager];
+    
     return YES;
+}
+
+- (void)insertBlocks:(NSArray *)blockArray
+             atFrame:(NSUInteger)frame
+     withUndoManager:(NSUndoManager *)undoManager
+{
+    NSUInteger channelNumber = 0;
+    
+    NSValue *value = blockArray[0];
+    NSUInteger extraFrames = MLNSampleBlockListNumberOfFrames([value pointerValue]);
+
+    for (MLNSampleChannel *channel in [self channelData]) {
+        NSValue *blockListValue = blockArray[channelNumber];
+        MLNSampleBlock *blockList = [blockListValue pointerValue];
+        [channel insertBlockList:blockList atFrame:frame];
+        channelNumber++;
+    }
+    
+    [self setNumberOfFrames:[self numberOfFrames] + extraFrames];
+    
+    NSRange changedRange = NSMakeRange(frame, extraFrames);
+    [self postChangeInRangeNotification:changedRange];
+    
+    [[undoManager prepareWithInvocationTarget:self] deleteRange:changedRange
+                                                    undoManager:undoManager];
 }
 
 - (NSArray *)copyRange:(NSRange)range
@@ -73,29 +105,25 @@
 
 - (BOOL)insertChannels:(NSArray *)channels
                atFrame:(NSUInteger)frame
-             withError:(NSError **)error
+             withUndoManager:(NSUndoManager *)undoManager
 {
     if ([channels count] != [self numberOfChannels]) {
         return NO;
     }
     
+    NSMutableArray *channelBlocks = [[NSMutableArray alloc] init];
     for (NSUInteger i = 0; i < [self numberOfChannels]; i++) {
-        MLNSampleChannel *destChannel = [self channelData][i];
         MLNSampleChannel *srcChannel = channels[i];
         
-        [destChannel insertChannel:srcChannel atFrame:frame];
+        channelBlocks[i] = [NSValue valueWithPointer:[srcChannel firstBlock]];
     }
-    
-    MLNSampleChannel *aChannel = [self channelData][0];
-    [self setNumberOfFrames:[aChannel numberOfFrames]];
-    
-    [self postChangeInRangeNotification:NSMakeRange(frame, [aChannel numberOfFrames] - frame)];
-    
+
+    [self insertBlocks:channelBlocks atFrame:frame withUndoManager:undoManager];
     return YES;
 }
 
 - (BOOL)cropRange:(NSRange)range
-        withError:(NSError **)error
+  withUndoManager:(NSUndoManager *)undoManager
 {
     if (![self containsRange:range]) {
         return NO;
@@ -104,8 +132,10 @@
     NSRange startRange = NSMakeRange(0, range.location);
     NSRange endRange = NSMakeRange(NSMaxRange(range), [self numberOfFrames] - NSMaxRange(range));
     
-    [self deleteRange:endRange withError:nil];
-    [self deleteRange:startRange withError:nil];
+    [undoManager beginUndoGrouping];
+    [self deleteRange:endRange undoManager:undoManager];
+    [self deleteRange:startRange undoManager:undoManager];
+    [undoManager endUndoGrouping];
     
     return YES;
 }

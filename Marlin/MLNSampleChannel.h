@@ -36,10 +36,12 @@
 - (void)addBlock:(MLNSampleBlock *)block;
 - (void)removeBlock:(MLNSampleBlock *)block;
 
-- (void)deleteRange:(NSRange)range;
+- (MLNSampleBlock *)deleteRange:(NSRange)range;
+
 - (BOOL)insertChannel:(MLNSampleChannel *)channel
               atFrame:(NSUInteger)frame;
-
+- (void)insertBlockList:(MLNSampleBlock *)blockList
+                atFrame:(NSUInteger)frame;
 
 - (void)dumpChannel:(BOOL)withBlocks;
 @end

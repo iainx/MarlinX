@@ -325,7 +325,11 @@ static void *sampleViewContext = &sampleViewContext;
     NSRange selection = [_sampleView selection];
     DDLogVerbose(@"Delete selected range: %@", NSStringFromRange(selection));
     
-    [_sample deleteRange:selection withError:nil];
+    NSUndoManager *undoManager = [self undoManager];
+    [undoManager setActionName:@"Delete Range"];
+    
+    [_sample deleteRange:selection undoManager:undoManager];
+    
     [_sampleView clearSelection];
 }
 
@@ -333,7 +337,10 @@ static void *sampleViewContext = &sampleViewContext;
 {
     NSRange selection = [_sampleView selection];
     
-    [_sample cropRange:selection withError:nil];
+    NSUndoManager *undoManager = [self undoManager];
+    [undoManager setActionName:@"Crop Range"];
+    
+    [_sample cropRange:selection withUndoManager:undoManager];
     [_sampleView clearSelection];
 }
 
@@ -365,7 +372,10 @@ static void *sampleViewContext = &sampleViewContext;
                                                                              sampleRate:[_sample sampleRate]];
     [appDelegate setClipboardContent:content];
 
-    [_sample deleteRange:selection withError:nil];
+    NSUndoManager *undoManager = [self undoManager];
+    
+    [undoManager setActionName:@"Cut"];
+    [_sample deleteRange:selection undoManager:undoManager];
     [_sampleView clearSelection];
 }
 
@@ -375,7 +385,11 @@ static void *sampleViewContext = &sampleViewContext;
     MLNApplicationDelegate *appDelegate = [NSApp delegate];
     
     MLNPasteboardSampleData *content = [appDelegate clipboardContent];
-    [_sample insertChannels:[content channels] atFrame:[_sampleView cursorFramePosition] withError:nil];
+    
+    NSUndoManager *undoManager = [self undoManager];
+    [undoManager setActionName:@"Paste"];
+    
+    [_sample insertChannels:[content channels] atFrame:[_sampleView cursorFramePosition] withUndoManager:undoManager];
 }
 
 - (IBAction)selectAll:(id)sender

@@ -15,20 +15,15 @@
 
 @implementation MLNSampleTests {
     MLNSample *_testSample;
+    MLNSample *_testStereoSample;
 }
 
 static const NSUInteger BUFFER_FRAME_SIZE = 44100;
 
-- (void)setUp
+- (MLNSampleChannel *)makeChannelWithName:(NSString *)name
 {
-    srand((unsigned int)time(NULL));
-    
-    [super setUp];
-    
-    NSMutableArray *channels = [NSMutableArray array];
-    
     MLNSampleChannel *channel = [[MLNSampleChannel alloc] init];
-    [channel setChannelName:@"Test channel"];
+    [channel setChannelName:name];
     
     float *buffer = malloc(BUFFER_FRAME_SIZE * sizeof(float));
     
@@ -39,15 +34,33 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     [channel addData:buffer withLength:BUFFER_FRAME_SIZE * sizeof(float)];
     
-    [channels addObject:channel];
+    return channel;
+}
+
+- (void)setUp
+{
+    srand((unsigned int)time(NULL));
+    
+    [super setUp];
+    
+    NSMutableArray *channels = [NSMutableArray array];
+    
+    [channels addObject:[self makeChannelWithName:@"Test Channel - Mono"]];
     
     _testSample = [[MLNSample alloc] initWithChannels:channels];
+    
+    
+    channels = [NSMutableArray arrayWithCapacity:2];
+    [channels addObject:[self makeChannelWithName:@"Test Channel - Left"]];
+    [channels addObject:[self makeChannelWithName:@"Test Channel - Right"]];
+    
+    _testStereoSample = [[MLNSample alloc] initWithChannels:channels];
 }
 
 - (void)tearDown
 {
     _testSample = nil;
-    
+    _testStereoSample = nil;
     [super tearDown];
 }
 
@@ -80,10 +93,41 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
 
 - (void)testDeleteRange
 {
-    [_testSample deleteRange:NSMakeRange(100, 100)];
+    [_testSample deleteRange:NSMakeRange(100, 100) undoManager:nil];
     
     // If the Channel tests have passed then the only thing this needs to test is that the sample has the correct number of frames
     STAssertEquals([_testSample numberOfFrames], (NSUInteger)44000, @"[_testSample numberOfFrames != 44000: %lu", [_testSample numberOfFrames]);
+}
+
+- (void)testDeleteRangeUndo
+{
+    NSUndoManager *undo = [[NSUndoManager alloc] init];
+    
+    [_testSample deleteRange:NSMakeRange(100, 100) undoManager:undo];
+    
+    STAssertTrue([undo canUndo], @"");
+    
+    [undo undo];
+    
+    STAssertFalse([undo canUndo], @"");
+    
+    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+    
+    MLNSampleChannel *channel = [_testSample channelData][0];
+    MLNSampleBlock *block = [channel firstBlock];
+    
+    NSUInteger j = 0;
+    
+    while (block) {
+        const float *data = MLNSampleBlockSampleData(block);
+        for (int i = 0; i < block->numberOfFrames; i++, j++) {
+            float d = data[i];
+    
+            STAssertEquals(d, (float)j, @"Frame %d is %f: Expected %f", i, d, (float)i);
+        }
+        
+        block = block->nextBlock;
+    }
 }
 
 - (void)testInsertInvalid
@@ -98,7 +142,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     NSRange range = NSMakeRange(start, length);
     
-    [_testSample cropRange:NSMakeRange(start, length)];
+    [_testSample cropRange:NSMakeRange(start, length) withError:nil];
     
     // Crop is just 2 channel deletes, so if the channel tests passed then we just need to check the number of frames
     STAssertEquals([_testSample numberOfFrames], length, @"Range is %@", NSStringFromRange(range));
