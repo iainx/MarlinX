@@ -995,7 +995,7 @@ subtractSelectionRects (NSRect a, NSRect b)
     
     // Overload NSPoint here to convert a frame to the backing store pixel format
     NSPoint selectionWidth = [self convertFrameToPoint:selectionFrameWidth];
-    NSRect selectionRect = NSMakeRect(startPoint.x, 0, selectionWidth.x, [self bounds].size.height);
+    NSRect selectionRect = NSMakeRect(startPoint.x, 0, selectionWidth.x, [self bounds].size.height - GUTTER_SIZE);
     
     return selectionRect;
 }
@@ -1157,11 +1157,12 @@ subtractSelectionRects (NSRect a, NSRect b)
         [self addSubview:_selectionToolbar];
         
         NSDictionary *viewsDict = @{@"toolbar": _selectionToolbar};
+        NSDictionary *verticalMetrics = @{@"offset": @(GUTTER_SIZE + 10.0)};
         
         // Setup the constraint that pins the toolbar to the top of the view
-        NSArray *constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-10-[toolbar]"
+        NSArray *constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-offset-[toolbar]"
                                                                        options:0
-                                                                       metrics:nil
+                                                                       metrics:verticalMetrics
                                                                          views:viewsDict];
         _toolbarConstraints = [NSMutableArray arrayWithArray:constraints];
         [self addConstraints:_toolbarConstraints];
