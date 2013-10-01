@@ -713,7 +713,7 @@ static void *sampleContext = &sampleContext;
          */
         possibleStartFrame = [self convertPointToFrame:startPoint];
     }
-     
+    
     // Grab the mouse and handle everything in a modal event loop
     NSUInteger eventMask = NSLeftMouseDraggedMask | NSLeftMouseUpMask | NSPeriodicMask;
     NSEvent *nextEvent;
@@ -739,8 +739,7 @@ static void *sampleContext = &sampleContext;
                     _selectionDirection = 1;
                 }
                 
-                dragged = YES;
-                
+                DDLogVerbose(@"%@ -> %@", NSStringFromPoint(zoomLoc), NSStringFromPoint(zoomPoint));
                 mouseLoc = [self convertPoint:[nextEvent locationInWindow] fromView:nil];
                 if (![self mouse:mouseLoc inRect:visibleRect]) {
                     if (timerOn == NO) {
@@ -754,8 +753,29 @@ static void *sampleContext = &sampleContext;
                     timerOn = NO;
                     _dragEvent = nil;
                 }
+            
+                if (mouseLoc.x != startPoint.x) {
+                    dragged = YES;
+                    
+                    [self resizeSelection:nextEvent];
+                }
                 
-                [self resizeSelection:nextEvent];
+                /* I'm not happy with how this works out, but I still think it's a good idea.
+                 * Idea is that as you select, vertical movement changes zoom so you can refine the
+                 * selection easier, or to quickly select a larger area than the working zoom would allow */
+                /*
+                zoomLoc = [nextEvent locationInWindow];
+                if (zoomLoc.y != zoomPoint.y) {
+                    CGFloat dZoom = (zoomLoc.y - zoomPoint.y) / 1000.0;
+                    CGFloat offset = zoomLoc.x - [self visibleRect].origin.x;
+
+                    DDLogVerbose(@"dZoom: %f", dZoom);
+                    //[self setFramesPerPixel:[self calculateFramesPerPixelForMagnification:dZoom]];
+                    [self magnify:dZoom atFrame:mouseLoc.x * _framesPerPixel offset:offset];
+                    
+                    zoomPoint = zoomLoc;
+                }
+                 */
                 break;
                 
             case NSLeftMouseUp:
@@ -779,8 +799,10 @@ static void *sampleContext = &sampleContext;
                     [self removeSelectionToolbar];
                     
                     selectionRect.size.width += 0.5;
+                    
                     [self setNeedsDisplayInRect:[self selectionRectToDirtyRect:selectionRect]];
                 }
+
                 return;
                 
             default:
@@ -818,16 +840,12 @@ static void *sampleContext = &sampleContext;
     }
 }
 
-- (void)magnifyWithEvent:(NSEvent *)event
+- (NSUInteger)calculateFramesPerPixelForMagnification:(CGFloat)magnification
 {
-    NSPoint locationInView = [self convertPoint:[event locationInWindow] fromView:nil];
-    NSInteger zoomFrame = locationInView.x * _framesPerPixel;
-    CGFloat dx = locationInView.x - [self visibleRect].origin.x;
     NSUInteger fpp;
-    
-    CGFloat dfpp = (_framesPerPixel * [event magnification]);
+    CGFloat dfpp = (_framesPerPixel * magnification);
     if (ABS(dfpp) < 1) {
-        if ([event magnification] < 0) {
+        if (magnification < 0) {
             dfpp = -1;
         } else {
             dfpp = 1;
@@ -843,10 +861,30 @@ static void *sampleContext = &sampleContext;
         fpp = 65536;
     }
     
+    return fpp;
+}
+
+- (void)magnify:(CGFloat)magnification
+        atFrame:(NSInteger)atFrame
+         offset:(CGFloat)offset
+{
+    NSUInteger fpp;
+    
+    fpp = [self calculateFramesPerPixelForMagnification:magnification];
+    
     [self setFramesPerPixel:fpp];
     
-    NSInteger newPosition = (zoomFrame / fpp) - dx;
+    NSInteger newPosition = (atFrame / fpp) - offset;
     [self scrollPoint:CGPointMake(newPosition, 0)];
+}
+
+- (void)magnifyWithEvent:(NSEvent *)event
+{
+    NSPoint locationInView = [self convertPoint:[event locationInWindow] fromView:nil];
+    NSInteger zoomFrame = locationInView.x * _framesPerPixel;
+    CGFloat dx = locationInView.x - [self visibleRect].origin.x;
+    
+    [self magnify:[event magnification] atFrame:zoomFrame offset:dx];
 }
 
 #pragma mark - Zoom handling
@@ -1098,6 +1136,7 @@ subtractSelectionRects (NSRect a, NSRect b)
 #define X_DISTANCE_FROM_INNER_FRAME 5.0
 - (void)updateSelectionToolbarInSelectionRect:(NSRect)newSelectionRect
 {
+    DDLogVerbose(@"Updating selection to: %@", NSStringFromRect(newSelectionRect));
     if (_selectionToolbar == nil) {
         if (![_delegate respondsToSelector:@selector(sampleViewWillShowSelectionToolbar)]) {
             return;
