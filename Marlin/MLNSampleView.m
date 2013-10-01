@@ -781,6 +781,15 @@ static void *sampleContext = &sampleContext;
                 [NSEvent stopPeriodicEvents];
                 _dragEvent = nil;
                 
+                mouseLoc = [self convertPoint:[nextEvent locationInWindow] fromView:nil];
+                if (mouseLoc.x < startPoint.x) {
+                    _inStart = YES;
+                    _inEnd = NO;
+                } else if (mouseLoc.x > startPoint.x) {
+                    _inEnd = YES;
+                    _inStart = NO;
+                }
+                
                 if (dragged == NO) {
                     _selectionStartFrame = 0;
                     _selectionEndFrame = 0;
