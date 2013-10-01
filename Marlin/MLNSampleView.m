@@ -703,6 +703,8 @@ static void *sampleContext = &sampleContext;
     // Possible selection start
     NSPoint mouseLoc = [self convertPoint:[event locationInWindow] fromView:nil];
     NSPoint startPoint = mouseLoc;
+    NSPoint lastPoint = mouseLoc;
+    BOOL insideSelection = NO;
     
     if (!_inStart && !_inEnd) {
         /*
@@ -712,6 +714,7 @@ static void *sampleContext = &sampleContext;
         DDLogVerbose(@"Maybe start drag: %lu", _selectionStartFrame);
          */
         possibleStartFrame = [self convertPointToFrame:startPoint];
+        insideSelection = _hasSelection ? (possibleStartFrame >= _selectionStartFrame && possibleStartFrame <= _selectionEndFrame) : NO;
     }
     
     // Grab the mouse and handle everything in a modal event loop
@@ -725,12 +728,23 @@ static void *sampleContext = &sampleContext;
         
         switch ([nextEvent type]) {
             case NSPeriodic:
-                [self resizeSelection:_dragEvent];
+                if (insideSelection == NO) {
+                    [self resizeSelection:_dragEvent];
+                } else {
+                    NSPoint newMouseLoc = [self convertPoint:[_dragEvent locationInWindow] fromView:nil];
+                    CGFloat dx = newMouseLoc.x - lastPoint.x;
+                    NSPoint scaledDX;
+                    
+                    scaledDX = [self convertPointToBacking:NSMakePoint(dx, 0)];
+                    [self moveSelectionByOffset:scaledDX.x];
+                    
+                    lastPoint = newMouseLoc;
+                }
                 [self autoscroll:_dragEvent];
                 break;
                 
             case NSLeftMouseDragged:
-                if (dragged == NO && !_inStart && !_inEnd) {
+                if (dragged == NO && !_inStart && !_inEnd && !insideSelection) {
                     if (_hasSelection) {
                         [self clearSelection];
                     }
@@ -738,7 +752,7 @@ static void *sampleContext = &sampleContext;
                     _selectionEndFrame = possibleStartFrame;
                     _selectionDirection = 1;
                 }
-                
+
                 mouseLoc = [self convertPoint:[nextEvent locationInWindow] fromView:nil];
                 if (![self mouse:mouseLoc inRect:visibleRect]) {
                     if (timerOn == NO) {
@@ -755,8 +769,17 @@ static void *sampleContext = &sampleContext;
             
                 if (mouseLoc.x != startPoint.x) {
                     dragged = YES;
-                    
-                    [self resizeSelection:nextEvent];
+                    if (insideSelection == NO) {
+                        [self resizeSelection:nextEvent];
+                    } else {
+                        CGFloat dx = mouseLoc.x - lastPoint.x;
+                        NSPoint scaledDX;
+                        
+                        scaledDX = [self convertPointToBacking:NSMakePoint(dx, 0)];
+                        [self moveSelectionByOffset:scaledDX.x];
+                        
+                        lastPoint = mouseLoc;
+                    }
                 }
                 
                 /* I'm not happy with how this works out, but I still think it's a good idea.
@@ -782,12 +805,16 @@ static void *sampleContext = &sampleContext;
                 _dragEvent = nil;
                 
                 mouseLoc = [self convertPoint:[nextEvent locationInWindow] fromView:nil];
-                if (mouseLoc.x < startPoint.x) {
-                    _inStart = YES;
-                    _inEnd = NO;
-                } else if (mouseLoc.x > startPoint.x) {
-                    _inEnd = YES;
-                    _inStart = NO;
+                if (!insideSelection) {
+                    // If we weren't inside a selection, then we were in one of the tracking areas.
+                    // Work out which one.
+                    if (mouseLoc.x < startPoint.x) {
+                        _inStart = YES;
+                        _inEnd = NO;
+                    } else if (mouseLoc.x > startPoint.x) {
+                        _inEnd = YES;
+                        _inStart = NO;
+                    }
                 }
                 
                 if (dragged == NO) {
@@ -961,7 +988,7 @@ static void *sampleContext = &sampleContext;
     
     NSRect newSelectionRect = [self selectionToRect];
     
-    DDLogWarn(@"Selection: %lu, %lu (%@)", _selectionStartFrame, _selectionEndFrame, NSStringFromRect(newSelectionRect));
+    //DDLogWarn(@"Selection: %lu, %lu (%@)", _selectionStartFrame, _selectionEndFrame, NSStringFromRect(newSelectionRect));
     [self updateSelection:newSelectionRect oldSelectionRect:oldSelectionRect];
 }
 
@@ -1060,6 +1087,29 @@ subtractSelectionRects (NSRect a, NSRect b)
     [self setNeedsDisplayInRect:[self selectionRectToDirtyRect:newSelectionRect]];
 }
 
+- (void)moveSelectionByOffset:(CGFloat)offset
+{
+    NSUInteger offsetFrames = offset * _framesPerPixel;
+    NSRect oldSelectionRect = [self selectionToRect];
+    NSUInteger frameCount = _selectionEndFrame - _selectionStartFrame;
+    
+    _selectionStartFrame += offsetFrames;
+    _selectionEndFrame += offsetFrames;
+    
+    if (((NSInteger)_selectionStartFrame) < 0) {
+        _selectionStartFrame = 0;
+        _selectionEndFrame = frameCount;
+    } else if (_selectionEndFrame >= [_sample numberOfFrames]) {
+        _selectionEndFrame = [_sample numberOfFrames] - 1;
+        _selectionStartFrame = _selectionEndFrame - frameCount;
+    }
+    
+    NSRect newSelectionRect = [self selectionToRect];
+    
+    [self updateSelection:newSelectionRect
+         oldSelectionRect:oldSelectionRect];
+}
+
 - (void)resizeSelection:(NSEvent *)event
 {
     NSPoint endPoint = [self convertPoint:[event locationInWindow] fromView:nil];
@@ -1144,7 +1194,6 @@ subtractSelectionRects (NSRect a, NSRect b)
 #define X_DISTANCE_FROM_INNER_FRAME 5.0
 - (void)updateSelectionToolbarInSelectionRect:(NSRect)newSelectionRect
 {
-    DDLogVerbose(@"Updating selection to: %@", NSStringFromRect(newSelectionRect));
     if (_selectionToolbar == nil) {
         if (![_delegate respondsToSelector:@selector(sampleViewWillShowSelectionToolbar)]) {
             return;
