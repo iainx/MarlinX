@@ -739,7 +739,6 @@ static void *sampleContext = &sampleContext;
                     _selectionDirection = 1;
                 }
                 
-                DDLogVerbose(@"%@ -> %@", NSStringFromPoint(zoomLoc), NSStringFromPoint(zoomPoint));
                 mouseLoc = [self convertPoint:[nextEvent locationInWindow] fromView:nil];
                 if (![self mouse:mouseLoc inRect:visibleRect]) {
                     if (timerOn == NO) {
