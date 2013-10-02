@@ -657,16 +657,10 @@ static void *sampleContext = &sampleContext;
 
 - (void)setVisibleRange:(NSRange)newVisibleRange
 {
-    DDLogVerbose(@"Require newVisibleRange: %@", NSStringFromRange(newVisibleRange));
     NSRect visibleRect = [self visibleRect];
-    /*
-    NSScrollView *scrollView = [self enclosingScrollView];
-    NSClipView *clipView = [scrollView contentView];
-    */
     NSRect scaledRect = [self convertRectToBacking:visibleRect];
     
     NSUInteger newFramesPerPixel = (NSUInteger)((CGFloat)newVisibleRange.length / scaledRect.size.width);
-    DDLogVerbose(@"Require newFramesPerPixel: %lu", newFramesPerPixel);
     
     [self updateScrollPositionForNewZoom:newFramesPerPixel offset:newVisibleRange.location];
 }
@@ -950,7 +944,6 @@ static void *sampleContext = &sampleContext;
     
     NSUInteger zoomFrame = [clipView bounds].origin.x * _framesPerPixel;
     
-    DDLogVerbose(@"ZoomFrame: %lu - offsetFrame: %lu", zoomFrame, offsetFrame);
     if (newFramesPerPixel < 1) {
         newFramesPerPixel = 1;
     } else if (newFramesPerPixel > 65536) {
