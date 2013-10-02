@@ -404,16 +404,106 @@ static const int GUTTER_SIZE = 24;
     
     [outerPath setWindingRule:NSEvenOddWindingRule];
     NSRect innerSelectionRect = NSInsetRect(rect, 0.0, 5.0);
+    /*
     innerPath = [NSBezierPath bezierPathWithRoundedRect:innerSelectionRect
                                                 xRadius:4.0 yRadius:4.0];
+    */
+    NSAttributedString *startString = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%lu", _selectionStartFrame]];
+    NSAttributedString *endString = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%lu", _selectionEndFrame]];
+    NSSize startSize = [startString size];
+    NSSize endSize = [endString size];
+    
+    innerPath = [self innerSelectionPathInRect:innerSelectionRect
+                         startStringSize:startSize
+                           endStringSize:endSize];
     
     [outerPath appendBezierPath:[innerPath bezierPathByReversingPath]];
     
     [[NSColor colorWithCalibratedRed:0.566 green:0.666 blue:0.796 alpha:1.000] set];
     [outerPath fill];
 
+    if (startSize.width + endSize.width + 25 < innerSelectionRect.size.width) {
+        [startString drawAtPoint:NSMakePoint(innerSelectionRect.origin.x, innerSelectionRect.origin.y + 5)];
+        [endString drawAtPoint:NSMakePoint(NSMaxX(innerSelectionRect) - [endString size].width - 5, innerSelectionRect.origin.y + 5)];
+    }
+    
     [[NSColor blackColor] set];
     [outerPath stroke];
+}
+
+- (NSBezierPath *)innerSelectionPathInRect:(NSRect)innerSelectionRect
+                           startStringSize:(NSSize)startSize
+                             endStringSize:(NSSize)endSize
+{
+    // If the strings don't fit on the selection then tough
+    if (startSize.width + endSize.width + 25 > innerSelectionRect.size.width) {
+        return [NSBezierPath bezierPathWithRoundedRect:innerSelectionRect
+                                               xRadius:4.0 yRadius:4.0];
+    }
+
+    NSBezierPath *innerPath = [[NSBezierPath alloc] init];
+    
+    CGFloat x1, y1, x2, y2;
+    
+    NSPoint topRight, rightTop, rightBottom, bottomRight, endCorner, endTopCorner;
+    NSPoint topLeft, leftTop, bottomLeft, leftBottom, startCorner;
+    
+    x1 = innerSelectionRect.origin.x;
+    y1 = innerSelectionRect.origin.y;
+    x2 = NSMaxX(innerSelectionRect);
+    y2 = NSMaxY(innerSelectionRect);
+    
+    topRight = NSMakePoint(x2 - 5, y2);
+    rightTop = NSMakePoint(x2, y2 - 5);
+    rightBottom = NSMakePoint(x2, y1 + endSize.height + 15.0);
+    bottomRight = NSMakePoint(x2 - 10 - endSize.width, y1);
+    endTopCorner = NSMakePoint(bottomRight.x + 5, rightBottom.y - 5);
+    endCorner = NSMakePoint(bottomRight.x, rightBottom.y - 5);
+    
+    topLeft = NSMakePoint(x1 + 5, y2);
+    leftTop = NSMakePoint(x1, y2 - 5);
+    leftBottom = NSMakePoint(x1, y1 + startSize.height + 10.0);
+    bottomLeft = NSMakePoint(x1 + 10 + startSize.width, y1);
+    startCorner = NSMakePoint(bottomLeft.x, leftBottom.y);
+    
+    // Top line
+    [innerPath moveToPoint:topLeft];
+    [innerPath lineToPoint:topRight];
+    
+    // Top right corner
+    [innerPath appendBezierPathWithArcFromPoint:NSMakePoint(x2, y2) toPoint:rightTop radius:5.0];
+    
+    // Right side
+    [innerPath lineToPoint:rightBottom];
+    [innerPath appendBezierPathWithArcFromPoint:NSMakePoint(x2, y1 + endSize.height + 10) toPoint:endCorner radius:5.0];
+    
+    [innerPath lineToPoint:endTopCorner];
+    [innerPath appendBezierPathWithArcFromPoint:endCorner toPoint:NSMakePoint(x2 - endSize.width - 10, y1) radius:5.0];
+    
+    [innerPath lineToPoint:NSMakePoint(x2-endSize.width - 10, y1 + 5)];
+    [innerPath appendBezierPathWithArcFromPoint:NSMakePoint(x2 - endSize.width - 10, y1)
+                                        toPoint:NSMakePoint(x2 - endSize.width - 15, y1) radius:5.0];
+    
+    // Bottom line
+    [innerPath lineToPoint:bottomLeft];
+    [innerPath appendBezierPathWithArcFromPoint:NSMakePoint(bottomLeft.x - 5, y1)
+                                        toPoint:NSMakePoint(bottomLeft.x - 5, y1 + 5) radius:5.0];
+    
+    [innerPath lineToPoint:NSMakePoint(bottomLeft.x - 5, y1 + startSize.height + 5)];
+    [innerPath appendBezierPathWithArcFromPoint:NSMakePoint(bottomLeft.x - 5, y1 + startSize.height + 10)
+                                        toPoint:NSMakePoint(bottomLeft.x - 10, y1 + startSize.height + 10)
+                                         radius:5.0];
+    
+    [innerPath lineToPoint:NSMakePoint(x1 + 5, y1 + startSize.height + 10)];
+    [innerPath appendBezierPathWithArcFromPoint:NSMakePoint(x1, y1 + startSize.height + 10)
+                                        toPoint:NSMakePoint(x1, y1 + startSize.height + 15) radius:5.0];
+    // Left side
+    [innerPath lineToPoint:leftTop];
+    
+    // Top left corner
+    [innerPath appendBezierPathWithArcFromPoint:NSMakePoint(x1, y2) toPoint:topLeft radius:5.0];
+    
+    return innerPath;
 }
 
 - (void)drawNameForChannel:(NSUInteger)channel
@@ -626,7 +716,10 @@ static void *sampleContext = &sampleContext;
     _framesPerPixel = framesPerPixel;
     
     // FIXME - This is retina only
-    _intrinsicWidth = [_sample numberOfFrames] / (_framesPerPixel * 2);
+    NSSize intrinsicSize = NSMakeSize([_sample numberOfFrames] / (_framesPerPixel), 0.0);
+    NSSize scaledSize = [self convertSizeFromBacking:intrinsicSize];
+    
+    _intrinsicWidth = scaledSize.width;
     
     [self setNeedsDisplay:YES];
     [self invalidateIntrinsicContentSize];
