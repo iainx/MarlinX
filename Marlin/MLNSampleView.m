@@ -624,6 +624,8 @@ static void *sampleContext = &sampleContext;
     }
     
     _framesPerPixel = framesPerPixel;
+    
+    // FIXME - This is retina only
     _intrinsicWidth = [_sample numberOfFrames] / (_framesPerPixel * 2);
     
     [self setNeedsDisplay:YES];
@@ -651,6 +653,22 @@ static void *sampleContext = &sampleContext;
         [self repositionSelectionResizeTrackingAreas:selectionRect];
         [self updateSelectionToolbarInSelectionRect:selectionRect];
     }
+}
+
+- (void)setVisibleRange:(NSRange)newVisibleRange
+{
+    DDLogVerbose(@"Require newVisibleRange: %@", NSStringFromRange(newVisibleRange));
+    NSRect visibleRect = [self visibleRect];
+    /*
+    NSScrollView *scrollView = [self enclosingScrollView];
+    NSClipView *clipView = [scrollView contentView];
+    */
+    NSRect scaledRect = [self convertRectToBacking:visibleRect];
+    
+    NSUInteger newFramesPerPixel = (NSUInteger)((CGFloat)newVisibleRange.length / scaledRect.size.width);
+    DDLogVerbose(@"Require newFramesPerPixel: %lu", newFramesPerPixel);
+    
+    [self updateScrollPositionForNewZoom:newFramesPerPixel offset:newVisibleRange.location];
 }
 
 #pragma mark - Notifications
@@ -925,30 +943,43 @@ static void *sampleContext = &sampleContext;
 #pragma mark - Zoom handling
 
 - (void)updateScrollPositionForNewZoom:(NSUInteger)newFramesPerPixel
+                                offset:(NSUInteger)offsetFrame
 {
     NSScrollView *scrollView = [self enclosingScrollView];
     NSClipView *clipView = [scrollView contentView];
     
     NSUInteger zoomFrame = [clipView bounds].origin.x * _framesPerPixel;
     
+    DDLogVerbose(@"ZoomFrame: %lu - offsetFrame: %lu", zoomFrame, offsetFrame);
+    if (newFramesPerPixel < 1) {
+        newFramesPerPixel = 1;
+    } else if (newFramesPerPixel > 65536) {
+        newFramesPerPixel = 65536;
+    }
+    
     [self setFramesPerPixel:newFramesPerPixel];
     
-    NSUInteger newPosition = (zoomFrame / newFramesPerPixel);
-    [self scrollPoint:NSMakePoint(newPosition, 0)];
+    if (offsetFrame == (NSUInteger)-1) {
+        NSUInteger newPosition = (zoomFrame / newFramesPerPixel);
+        [self scrollPoint:NSMakePoint(newPosition, 0)];
+    } else {
+        NSPoint scrollPoint = [self convertFrameToPoint:offsetFrame];
+        [self scrollPoint:scrollPoint];
+    }
 }
 
 - (void)zoomIn
 {
     NSUInteger newFramesPerPixel = _framesPerPixel / 2;
     
-    [self updateScrollPositionForNewZoom:newFramesPerPixel];
+    [self updateScrollPositionForNewZoom:newFramesPerPixel offset:-1];
 }
 
 - (void)zoomOut
 {
     NSUInteger newFramesPerPixel = _framesPerPixel * 2;
     
-    [self updateScrollPositionForNewZoom:newFramesPerPixel];
+    [self updateScrollPositionForNewZoom:newFramesPerPixel offset:-1];
 }
 
 - (void)zoomToFit
@@ -959,12 +990,12 @@ static void *sampleContext = &sampleContext;
     NSRect scaledWidth = [self convertRectToBacking:[clipView bounds]];
     
     NSUInteger newFramesPerPixel = [_sample numberOfFrames] / scaledWidth.size.width;
-    [self updateScrollPositionForNewZoom:newFramesPerPixel];
+    [self updateScrollPositionForNewZoom:newFramesPerPixel offset:-1];
 }
 
 - (void)zoomToNormal
 {
-    [self updateScrollPositionForNewZoom:DEFAULT_FRAMES_PER_PIXEL];
+    [self updateScrollPositionForNewZoom:DEFAULT_FRAMES_PER_PIXEL offset:-1];
 }
 #pragma mark - Selection handling
 
@@ -1433,10 +1464,6 @@ subtractSelectionRects (NSRect a, NSRect b)
     [self scrollPoint:NSMakePoint(MAX(0, cursorPoint.x - halfWidth), 0.0)];
 }
 
-#pragma mark - MLNSampleDelegate methods
-/*
-
-*/
 #pragma mark - Debugging
 
 // Writes a CGImageRef to a PNG file

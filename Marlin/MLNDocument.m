@@ -535,9 +535,16 @@ selectionDidChange:(NSRange)selection
 }
 
 #pragma mark - Overview Bar Delegate
-- (void)overviewBar:(MLNOverviewBar *)bar didSelectFrame:(NSUInteger)frame
+- (void)overviewBar:(MLNOverviewBar *)bar
+     didSelectFrame:(NSUInteger)frame
 {
     [_sampleView moveCursorTo:frame];
     [_sampleView centreOnCursor];
+}
+
+- (void)overviewBar:(MLNOverviewBar *)bar
+requestVisibleRange:(NSRange)newVisibleRange
+{
+    [_sampleView setVisibleRange:newVisibleRange];
 }
 @end

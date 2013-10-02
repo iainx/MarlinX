@@ -12,5 +12,5 @@
 @protocol MLNOverviewBarDelegate <NSObject>
 
 - (void)overviewBar:(MLNOverviewBar *)bar didSelectFrame:(NSUInteger)frame;
-
+- (void)overviewBar:(MLNOverviewBar *)bar requestVisibleRange:(NSRange)newVisibleRange;
 @end

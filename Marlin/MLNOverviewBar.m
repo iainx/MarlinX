@@ -10,12 +10,25 @@
 #import "MLNSample.h"
 #import "MLNSample+Drawing.h"
 
+typedef enum {
+    DragRegionNone,
+    DragRegionStart,
+    DragRegionEnd,
+} DragRegion;
+
 @implementation MLNOverviewBar {
     NSSize _cachedSize;
     NSMutableArray *_channelMasks;
     NSRange _selection;
-    NSRange _visibleRange;
+    NSRange _visibleFrameRange;
+    NSRect _visiblePixelRect;
     NSUInteger _framesPerPixel;
+    
+    NSTrackingArea *_trackingArea;
+    
+    NSPoint _mouseDownPoint;
+    DragRegion _dragRegion;
+    BOOL _dragged;
 }
 
 @synthesize sample = _sample;
@@ -36,6 +49,12 @@ static void *sampleContext = &sampleContext;
                                    forOrientation:NSLayoutConstraintOrientationVertical];
     [self setContentHuggingPriority:NSLayoutPriorityRequired
                      forOrientation:NSLayoutConstraintOrientationVertical];
+    
+    _trackingArea = [[NSTrackingArea alloc] initWithRect:frame
+                                                 options:NSTrackingCursorUpdate | NSTrackingMouseMoved | NSTrackingActiveInKeyWindow |NSTrackingInVisibleRect
+                                                   owner:self
+                                                userInfo:nil];
+    [self addTrackingArea:_trackingArea];
     
     return self;
 }
@@ -79,8 +98,8 @@ static void *sampleContext = &sampleContext;
     NSRectFill(dirtyRect);
     
     NSRect borderRect = NSZeroRect;
-    if (_visibleRange.length != 0) {
-        borderRect = [self visibleRangeToRect:_visibleRange];
+    if (_visibleFrameRange.length != 0) {
+        borderRect = _visiblePixelRect;
     }
     
     for (int channel = 0; channel < [_sample numberOfChannels]; channel++) {
@@ -136,7 +155,7 @@ static void *sampleContext = &sampleContext;
         [selectionPath stroke];
     }
     
-    if (_visibleRange.length != 0) {
+    if (_visibleFrameRange.length != 0) {
         [[NSColor colorWithCalibratedRed:0.1 green:0.12 blue:0.15 alpha:1.0] set];
         NSBezierPath *borderPath = [NSBezierPath bezierPathWithRoundedRect:borderRect xRadius:2.0 yRadius:2.0];
         [borderPath setLineWidth:1.0];
@@ -249,15 +268,78 @@ static void *sampleContext = &sampleContext;
 
 #pragma mark - Event handling
 
-- (void)mouseDown:(NSEvent *)theEvent
+- (BOOL)pointInVisibleEdges:(NSPoint)point
 {
-    NSPoint point = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-    NSPoint scaledPoint = [self convertPointToBacking:point];
-    NSUInteger selectedFrame = _framesPerPixel * (NSInteger)scaledPoint.x;
+    NSRect visibleRect = [self visibleRangeToRect:_visibleFrameRange];
     
-    [_delegate overviewBar:self didSelectFrame:selectedFrame];
+    return ((point.x >= visibleRect.origin.x - 3 && point.x <= visibleRect.origin.x + 3) ||
+            (point.x >= NSMaxX(visibleRect) - 3 && point.x <= NSMaxX(visibleRect) + 3));
 }
 
+- (void)mouseDown:(NSEvent *)theEvent
+{
+    _mouseDownPoint = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    if (_mouseDownPoint.x >= _visiblePixelRect.origin.x - 3 && _mouseDownPoint.x <= _visiblePixelRect.origin.x + 3) {
+        _dragRegion = DragRegionStart;
+    } else if (_mouseDownPoint.x >= NSMaxX(_visiblePixelRect) - 3 && _mouseDownPoint.x <= NSMaxX(_visiblePixelRect) + 3) {
+        _dragRegion = DragRegionEnd;
+    } else {
+        _dragRegion = DragRegionNone;
+    }
+}
+
+- (void)mouseUp:(NSEvent *)theEvent
+{
+    if (_dragRegion == DragRegionNone) {
+        NSPoint scaledPoint = [self convertPointToBacking:_mouseDownPoint];
+        NSUInteger selectedFrame = _framesPerPixel * (NSInteger)scaledPoint.x;
+    
+        [_delegate overviewBar:self didSelectFrame:selectedFrame];
+    }
+}
+
+- (void)mouseDragged:(NSEvent *)theEvent
+{
+    if (_dragRegion == DragRegionNone) {
+        return;
+    }
+    
+    NSPoint mouseLoc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    
+    NSUInteger newFrameLocation;
+    NSUInteger newFrameLength;
+    
+    NSPoint scaledLengthPoint = [self convertPointToBacking:mouseLoc];
+    
+    if (_dragRegion == DragRegionEnd) {
+        newFrameLocation = _visibleFrameRange.location;
+        newFrameLength = (scaledLengthPoint.x * _framesPerPixel) - newFrameLocation;
+    } else {
+        NSUInteger lastFrame = NSMaxRange(_visibleFrameRange) - 1;
+        newFrameLocation = scaledLengthPoint.x * _framesPerPixel;
+        newFrameLength = lastFrame - newFrameLocation;
+    }
+    
+    NSRange newFrameRange;
+    newFrameRange = NSMakeRange(newFrameLocation, newFrameLength);
+    [_delegate overviewBar:self requestVisibleRange:newFrameRange];
+}
+
+- (void)mouseMoved:(NSEvent *)theEvent
+{
+    [self cursorUpdate:theEvent];
+}
+
+- (void)cursorUpdate:(NSEvent *)event
+{
+    NSPoint mouseLoc = [self convertPoint:[event locationInWindow] fromView:nil];
+ 
+    if ([self pointInVisibleEdges:mouseLoc]) {
+        [[NSCursor resizeLeftRightCursor] set];
+    } else {
+        [super cursorUpdate:event];
+    }
+}
 #pragma mark - Accessors
 
 - (void)setFrameSize:(NSSize)newSize
@@ -312,14 +394,15 @@ static void *sampleContext = &sampleContext;
     [self setNeedsDisplayInRect:rect];
 }
 
-- (void)setVisibleRange:(NSRange)visibleRange
+- (void)setVisibleRange:(NSRange)visibleFrameRange
 {
-    if (NSEqualRanges(visibleRange, _visibleRange)) {
+    if (NSEqualRanges(visibleFrameRange, _visibleFrameRange)) {
         return;
     }
     
-    NSRect newRect = [self visibleRangeToRect:visibleRange];
-    NSRect rect = [self visibleRangeToRect:_visibleRange];
+    DDLogVerbose(@"Official range: %@", NSStringFromRange(visibleFrameRange));
+    NSRect newRect = [self visibleRangeToRect:visibleFrameRange];
+    NSRect rect = _visiblePixelRect;
     
     if (NSEqualRects(newRect, rect)) {
         return;
@@ -330,6 +413,7 @@ static void *sampleContext = &sampleContext;
     unionRect.size.width += 20;
     [self setNeedsDisplayInRect:unionRect];
     
-    _visibleRange = visibleRange;
+    _visibleFrameRange = visibleFrameRange;
+    _visiblePixelRect = newRect;
 }
 @end

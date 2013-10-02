@@ -30,6 +30,8 @@
 - (void)moveCursorTo:(NSUInteger)cursorFrame;
 - (void)centreOnCursor;
 
+- (void)setVisibleRange:(NSRange)newVisibleRange;
+
 - (void)dumpCacheImage;
 
 @end
