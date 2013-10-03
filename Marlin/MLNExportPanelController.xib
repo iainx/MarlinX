@@ -20,11 +20,11 @@
             </connections>
         </collectionViewItem>
         <view id="8" customClass="MLNExportableTypeView">
-            <rect key="frame" x="0.0" y="0.0" width="50" height="68"/>
+            <rect key="frame" x="0.0" y="0.0" width="68" height="68"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
-                <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="107">
-                    <rect key="frame" x="-1" y="5" width="54" height="17"/>
+                <textField verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="107">
+                    <rect key="frame" x="7" y="5" width="54" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Name" id="108">
                         <font key="font" metaFont="system"/>
@@ -36,7 +36,7 @@
                     </connections>
                 </textField>
                 <imageView translatesAutoresizingMaskIntoConstraints="NO" id="112">
-                    <rect key="frame" x="1" y="20" width="48" height="48"/>
+                    <rect key="frame" x="10" y="20" width="48" height="48"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="48" id="121"/>
@@ -58,21 +58,21 @@
         <window title="Choose File Format" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="133">
             <windowStyleMask key="styleMask" titled="YES" documentModal="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="139" y="81" width="457" height="160"/>
+            <rect key="contentRect" x="139" y="81" width="457" height="153"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
             <view key="contentView" id="134">
-                <rect key="frame" x="0.0" y="0.0" width="457" height="160"/>
+                <rect key="frame" x="0.0" y="0.0" width="457" height="153"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <scrollView borderType="line" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" hasVerticalScroller="NO" usesPredominantAxisScrolling="NO" horizontalScrollElasticity="none" verticalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="3">
-                        <rect key="frame" x="20" y="72" width="417" height="68"/>
+                        <rect key="frame" x="-1" y="86" width="459" height="68"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="DWw-A0-TrP">
-                            <rect key="frame" x="1" y="1" width="415" height="66"/>
+                        <clipView key="contentView" copiesOnScroll="NO" id="DWw-A0-TrP">
+                            <rect key="frame" x="1" y="1" width="457" height="66"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <collectionView focusRingType="none" selectable="YES" maxNumberOfRows="1" id="4">
-                                    <rect key="frame" x="0.0" y="0.0" width="415" height="66"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="457" height="66"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <color key="primaryBackgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
                                     <connections>
@@ -83,7 +83,11 @@
                                     </connections>
                                 </collectionView>
                             </subviews>
+                            <color key="backgroundColor" red="0.95015285326086962" green="0.95015285326086962" blue="0.95015285326086962" alpha="1" colorSpace="calibratedRGB"/>
                         </clipView>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="68" id="1g0-Jd-rf3"/>
+                        </constraints>
                         <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" id="5">
                             <rect key="frame" x="-100" y="-100" width="233" height="15"/>
                             <autoresizingMask key="autoresizingMask"/>
@@ -119,7 +123,7 @@ Gw
                         </connections>
                     </button>
                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Y2V-EK-vnB">
-                        <rect key="frame" x="20" y="45" width="420" height="17"/>
+                        <rect key="frame" x="20" y="61" width="420" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="This is the blurb" id="FeB-xr-7hb">
                             <font key="font" metaFont="system"/>
@@ -132,16 +136,17 @@ Gw
                     </textField>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="3" firstAttribute="top" secondItem="134" secondAttribute="top" constant="20" symbolic="YES" id="135"/>
-                    <constraint firstItem="3" firstAttribute="leading" secondItem="134" secondAttribute="leading" constant="20" symbolic="YES" id="136"/>
-                    <constraint firstAttribute="trailing" secondItem="3" secondAttribute="trailing" constant="20" symbolic="YES" id="138"/>
+                    <constraint firstItem="3" firstAttribute="top" secondItem="134" secondAttribute="top" constant="-1" id="135"/>
+                    <constraint firstItem="3" firstAttribute="leading" secondItem="134" secondAttribute="leading" constant="-1" id="136"/>
                     <constraint firstAttribute="bottom" secondItem="24" secondAttribute="bottom" constant="20" symbolic="YES" id="139"/>
                     <constraint firstItem="20" firstAttribute="leading" secondItem="24" secondAttribute="trailing" constant="12" symbolic="YES" id="140"/>
                     <constraint firstAttribute="trailing" secondItem="20" secondAttribute="trailing" constant="20" symbolic="YES" id="145"/>
                     <constraint firstAttribute="bottom" secondItem="20" secondAttribute="bottom" constant="20" symbolic="YES" id="168"/>
-                    <constraint firstItem="Y2V-EK-vnB" firstAttribute="top" secondItem="3" secondAttribute="bottom" constant="10" id="A3k-D4-ZTP"/>
-                    <constraint firstItem="24" firstAttribute="top" secondItem="Y2V-EK-vnB" secondAttribute="bottom" constant="4" id="URC-xP-1Uw"/>
+                    <constraint firstItem="Y2V-EK-vnB" firstAttribute="top" secondItem="3" secondAttribute="bottom" constant="8" symbolic="YES" id="Dh2-OF-Jvz"/>
+                    <constraint firstItem="3" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="134" secondAttribute="leading" constant="-1" id="L91-ul-OJc"/>
+                    <constraint firstItem="24" firstAttribute="top" secondItem="Y2V-EK-vnB" secondAttribute="bottom" constant="20" id="URC-xP-1Uw"/>
                     <constraint firstItem="Y2V-EK-vnB" firstAttribute="leading" secondItem="134" secondAttribute="leading" constant="23" id="XuT-MT-kUn"/>
+                    <constraint firstAttribute="trailing" secondItem="3" secondAttribute="trailing" constant="-1" id="lQD-mh-EkI"/>
                     <constraint firstItem="Y2V-EK-vnB" firstAttribute="trailing" secondItem="20" secondAttribute="trailing" id="yid-G5-32R"/>
                 </constraints>
             </view>
