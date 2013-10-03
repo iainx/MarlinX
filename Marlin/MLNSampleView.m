@@ -451,7 +451,7 @@ static const int GUTTER_SIZE = 24;
     CGFloat x1, y1, x2, y2;
     
     NSPoint topRight, rightTop, rightBottom, bottomRight, endCorner, endTopCorner;
-    NSPoint topLeft, leftTop, bottomLeft, leftBottom, startCorner;
+    NSPoint topLeft, leftTop, bottomLeft;
     
     x1 = innerSelectionRect.origin.x;
     y1 = innerSelectionRect.origin.y;
@@ -467,9 +467,7 @@ static const int GUTTER_SIZE = 24;
     
     topLeft = NSMakePoint(x1 + 5, y2);
     leftTop = NSMakePoint(x1, y2 - 5);
-    leftBottom = NSMakePoint(x1, y1 + startSize.height + 10.0);
     bottomLeft = NSMakePoint(x1 + 10 + startSize.width, y1);
-    startCorner = NSMakePoint(bottomLeft.x, leftBottom.y);
     
     // Top line
     [innerPath moveToPoint:topLeft];

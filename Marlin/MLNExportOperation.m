@@ -12,6 +12,7 @@
 #import "MLNExportableType.h"
 #import "MLNSample.h"
 #import "MLNSampleChannel.h"
+#import "utils.h"
 
 @implementation MLNExportOperation {
     MLNSample *_sample;
@@ -120,7 +121,7 @@
     bufferList = malloc(sizeof(AudioBufferList) + (sizeof(AudioBuffer) * (_outputFormat.mChannelsPerFrame - 1)));
     bufferList->mNumberBuffers = _outputFormat.mChannelsPerFrame;
     
-    channelLocations = malloc(bufferList->mNumberBuffers * sizeof(NSUInteger));
+    channelLocations = calloc(bufferList->mNumberBuffers, sizeof(NSUInteger));
     
     for (i = 0; i < bufferList->mNumberBuffers; i++) {
         bufferList->mBuffers[i].mNumberChannels = 1;
@@ -137,7 +138,7 @@
     NSUInteger totalFrames = [_sample numberOfFrames];
     
     while (1) {
-        size_t bytesInBuffer;
+        size_t bytesInBuffer = 0;
 
         if ([self isCancelled]) {
             break;
@@ -189,52 +190,4 @@
 }
 
 // FIXME: This should be a shared function
-static bool
-check_status_is_error (OSStatus    status,
-                       const char *operation)
-{
-    if (status == noErr) {
-        return false;
-    }
-    
-    char str[20];
-	// see if it appears to be a 4-char-code
-	*(UInt32 *)(str + 1) = CFSwapInt32HostToBig(status);
-	if (isprint(str[1]) && isprint(str[2]) && isprint(str[3]) && isprint(str[4])) {
-		str[0] = str[5] = '\'';
-		str[6] = '\0';
-	} else {
-		// no, format it as an integer
-		sprintf(str, "%d", (int)status);
-	}
-	fprintf(stderr, "Error: %s (%s)\n", operation, str);
-    //fprintf(stderr, "   %s - %s", GetMacOSStatusErrorString(status), GetMacOSStatusCommentString(status));
-    //NSError *error = [NSError errorWithDomain:NSOSStatusErrorDomain code:status userInfo:nil];
-    //NSLog(@"   %@ - %@\n", [error localizedFailureReason], [error localizedDescription]);
-    
-    return true;
-}
-
-static void
-dump_asbd (AudioStreamBasicDescription *asbd)
-{
-    fprintf(stdout, "Sample rate: %f\n", asbd->mSampleRate);
-    
-    char str[20];
-    *(UInt32 *)(str + 1) = CFSwapInt32HostToBig(asbd->mFormatID);
-	if (isprint(str[1]) && isprint(str[2]) && isprint(str[3]) && isprint(str[4])) {
-		str[0] = str[5] = '\'';
-		str[6] = '\0';
-	} else {
-		// no, format it as an integer
-		sprintf(str, "%d", (int)asbd->mFormatID);
-	}
-    fprintf(stdout, "Format ID: %s\n", str);
-    fprintf(stdout, "Format flags: %d\n", asbd->mFormatFlags);
-    fprintf(stdout, "Bytes per packet: %d\n", asbd->mBytesPerPacket);
-    fprintf(stdout, "Frames per packet: %d\n", asbd->mFramesPerPacket);
-    fprintf(stdout, "Bytes per frame: %d\n", asbd->mBytesPerFrame);
-    fprintf(stdout, "Channels per frame: %d\n", asbd->mChannelsPerFrame);
-    fprintf(stdout, "Bits per channel: %d\n", asbd->mBitsPerChannel);
-}
 @end

@@ -14,6 +14,8 @@
 #import "MLNSampleChannel.h"
 #import "Constants.h"
 
+#import "utils.h"
+
 @implementation MLNLoadOperation {
     ExtAudioFileRef _fileRef;
     AudioStreamBasicDescription _outputFormat;
@@ -204,32 +206,6 @@ cleanup:
 }
 
 #pragma mark - Utility functions
-
-static bool
-check_status_is_error (OSStatus    status,
-                       const char *operation)
-{
-    if (status == noErr) {
-        return false;
-    }
-    
-    char str[20];
-	// see if it appears to be a 4-char-code
-	*(UInt32 *)(str + 1) = CFSwapInt32HostToBig(status);
-	if (isprint(str[1]) && isprint(str[2]) && isprint(str[3]) && isprint(str[4])) {
-		str[0] = str[5] = '\'';
-		str[6] = '\0';
-	} else {
-		// no, format it as an integer
-		sprintf(str, "%d", (int)status);
-	}
-	fprintf(stderr, "Error: %s (%s)\n", operation, str);
-    //fprintf(stderr, "   %s - %s", GetMacOSStatusErrorString(status), GetMacOSStatusCommentString(status));
-    //NSError *error = [NSError errorWithDomain:NSOSStatusErrorDomain code:status userInfo:nil];
-    //NSLog(@"   %@ - %@\n", [error localizedFailureReason], [error localizedDescription]);
-    
-    return true;
-}
 
 static NSError *
 make_error (OSStatus    status,

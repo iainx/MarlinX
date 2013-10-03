@@ -22,6 +22,7 @@
 		AE298D8116F7CC720031334A /* README.txt in Resources */ = {isa = PBXBuildFile; fileRef = AE298D7916F7CC720031334A /* README.txt */; };
 		AE2E4437172333B8005463FB /* MLNCacheFile.m in Sources */ = {isa = PBXBuildFile; fileRef = AE2E4436172333B8005463FB /* MLNCacheFile.m */; };
 		AE31A9C916F146ED0051CF41 /* MLNSample+Operations.m in Sources */ = {isa = PBXBuildFile; fileRef = AE31A9C816F146ED0051CF41 /* MLNSample+Operations.m */; };
+		AE47540917FDD51E001105F8 /* utils.m in Sources */ = {isa = PBXBuildFile; fileRef = AE47540817FDD51E001105F8 /* utils.m */; };
 		AE57CA4B170F73250043E690 /* MLNSelectionButton.m in Sources */ = {isa = PBXBuildFile; fileRef = AE57CA4A170F73250043E690 /* MLNSelectionButton.m */; };
 		AE57CA4E171040AE0043E690 /* MLNSelectionToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = AE57CA4D171040AE0043E690 /* MLNSelectionToolbar.m */; };
 		AE57CA511710EB0A0043E690 /* MLNSelectionAction.m in Sources */ = {isa = PBXBuildFile; fileRef = AE57CA501710EB0A0043E690 /* MLNSelectionAction.m */; };
@@ -97,6 +98,8 @@
 		AE31A9C716F146ED0051CF41 /* MLNSample+Operations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MLNSample+Operations.h"; sourceTree = "<group>"; };
 		AE31A9C816F146ED0051CF41 /* MLNSample+Operations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MLNSample+Operations.m"; sourceTree = "<group>"; };
 		AE31A9CA16F28D3E0051CF41 /* MLNSampleDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNSampleDelegate.h; sourceTree = "<group>"; };
+		AE47540817FDD51E001105F8 /* utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = utils.m; sourceTree = "<group>"; };
+		AE47540A17FDD5D1001105F8 /* utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
 		AE4E854317E9E5C9001AECED /* MLNOperationDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNOperationDelegate.h; sourceTree = "<group>"; };
 		AE57CA49170F73250043E690 /* MLNSelectionButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNSelectionButton.h; sourceTree = "<group>"; };
 		AE57CA4A170F73250043E690 /* MLNSelectionButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNSelectionButton.m; sourceTree = "<group>"; };
@@ -368,6 +371,8 @@
 				AEEE7EA517E7607F00ECA24B /* MLNExportOperation.m */,
 				AE6FB1D616B8FF6E00139735 /* Constants.h */,
 				AE6FB1D716B8FF6E00139735 /* Constants.m */,
+				AE47540817FDD51E001105F8 /* utils.m */,
+				AE47540A17FDD5D1001105F8 /* utils.h */,
 				AEC19AC617E0B69500226CD9 /* XIB */,
 				AE5AB6C916E93623008D0AE4 /* External Sources */,
 				AECDE7C816B7C0C300DE94D5 /* Supporting Files */,
@@ -568,6 +573,7 @@
 				AE071B89172B542A0089278E /* MLNPasteboardSampleData.m in Sources */,
 				AE24E45B17E1D14F00B67469 /* MLNProgressViewController.m in Sources */,
 				AEEE7EA217E725FA00ECA24B /* MLNExportPanelController.m in Sources */,
+				AE47540917FDD51E001105F8 /* utils.m in Sources */,
 				AEEE7EA617E7607F00ECA24B /* MLNExportOperation.m in Sources */,
 				AEEE7EA917E7642F00ECA24B /* MLNOperation.m in Sources */,
 			);

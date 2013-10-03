@@ -18,8 +18,8 @@
 - (id)initWithFrame:(NSRect)frame
 {
     self = [super initWithFrame:frame];
-    if (self) {
-        // Initialization code here.
+    if (!self) {
+        return nil;
     }
     
     _horizontal = YES;
@@ -59,7 +59,7 @@
 {
     NSArray *subviews = [self subviews];
     
-    CGFloat width, height;
+    CGFloat width = 0, height = 0;
     
     for (NSView *subview in subviews) {
         NSSize ics = [subview intrinsicContentSize];

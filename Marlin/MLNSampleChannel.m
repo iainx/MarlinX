@@ -175,7 +175,6 @@
     NSUInteger framesWanted;
     NSUInteger framesAdded = 0;
     NSUInteger frameInBlock;
-    off_t byteInBlock;
     const float *blockData;
     
     if (frame > _numberOfFrames) {
@@ -188,7 +187,6 @@
     }
     
     frameInBlock = (frame - block->startFrame);
-    byteInBlock = frameInBlock * sizeof(float);
     
     framesWanted = byteLength / sizeof(float);
     
@@ -211,7 +209,7 @@
         }
         
         blockData = MLNSampleBlockSampleData(block);
-        frameInBlock = byteInBlock = 0;
+        frameInBlock = 0;
     }
     
     return framesAdded * sizeof(float);

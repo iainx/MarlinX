@@ -15,6 +15,7 @@
 #import "MLNExportOperation.h"
 
 #import "pa_ringbuffer.h"
+#import "utils.h"
 
 typedef struct PlaybackBlock {
     MLNSampleBlock *block;
@@ -168,9 +169,6 @@ typedef struct PlaybackData {
     [self willChangeValueForKey:@"loaded"];
     _loaded = YES;
     [self didChangeValueForKey:@"loaded"];
-    /*
- 
-     */
 }
 
 - (void)didFailLoadWithError:(NSError *)error
@@ -184,16 +182,7 @@ typedef struct PlaybackData {
     NSNumber *statusCode = userInfo[@"statusCode"];
     UInt32 status = [statusCode intValue];
     
-    char str[20];
-    *(UInt32 *)(str + 1) = CFSwapInt32HostToBig(status);
-	if (isprint(str[1]) && isprint(str[2]) && isprint(str[3]) && isprint(str[4])) {
-		str[0] = str[5] = '\'';
-		str[6] = '\0';
-	} else {
-		// no, format it as an integer
-		sprintf(str, "%d", (int)status);
-	}
-    NSLog(@"   Status: %s", str);
+    print_coreaudio_error(status, "OSSStatus");
 }
 
 // This should be a category but you can't have any ivars in a category
@@ -428,31 +417,6 @@ MyAQOutputCallback (void *userData,
     }
     
     return YES;
-}
-
-#pragma mark - Utility functions
-
-static void
-dump_asbd (AudioStreamBasicDescription *asbd)
-{
-    fprintf(stdout, "Sample rate: %f\n", asbd->mSampleRate);
-    
-    char str[20];
-    *(UInt32 *)(str + 1) = CFSwapInt32HostToBig(asbd->mFormatID);
-	if (isprint(str[1]) && isprint(str[2]) && isprint(str[3]) && isprint(str[4])) {
-		str[0] = str[5] = '\'';
-		str[6] = '\0';
-	} else {
-		// no, format it as an integer
-		sprintf(str, "%d", (int)asbd->mFormatID);
-	}
-    fprintf(stdout, "Format ID: %s\n", str);
-    fprintf(stdout, "Format flags: %d\n", asbd->mFormatFlags);
-    fprintf(stdout, "Bytes per packet: %d\n", asbd->mBytesPerPacket);
-    fprintf(stdout, "Frames per packet: %d\n", asbd->mFramesPerPacket);
-    fprintf(stdout, "Bytes per frame: %d\n", asbd->mBytesPerFrame);
-    fprintf(stdout, "Channels per frame: %d\n", asbd->mChannelsPerFrame);
-    fprintf(stdout, "Bits per channel: %d\n", asbd->mBitsPerChannel);
 }
 
 @end
