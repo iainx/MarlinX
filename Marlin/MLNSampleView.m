@@ -17,18 +17,23 @@
 #import "MLNSelectionToolbar.h"
 #import "Constants.h"
 
+typedef enum {
+    DragHandleNone,
+    DragHandleStart,
+    DragHandleEnd
+} DragHandle;
+
 @implementation MLNSampleView {
     CGFloat _intrinsicWidth;
     CGFloat _summedMagnificationLevel;
     
     int _selectionDirection;
     NSTrackingArea *_startTrackingArea;
-    NSTrackingArea *_endTrackingArea;
+    //NSTrackingArea *_endTrackingArea;
     NSUInteger _selectionStartFrame;
     NSUInteger _selectionEndFrame;
     NSEvent *_dragEvent;
-    BOOL _inStart;
-    BOOL _inEnd;
+    DragHandle _dragHandle;
     
     CGGradientRef _shadowGradient;
     
@@ -811,7 +816,7 @@ static void *sampleContext = &sampleContext;
     NSPoint lastPoint = mouseLoc;
     BOOL insideSelection = NO;
     
-    if (!_inStart && !_inEnd) {
+    if (_dragHandle == DragHandleNone) {
         /*
         _selectionStartFrame = [self convertPointToFrame:startPoint];
         _selectionEndFrame = _selectionStartFrame;
@@ -849,7 +854,7 @@ static void *sampleContext = &sampleContext;
                 break;
                 
             case NSLeftMouseDragged:
-                if (dragged == NO && !_inStart && !_inEnd && !insideSelection) {
+                if (dragged == NO && _dragHandle == DragHandleNone && !insideSelection) {
                     if (_hasSelection) {
                         [self clearSelection];
                     }
@@ -914,11 +919,9 @@ static void *sampleContext = &sampleContext;
                     // If we weren't inside a selection, then we were in one of the tracking areas.
                     // Work out which one.
                     if (mouseLoc.x < startPoint.x) {
-                        _inStart = YES;
-                        _inEnd = NO;
+                        _dragHandle = DragHandleStart;
                     } else if (mouseLoc.x > startPoint.x) {
-                        _inEnd = YES;
-                        _inStart = NO;
+                        _dragHandle = DragHandleEnd;
                     }
                 }
                 
@@ -932,9 +935,9 @@ static void *sampleContext = &sampleContext;
                     [self moveCursorTo:possibleStartFrame];
 
                     [self removeTrackingArea:_startTrackingArea];
-                    [self removeTrackingArea:_endTrackingArea];
+                    //[self removeTrackingArea:_endTrackingArea];
                     _startTrackingArea = nil;
-                    _endTrackingArea = nil;
+                    //_endTrackingArea = nil;
                     
                     [self removeSelectionToolbar];
                     
@@ -953,30 +956,63 @@ static void *sampleContext = &sampleContext;
     _dragEvent = nil;
 }
 
-- (void)mouseEntered:(NSEvent *)event
+- (void)setDragHandleForEvent:(NSEvent *)event
 {
     NSPoint mouseLoc = [self convertPoint:[event locationInWindow] fromView:nil];
+    
+    /*
     if (NSPointInRect(mouseLoc, [_startTrackingArea rect])) {
-        _inEnd = NO;
-        _inStart = YES;
+        DDLogVerbose(@"   - Start");
+        _dragHandle = DragHandleStart;
+    } else if (NSPointInRect(mouseLoc, [_endTrackingArea rect])) {
+        DDLogVerbose(@"   - End");
+        _dragHandle = DragHandleEnd;
     } else {
-        _inStart = NO;
-        _inEnd = YES;
+        DDLogVerbose(@"   - None");
+        _dragHandle = DragHandleNone;
     }
+     */
+    
+    NSRect trackingRect = [_startTrackingArea rect];
+    
+    DDLogVerbose(@"%f - %@", mouseLoc.x, NSStringFromRect(trackingRect));
+    
+    if (mouseLoc.x >= trackingRect.origin.x && mouseLoc.x <= trackingRect.origin.x + 15) {
+        DDLogVerbose(@"   - Start");
+        _dragHandle = DragHandleStart;
+    } else if (mouseLoc.x >= NSMaxX(trackingRect) - 15 && mouseLoc.x <= NSMaxX(trackingRect)) {
+        DDLogVerbose(@"   - End");
+        _dragHandle= DragHandleEnd;
+    } else {
+        DDLogVerbose(@"   - None");
+        _dragHandle = DragHandleNone;
+    }
+}
+
+- (void)mouseMoved:(NSEvent *)theEvent
+{
+    [self setDragHandleForEvent:theEvent];
+    [self cursorUpdate:theEvent];
+}
+
+- (void)mouseEntered:(NSEvent *)event
+{
+    [self setDragHandleForEvent:event];
 }
 
 - (void)mouseExited:(NSEvent *)event
 {
-    _inStart = NO;
-    _inEnd = NO;
+    DDLogVerbose(@"Ended");
+    _dragHandle = DragHandleNone;
 }
 
 - (void)cursorUpdate:(NSEvent *)event
 {
-    if (_inEnd || _inStart) {
+    DDLogVerbose(@"Cursor update");
+    if (_dragHandle != DragHandleNone) {
         [[NSCursor resizeLeftRightCursor] set];
     } else {
-        [[NSCursor arrowCursor] set];
+        [super cursorUpdate:event];
     }
 }
 
@@ -1161,29 +1197,18 @@ subtractSelectionRects (NSRect a, NSRect b)
 
 - (void)repositionSelectionResizeTrackingAreas:(NSRect)newSelectionRect
 {
-    NSRect startRect = NSMakeRect(newSelectionRect.origin.x - 10, 0, 10, newSelectionRect.size.height);
-    NSRect endRect = NSMakeRect(NSMaxX(newSelectionRect), 0, 10, newSelectionRect.size.height);
-    
+    NSRect trackingRect = NSInsetRect(newSelectionRect, -10, 0);
     if (_startTrackingArea) {
         [self removeTrackingArea:_startTrackingArea];
         _startTrackingArea = nil;
     }
     
-    if (_endTrackingArea) {
-        [self removeTrackingArea:_endTrackingArea];
-        _endTrackingArea = nil;
-    }
-    
-    _startTrackingArea = [[NSTrackingArea alloc] initWithRect:startRect
-                                                      options:NSTrackingCursorUpdate | NSTrackingMouseEnteredAndExited | NSTrackingActiveInActiveApp
+    _startTrackingArea = [[NSTrackingArea alloc] initWithRect:trackingRect
+                                                      options:NSTrackingCursorUpdate | NSTrackingMouseEnteredAndExited |
+                                                        NSTrackingMouseMoved | NSTrackingActiveInActiveApp
                                                         owner:self
                                                      userInfo:nil];
-    _endTrackingArea = [[NSTrackingArea alloc] initWithRect:endRect
-                                                    options:NSTrackingCursorUpdate | NSTrackingMouseEnteredAndExited | NSTrackingActiveInActiveApp
-                                                      owner:self
-                                                   userInfo:nil];
     [self addTrackingArea:_startTrackingArea];
-    [self addTrackingArea:_endTrackingArea];
 }
 
 - (void)updateSelection:(NSRect)newSelectionRect
@@ -1240,9 +1265,9 @@ subtractSelectionRects (NSRect a, NSRect b)
         tmp = [_sample numberOfFrames] - 1;
     }
     
-    if (_inStart) {
+    if (_dragHandle == DragHandleStart) {
         _selectionStartFrame = tmp;
-    } else if (_inEnd) {
+    } else if (_dragHandle == DragHandleEnd) {
         _selectionEndFrame = tmp;
     } else {
         if (_selectionDirection == -1) {
@@ -1290,9 +1315,10 @@ subtractSelectionRects (NSRect a, NSRect b)
     [self selectionChanged];
     
     [self removeTrackingArea:_startTrackingArea];
-    [self removeTrackingArea:_endTrackingArea];
+    //[self removeTrackingArea:_endTrackingArea];
     _startTrackingArea = nil;
-    _endTrackingArea = nil;
+    _dragHandle = DragHandleNone;
+    //_endTrackingArea = nil;
     
     selectionRect.size.width += 0.5;
     [self setNeedsDisplayInRect:[self selectionRectToDirtyRect:selectionRect]];
