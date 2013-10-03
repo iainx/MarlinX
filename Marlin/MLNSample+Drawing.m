@@ -151,11 +151,7 @@
     NSArray *channelData;
     MLNSampleCachePoint *pointArray;
     
-    // Scale bounds as we may be working on a retina display
-    // And CGContext works in pixels, but bounds is in points.
-    
-    // NSRect scaledBounds = [self convertRectToBacking:bounds];
-    
+    scaledBounds.origin.x = floor(scaledBounds.origin.x);
     // Add one to the width because if x is not on pixel boundaries
     // then we need to draw one more pixel.
     // Consider drawing from 0.5 with width 3, we need to draw the 0, 1, 2, and 3 pixels
@@ -168,13 +164,6 @@
     pointArray = malloc(numberOfPoints * sizeof(MLNSampleCachePoint));
     assert(pointArray);
  
-    /*
-    NSUInteger channelCount = [channelData count];
-    CGFloat totalGutterSpacing = ((channelCount - 1) == 0 ? 1 : channelCount - 1) * gutterSpacing;
-    CGFloat boundsHeight = (scaledBounds.size.height + scaledBounds.origin.y) - totalGutterSpacing;
-    CGFloat h = boundsHeight / (2 * [channelData count]);
-    */
-    //for (int c = 0; c < [channelData count]; c++) {
     MLNSampleChannel *channel = channelData[channelNumber];
     NSUInteger pixelsDrawn;
     CGFloat h = scaledBounds.size.height / 2;
