@@ -226,7 +226,8 @@ static void *sampleViewContext = &sampleViewContext;
 
 + (BOOL)autosavesInPlace
 {
-    return YES;
+    //return YES;
+    return NO;
 }
 
 - (NSData *)dataOfType:(NSString *)typeName error:(NSError **)outError
@@ -461,6 +462,12 @@ static void *sampleViewContext = &sampleViewContext;
         }
         
         return YES;
+    }
+    
+    // These are not implemented yet
+    if (action == @selector(revertDocumentToSaved:)
+        || action == @selector(saveDocument:)) {
+        return NO;
     }
     
     return YES;
