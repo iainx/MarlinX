@@ -945,32 +945,13 @@ static void *sampleContext = &sampleContext;
 - (void)setDragHandleForEvent:(NSEvent *)event
 {
     NSPoint mouseLoc = [self convertPoint:[event locationInWindow] fromView:nil];
-    
-    /*
-    if (NSPointInRect(mouseLoc, [_startTrackingArea rect])) {
-        DDLogVerbose(@"   - Start");
-        _dragHandle = DragHandleStart;
-    } else if (NSPointInRect(mouseLoc, [_endTrackingArea rect])) {
-        DDLogVerbose(@"   - End");
-        _dragHandle = DragHandleEnd;
-    } else {
-        DDLogVerbose(@"   - None");
-        _dragHandle = DragHandleNone;
-    }
-     */
-    
     NSRect trackingRect = [_startTrackingArea rect];
     
-    DDLogVerbose(@"%f - %@", mouseLoc.x, NSStringFromRect(trackingRect));
-    
     if (mouseLoc.x >= trackingRect.origin.x && mouseLoc.x <= trackingRect.origin.x + 15) {
-        DDLogVerbose(@"   - Start");
         _dragHandle = DragHandleStart;
     } else if (mouseLoc.x >= NSMaxX(trackingRect) - 15 && mouseLoc.x <= NSMaxX(trackingRect)) {
-        DDLogVerbose(@"   - End");
         _dragHandle= DragHandleEnd;
     } else {
-        DDLogVerbose(@"   - None");
         _dragHandle = DragHandleNone;
     }
 }
@@ -988,13 +969,11 @@ static void *sampleContext = &sampleContext;
 
 - (void)mouseExited:(NSEvent *)event
 {
-    DDLogVerbose(@"Ended");
     _dragHandle = DragHandleNone;
 }
 
 - (void)cursorUpdate:(NSEvent *)event
 {
-    DDLogVerbose(@"Cursor update");
     if (_dragHandle != DragHandleNone) {
         [[NSCursor resizeLeftRightCursor] set];
     } else {
