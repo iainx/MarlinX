@@ -802,12 +802,6 @@ static void *sampleContext = &sampleContext;
     // Store the current selection in case we need to remove it on mouseUp
     NSRect selectionRect = [self selectionToRect];
     
-    /*
-    if (!_inStart && !_inEnd) {
-        [self clearSelection];
-    }
-    */
-    
     // Possible selection start
     NSPoint mouseLoc = [self convertPoint:[event locationInWindow] fromView:nil];
     NSPoint startPoint = mouseLoc;
@@ -815,12 +809,6 @@ static void *sampleContext = &sampleContext;
     BOOL insideSelection = NO;
     
     if (_dragHandle == DragHandleNone) {
-        /*
-        _selectionStartFrame = [self convertPointToFrame:startPoint];
-        _selectionEndFrame = _selectionStartFrame;
-        _selectionDirection = 1; // No direction;
-        DDLogVerbose(@"Maybe start drag: %lu", _selectionStartFrame);
-         */
         possibleStartFrame = [self convertPointToFrame:startPoint];
         insideSelection = _hasSelection ? (possibleStartFrame >= _selectionStartFrame && possibleStartFrame <= _selectionEndFrame) : NO;
     }
@@ -1264,8 +1252,24 @@ subtractSelectionRects (NSRect a, NSRect b)
     }
     
     if (_dragHandle == DragHandleStart) {
+        if (tmp >= _selectionEndFrame) {
+            tmp = _selectionEndFrame - _framesPerPixel;
+        }
+        
+        if (tmp <= 0) {
+            tmp = 0;
+        }
+        
         _selectionStartFrame = tmp;
     } else if (_dragHandle == DragHandleEnd) {
+        if (tmp <= _selectionStartFrame) {
+            tmp = _selectionStartFrame + _framesPerPixel;
+        }
+        
+        if (tmp >= [_sample numberOfFrames]) {
+            tmp = [_sample numberOfFrames] - 1;
+        }
+        
         _selectionEndFrame = tmp;
     } else {
         if (_selectionDirection == -1) {
