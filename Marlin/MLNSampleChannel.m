@@ -434,16 +434,20 @@
     }
     
     if (insertBlock && followBlock) {
-        MLNSampleBlockAppendBlock(insertBlock, blockList);
-        //MLNSampleBlockAppendBlock(lastBlock, followBlock);
+        MLNSampleBlockInsertList(insertBlock, blockList);
     } else if (insertBlock == NULL && followBlock) {
+        // Inserting at the head of the list
         MLNSampleBlockAppendBlock(lastBlock, followBlock);
         
         _firstBlock = blockList;
     } else if (insertBlock && followBlock == NULL) {
-        MLNSampleBlockAppendBlock(insertBlock, blockList);
+        // Inserting at the tail of the list
+        MLNSampleBlockInsertList(insertBlock, blockList);
+        
+        MLNSampleBlockListDump(insertBlock);
         _lastBlock = lastBlock;
     } else {
+        // There are no blocks in the channel yet.
         _firstBlock = blockList;
         _lastBlock = lastBlock;
     }

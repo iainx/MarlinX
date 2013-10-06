@@ -32,8 +32,6 @@
     
     NSUInteger urlCount = [urls count];
     for (NSUInteger i = 0; i < urlCount; i++) {
-        DDLogVerbose(@"Url: %@, %p", urls[i], self);
-        //[dc makeDocumentWithContentsOfURL:urls[i] ofType:[dc defaultType] error:&error];
         [dc openDocumentWithContentsOfURL:urls[i] display:YES completionHandler:NULL];
     }
     

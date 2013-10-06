@@ -386,6 +386,29 @@ MLNSampleBlockListNumberOfFrames (MLNSampleBlock *startBlock)
     return count;
 }
 
+/**
+ * MLNSampleBlockInsertList:
+ *
+ * Inserts @blockList after @block
+ */
+void
+MLNSampleBlockInsertList(MLNSampleBlock *block,
+                         MLNSampleBlock *blockList)
+{
+    MLNSampleBlock *lastListBlock = MLNSampleBlockListLastBlock(blockList);
+    MLNSampleBlock *nextBlock;
+    
+    nextBlock = block->nextBlock;
+    if (nextBlock) {
+        nextBlock->previousBlock = lastListBlock;
+    }
+    
+    lastListBlock->nextBlock = nextBlock;
+    
+    block->nextBlock = blockList;
+    blockList->previousBlock = block;
+}
+
 #pragma mark - Debugging
 void
 MLNSampleBlockDumpBlock (MLNSampleBlock *block)
@@ -399,4 +422,13 @@ MLNSampleBlockDumpBlock (MLNSampleBlock *block)
     DDLogCInfo(@"   %lu bytes", block->sampleByteLength);
     DDLogCInfo(@"   %lu cache", block->cacheByteLength);
     DDLogCInfo(@"   %lu -> %lu", block->startFrame, MLNSampleBlockLastFrame(block));
+}
+
+void
+MLNSampleBlockListDump (MLNSampleBlock *block)
+{
+    while (block) {
+        MLNSampleBlockDumpBlock(block);
+        block = block->nextBlock;
+    }
 }

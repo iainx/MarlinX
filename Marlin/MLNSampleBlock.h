@@ -69,5 +69,9 @@ NSUInteger MLNSampleBlockLastFrame(MLNSampleBlock *block);
 MLNSampleBlock *MLNSampleBlockListLastBlock(MLNSampleBlock *blockList);
 NSUInteger MLNSampleBlockListNumberOfFrames(MLNSampleBlock *blockList);
 
+void MLNSampleBlockInsertList(MLNSampleBlock *block,
+                              MLNSampleBlock *blockList);
 void MLNSampleBlockDumpBlock (MLNSampleBlock *block);
+void MLNSampleBlockListDump (MLNSampleBlock *block);
+
 #endif

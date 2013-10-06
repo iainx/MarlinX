@@ -730,7 +730,8 @@ static void *sampleContext = &sampleContext;
     if (_hasSelection) {
         NSRect selectionRect = [self selectionToRect];
         [self repositionSelectionResizeTrackingAreas:selectionRect];
-        [self updateSelectionToolbarInSelectionRect:selectionRect];        
+        [self updateSelectionToolbarInSelectionRect:selectionRect];
+        [self setDragHandleForPoint:[self convertPoint:[NSEvent mouseLocation] fromView:nil]];
     }
 }
 
@@ -942,9 +943,8 @@ static void *sampleContext = &sampleContext;
     _dragEvent = nil;
 }
 
-- (void)setDragHandleForEvent:(NSEvent *)event
+- (void)setDragHandleForPoint:(NSPoint)mouseLoc
 {
-    NSPoint mouseLoc = [self convertPoint:[event locationInWindow] fromView:nil];
     NSRect trackingRect = [_startTrackingArea rect];
     
     if (mouseLoc.x >= trackingRect.origin.x && mouseLoc.x <= trackingRect.origin.x + 15) {
@@ -954,6 +954,12 @@ static void *sampleContext = &sampleContext;
     } else {
         _dragHandle = DragHandleNone;
     }
+}
+
+- (void)setDragHandleForEvent:(NSEvent *)event
+{
+    NSPoint mouseLoc = [self convertPoint:[event locationInWindow] fromView:nil];
+    [self setDragHandleForPoint:mouseLoc];
 }
 
 - (void)mouseMoved:(NSEvent *)theEvent

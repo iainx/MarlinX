@@ -142,9 +142,43 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     NSRange range = NSMakeRange(start, length);
     
-    [_testSample cropRange:NSMakeRange(start, length) withError:nil];
+    [_testSample cropRange:range withUndoManager:nil];
     
     // Crop is just 2 channel deletes, so if the channel tests passed then we just need to check the number of frames
     STAssertEquals([_testSample numberOfFrames], length, @"Range is %@", NSStringFromRange(range));
+}
+
+- (void)testCropRangeUndo
+{
+    NSUndoManager *undo = [[NSUndoManager alloc] init];
+    NSUInteger start = rand() % [_testSample numberOfFrames];
+    NSUInteger length = rand() % ([_testSample numberOfFrames] - start);
+    
+    NSRange range = NSMakeRange(start, length);
+    
+    [_testSample cropRange:range withUndoManager:undo];
+    
+    [undo undo];
+    
+    MLNSampleChannel *channel = [_testSample channelData][0];
+    MLNSampleBlock *block = [channel firstBlock];
+    
+    NSUInteger j = 0;
+    NSUInteger numberOfBlocks = 0;
+    
+    while (block) {
+        const float *data = MLNSampleBlockSampleData(block);
+        for (int i = 0; i < block->numberOfFrames; i++, j++) {
+            float d = data[i];
+            
+            STAssertEquals(d, (float)j, @"Frame %d is %f: Expected %f", i, d, (float)i);
+        }
+        
+        block = block->nextBlock;
+        numberOfBlocks++;
+    }
+    
+    STAssertEquals(numberOfBlocks, (NSUInteger)3, @"");
+    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
 }
 @end
