@@ -29,7 +29,6 @@ typedef enum {
     
     int _selectionDirection;
     NSTrackingArea *_startTrackingArea;
-    //NSTrackingArea *_endTrackingArea;
     NSUInteger _selectionStartFrame;
     NSUInteger _selectionEndFrame;
     NSEvent *_dragEvent;
@@ -718,7 +717,6 @@ static void *sampleContext = &sampleContext;
     
     _framesPerPixel = framesPerPixel;
     
-    // FIXME - This is retina only
     NSSize intrinsicSize = NSMakeSize([_sample numberOfFrames] / (_framesPerPixel), 0.0);
     NSSize scaledSize = [self convertSizeFromBacking:intrinsicSize];
     
