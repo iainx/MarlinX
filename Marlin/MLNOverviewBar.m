@@ -400,7 +400,6 @@ static void *sampleContext = &sampleContext;
         return;
     }
     
-    DDLogVerbose(@"Official range: %@", NSStringFromRange(visibleFrameRange));
     NSRect newRect = [self visibleRangeToRect:visibleFrameRange];
     NSRect rect = _visiblePixelRect;
     
