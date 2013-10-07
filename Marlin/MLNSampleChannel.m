@@ -360,16 +360,12 @@
     NSUInteger lastFrame = NSMaxRange(range) - 1;
     MLNSampleBlock *firstBlock, *lastBlock;
     
-    DDLogVerbose(@"Deleting from %lu -> %lu", range.location, lastFrame);
-    
     // Find first block
     firstBlock = [self sampleBlockForFrame:range.location];
     if (firstBlock == NULL) {
         [NSException raise:@"MLNSampleChannel" format:@"deleteRange has no first block"];
         return NULL;
     }
-    
-    DDLogVerbose(@"   firstBlock: %p", firstBlock);
     
     // Split first & last blocks
     if (range.location != firstBlock->startFrame) {
@@ -384,8 +380,6 @@
         return NULL;
     }
     
-    DDLogVerbose(@"   lastBlock: %p", lastBlock);
-    
     if (lastFrame != MLNSampleBlockLastFrame(lastBlock)) {
         // Split the last block on the next frame
         // Don't need to care about the next
@@ -399,7 +393,7 @@
     if (_lastBlock == lastBlock) {
         _lastBlock = firstBlock->previousBlock;
     }
-    DDLogVerbose(@"Need to remove blocks from %p -> %p", firstBlock, lastBlock);
+    
     MLNSampleBlockRemoveBlocksFromList(firstBlock, lastBlock);
     
     [self updateBlockCount];
