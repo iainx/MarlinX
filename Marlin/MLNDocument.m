@@ -382,7 +382,6 @@ static void *sampleViewContext = &sampleViewContext;
 
 - (void)paste:(id)sender
 {
-    DDLogVerbose(@"Paste: %lu", [_sampleView cursorFramePosition]);
     MLNApplicationDelegate *appDelegate = [NSApp delegate];
     
     MLNPasteboardSampleData *content = [appDelegate clipboardContent];
