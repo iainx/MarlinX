@@ -151,7 +151,7 @@
         for (i = 0; i < _outputFormat.mChannelsPerFrame; i++) {
             MLNSampleChannel *channel = _channelArray[i];
             
-            [channel addData:bufferList->mBuffers[i].mData withLength:frameCount * sizeof(float)];
+            [channel addData:bufferList->mBuffers[i].mData withByteLength:frameCount * sizeof(float)];
         }
         
         // Post percentage notification

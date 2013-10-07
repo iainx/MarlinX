@@ -28,7 +28,9 @@
 - (MLNSampleChannel *)copyChannelInRange:(NSRange)range;
 
 - (BOOL)addData:(float *)data
-     withLength:(size_t)byteLength;
+     withByteLength:(size_t)byteLength;
+- (BOOL)insertSilenceAtFrame:(NSUInteger)frame frameDuration:(NSUInteger)duration;
+
 - (size_t)fillBuffer:(float *)data
        withLength:(size_t)byteLength
         fromFrame:(NSUInteger)frame;

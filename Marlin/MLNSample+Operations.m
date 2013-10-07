@@ -144,6 +144,10 @@
               numberOfFrames:(NSUInteger)numberOfFrames
                  undoManager:(NSUndoManager *)undoManager
 {
-    
+    /*
+    for (MLNSampleChannel *channel in [self channelData]) {
+        <#statements#>
+    }
+     */
 }
 @end

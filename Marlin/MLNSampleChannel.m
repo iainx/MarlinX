@@ -141,9 +141,8 @@
 }
 
 #pragma mark - Data operations
-
-- (BOOL)addData:(float *)data
-     withLength:(size_t)byteLength
+- (MLNSampleBlock *)writeData:(float *)data
+               withByteLength:(size_t)byteLength
 {
     size_t cacheByteLength = 0;
     
@@ -162,6 +161,13 @@
     // Our new block is the whole of the new region we've created
     MLNSampleBlock *block = MLNSampleBlockCreateBlock(region, byteLength, 0,
                                                       cacheRegion, cacheByteLength, 0);
+    return block;
+}
+
+- (BOOL)addData:(float *)data
+     withByteLength:(size_t)byteLength
+{
+    MLNSampleBlock *block = [self writeData:data withByteLemgth:byteLength];
     [self addBlock:block];
     
     return YES;
@@ -403,11 +409,11 @@
     return firstBlock;
 }
 
-- (void)insertBlockList:(MLNSampleBlock *)blockList
-                atFrame:(NSUInteger)frame
+- (void)splitAtFrame:(NSUInteger)frame
+          firstBlock:(MLNSampleBlock **)firstBlock
+         secondBlock:(MLNSampleBlock **)secondBlock
 {
     MLNSampleBlock *insertBlock, *followBlock;
-    MLNSampleBlock *lastBlock = MLNSampleBlockListLastBlock(blockList);
     
     if (frame != 0) {
         insertBlock = [self sampleBlockForFrame:frame - 1];
@@ -416,29 +422,53 @@
     }
     
     if (insertBlock == NULL) {
-        [NSException raise:@"MLNSampleChannel" format:@"insertChannel:atFrame: has no insertBlock"];
-        return;
+        if (insertBlock == NULL) {
+            [NSException raise:@"MLNSampleChannel" format:@"insertChannel:atFrame: has no insertBlock"];
+            
+            *firstBlock = NULL;
+            *secondBlock = NULL;
+            
+            return;
+        }
     }
     
     if (insertBlock->startFrame == frame) {
-        followBlock = insertBlock;
-        insertBlock = followBlock->previousBlock;
-    } else {
-        followBlock = MLNSampleBlockSplitBlockAtFrame(insertBlock, frame);
+        // The blocks are already split at the correct place, so we don't need to do anything
+        *firstBlock = insertBlock->previousBlock;
+        *secondBlock = insertBlock;
+        return;
     }
     
-    if (insertBlock && followBlock) {
-        MLNSampleBlockInsertList(insertBlock, blockList);
-    } else if (insertBlock == NULL && followBlock) {
+    followBlock = MLNSampleBlockSplitBlockAtFrame(insertBlock, frame);
+    
+    if (insertBlock == _lastBlock) {
+        _lastBlock = followBlock;
+    }
+    
+    *firstBlock = insertBlock;
+    *secondBlock = followBlock;
+}
+
+- (void)insertBlockList:(MLNSampleBlock *)blockList
+                atFrame:(NSUInteger)frame
+{
+    MLNSampleBlock *firstBlock, *secondBlock;
+    MLNSampleBlock *lastBlock = MLNSampleBlockListLastBlock(blockList);
+    
+    [self splitAtFrame:frame firstBlock:&firstBlock secondBlock:&secondBlock];
+    
+    if (firstBlock && secondBlock) {
+        MLNSampleBlockInsertList(firstBlock, blockList);
+    } else if (firstBlock == NULL && secondBlock) {
         // Inserting at the head of the list
-        MLNSampleBlockInsertList(lastBlock, followBlock);
+        MLNSampleBlockInsertList(lastBlock, secondBlock);
         
         _firstBlock = blockList;
-    } else if (insertBlock && followBlock == NULL) {
+    } else if (firstBlock && secondBlock == NULL) {
         // Inserting at the tail of the list
-        MLNSampleBlockInsertList(insertBlock, blockList);
+        MLNSampleBlockInsertList(firstBlock, blockList);
         
-        MLNSampleBlockListDump(insertBlock);
+        MLNSampleBlockListDump(firstBlock);
         _lastBlock = lastBlock;
     } else {
         // There are no blocks in the channel yet.
@@ -457,6 +487,40 @@
     
     copyBlockList = MLNSampleBlockListCopy([channel firstBlock]);
     [self insertBlockList:copyBlockList atFrame:frame];
+    return YES;
+}
+
+- (void)insertBlock:(MLNSampleBlock *)block
+         afterBlock:(MLNSampleBlock *)previousBlock
+{
+    MLNSampleBlockAppendBlock(previousBlock, block);
+    if (previousBlock == _lastBlock) {
+        _lastBlock = block;
+    }
+    
+    [self updateBlockCount];
+}
+
+#define MAX_BUFFER_FRAME_SIZE 262144
+- (BOOL)insertSilenceAtFrame:(NSUInteger)frame
+               frameDuration:(NSUInteger)duration
+{
+    MLNSampleBlock *firstBlock, *secondBlock;
+    float *data = calloc(MAX_BUFFER_FRAME_SIZE, sizeof(float));
+    
+    [self splitAtFrame:frame firstBlock:&firstBlock secondBlock:&secondBlock];
+    
+    while (duration) {
+        MLNSampleBlock *newBlock;
+        size_t framesToWrite = MIN(duration, MAX_BUFFER_FRAME_SIZE);
+        
+        newBlock = [self writeData:data withByteLength:framesToWrite * sizeof(float)];
+        [self insertBlock:newBlock afterBlock:firstBlock];
+        
+        firstBlock = newBlock;
+        duration -= framesToWrite;
+    }
+    
     return YES;
 }
 
