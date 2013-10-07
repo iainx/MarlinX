@@ -443,6 +443,8 @@ static void *sampleViewContext = &sampleViewContext;
                 return YES;
             }
         }
+        
+        return NO;
     }
     
     if (action == @selector(selectAll:)) {
