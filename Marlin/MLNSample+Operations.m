@@ -139,4 +139,11 @@
     
     return YES;
 }
+
+- (void)insertSilenceAtFrame:(NSUInteger)frame
+              numberOfFrames:(NSUInteger)numberOfFrames
+                 undoManager:(NSUndoManager *)undoManager
+{
+    
+}
 @end

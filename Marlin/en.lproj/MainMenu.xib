@@ -151,17 +151,6 @@
                                     <action selector="paste:" target="-1" id="226"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Delete" id="202">
-                                <connections>
-                                    <action selector="delete:" target="-1" id="536"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Crop" id="g1U-Kb-DSy">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="crop:" target="-1" id="oVX-qy-F1H"/>
-                                </connections>
-                            </menuItem>
                         </items>
                     </menu>
                 </menuItem>
@@ -177,6 +166,25 @@
                             <menuItem title="Select None" keyEquivalent="A" id="547">
                                 <connections>
                                     <action selector="selectNone:" target="-1" id="559"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="emh-hF-AMJ"/>
+                            <menuItem title="Delete Selection" id="3A3-sg-djs">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="delete:" target="-1" id="jP3-1U-GdW"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Crop Selection" id="ttb-CR-tSV">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="crop:" target="-1" id="Itg-2Z-ajW"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Clear Selection" id="xwN-Be-LWK">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="clear:" target="-1" id="kq4-6y-AFe"/>
                                 </connections>
                             </menuItem>
                         </items>

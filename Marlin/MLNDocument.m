@@ -392,6 +392,11 @@ static void *sampleViewContext = &sampleViewContext;
     [_sample insertChannels:[content channels] atFrame:[_sampleView cursorFramePosition] withUndoManager:undoManager];
 }
 
+- (void)clear:(id)sender
+{
+    
+}
+
 - (IBAction)selectAll:(id)sender
 {
     [_sampleView setSelection:NSMakeRange(0, [_sample numberOfFrames])];
@@ -445,6 +450,10 @@ static void *sampleViewContext = &sampleViewContext;
         }
         
         return NO;
+    }
+    
+    if (action == @selector(clear:)) {
+        return [_sampleView hasSelection];
     }
     
     if (action == @selector(selectAll:)) {

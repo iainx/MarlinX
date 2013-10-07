@@ -25,4 +25,8 @@
      withUndoManager:(NSUndoManager *)undoManager;
 
 - (BOOL)cropRange:(NSRange)range withUndoManager:(NSUndoManager *)undoManager;
+
+- (void)insertSilenceAtFrame:(NSUInteger)frame
+              numberOfFrames:(NSUInteger)numberOfFrames
+                 undoManager:(NSUndoManager *)undoManager;
 @end
