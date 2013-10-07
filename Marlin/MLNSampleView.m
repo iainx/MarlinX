@@ -303,7 +303,7 @@ static const int GUTTER_SIZE = 24;
     
     if (_drawCursor && _hasSelection == NO) {
         NSPoint cursorPoint = [self convertFrameToPoint:_cursorFramePosition];
-        NSRect cursorRect = NSMakeRect(cursorPoint.x + 0.5, 0, 1, [self bounds].size.height);
+        NSRect cursorRect = NSMakeRect(cursorPoint.x + 0.5, 0, 1, [self bounds].size.height - GUTTER_SIZE);
         if (NSIntersectsRect(cursorRect, dirtyRect)) {
             NSColor *cursorColour = [NSColor colorWithCalibratedWhite:1.0 alpha:_cursorOpacity];
             [cursorColour set];
