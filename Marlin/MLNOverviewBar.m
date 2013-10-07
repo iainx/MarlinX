@@ -29,6 +29,8 @@ typedef enum {
     NSPoint _mouseDownPoint;
     DragRegion _dragRegion;
     BOOL _dragged;
+    
+    NSColor *_darkBG;
 }
 
 @synthesize sample = _sample;
@@ -92,8 +94,10 @@ static void *sampleContext = &sampleContext;
     CGFloat channelHeight = (bounds.size.height - 9) / [_sample numberOfChannels];
     
     channelRect.size.height = (channelHeight - 1);
-    NSColor *darkBG = [NSColor colorWithCalibratedRed:0.214 green:0.218 blue:0.226 alpha:1.0];
-
+    if (_darkBG == nil) {
+        _darkBG = [NSColor colorWithCalibratedRed:0.214 green:0.218 blue:0.226 alpha:1.0];
+    }
+    
     [[NSColor underPageBackgroundColor] setFill];
     NSRectFill(dirtyRect);
     
@@ -108,7 +112,7 @@ static void *sampleContext = &sampleContext;
         // Draw the background
         NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:channelRect
                                                              xRadius:4 yRadius:4];
-        [darkBG set];
+        [_darkBG set];
         [path fill];
     }
 
