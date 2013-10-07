@@ -437,7 +437,7 @@
         MLNSampleBlockInsertList(insertBlock, blockList);
     } else if (insertBlock == NULL && followBlock) {
         // Inserting at the head of the list
-        MLNSampleBlockAppendBlock(lastBlock, followBlock);
+        MLNSampleBlockInsertList(lastBlock, followBlock);
         
         _firstBlock = blockList;
     } else if (insertBlock && followBlock == NULL) {

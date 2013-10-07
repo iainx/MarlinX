@@ -26,7 +26,6 @@
     NSArray *urls = [dc URLsFromRunningOpenPanel];
     
     if (urls == nil) {
-        // FIXME: Should we just quit here?
         return NO;
     }
     
