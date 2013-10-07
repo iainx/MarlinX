@@ -16,11 +16,11 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowCollectionBehavior key="collectionBehavior" fullScreenPrimary="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="133" y="235" width="569" height="339"/>
+            <rect key="contentRect" x="133" y="235" width="719" height="358"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
             <value key="minSize" type="size" width="500" height="86"/>
             <view key="contentView" id="6">
-                <rect key="frame" x="0.0" y="0.0" width="569" height="339"/>
+                <rect key="frame" x="0.0" y="0.0" width="719" height="358"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="100077" userLabel="Play Button">
@@ -45,22 +45,12 @@
                             <action selector="stopSample:" target="-2" id="100086"/>
                         </connections>
                     </button>
-                    <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="100192" userLabel="Zoom Bar">
-                        <rect key="frame" x="405" y="8" width="115" height="21"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <constraints>
-                            <constraint firstAttribute="width" constant="111" id="100197"/>
-                        </constraints>
-                        <sliderCell key="cell" state="on" alignment="left" minValue="1" maxValue="65536" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="100193"/>
-                    </slider>
                 </subviews>
                 <constraints>
                     <constraint firstAttribute="bottom" secondItem="100077" secondAttribute="bottom" constant="8" id="100079"/>
                     <constraint firstItem="100077" firstAttribute="leading" secondItem="6" secondAttribute="leading" constant="20" symbolic="YES" id="100080"/>
                     <constraint firstItem="100081" firstAttribute="leading" secondItem="100077" secondAttribute="trailing" constant="12" symbolic="YES" id="100083"/>
                     <constraint firstItem="100081" firstAttribute="baseline" secondItem="100077" secondAttribute="baseline" id="100084"/>
-                    <constraint firstAttribute="trailing" secondItem="100192" secondAttribute="trailing" constant="51" id="100194"/>
-                    <constraint firstItem="100192" firstAttribute="centerY" secondItem="100081" secondAttribute="centerY" id="100195"/>
                 </constraints>
             </view>
             <toolbar key="toolbar" implicitIdentifier="FC47AB36-F5F5-4D14-B2E7-D05626977E91" explicitIdentifier="main" autosavesConfiguration="NO" allowsUserCustomization="NO" showsBaselineSeparator="NO" displayMode="iconAndLabel" sizeMode="regular" id="100063">
