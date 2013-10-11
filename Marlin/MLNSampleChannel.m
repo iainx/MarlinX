@@ -167,7 +167,7 @@
 - (BOOL)addData:(float *)data
      withByteLength:(size_t)byteLength
 {
-    MLNSampleBlock *block = [self writeData:data withByteLemgth:byteLength];
+    MLNSampleBlock *block = [self writeData:data withByteLength:byteLength];
     [self addBlock:block];
     
     return YES;
