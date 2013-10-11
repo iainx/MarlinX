@@ -113,14 +113,10 @@ static void *sampleViewContext = &sampleViewContext;
         [_overviewBarView setVisibleRange:visibleRange];
         return;
     }
-}
-
-- (void)clipViewBoundsChanged:(NSNotification *)note
-{
-    NSRect newBounds = [[note object] bounds];
     
-    NSRange visibleRange = [self boundsToVisibleSampleRange:newBounds];
-    [_overviewBarView setVisibleRange:visibleRange];
+    if ([keyPath isEqualToString:@"visibleRange"]) {
+        [_overviewBarView setVisibleRange:[_sampleView visibleRange]];
+    }
 }
 
 - (void)windowControllerDidLoadNib:(NSWindowController *)aController
@@ -193,7 +189,7 @@ static void *sampleViewContext = &sampleViewContext;
     [_sampleView setSample:_sample];
     
     [_sampleView addObserver:self
-                  forKeyPath:@"framesPerPixel"
+                  forKeyPath:@"visibleRange"
                      options:NSKeyValueObservingOptionNew
                      context:sampleViewContext];
 
@@ -214,14 +210,6 @@ static void *sampleViewContext = &sampleViewContext;
     
     // Set up the clipview so that the sampleView fills the whole of it vertically
     [clipView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[sampleView]|" options:0 metrics:nil views:viewsDict]];
-    
-    // Post the clip view bounds changed so we can track it with the overview bar
-    [clipView setPostsBoundsChangedNotifications:YES];
-    NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-    [nc addObserver:self
-           selector:@selector(clipViewBoundsChanged:)
-               name:NSViewBoundsDidChangeNotification
-             object:clipView];
 }
 
 + (BOOL)autosavesInPlace
@@ -562,6 +550,6 @@ selectionDidChange:(NSRange)selection
 - (void)overviewBar:(MLNOverviewBar *)bar
 requestVisibleRange:(NSRange)newVisibleRange
 {
-    [_sampleView setVisibleRange:newVisibleRange];
+    [_sampleView requestNewVisibleRange:newVisibleRange];
 }
 @end

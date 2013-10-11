@@ -112,6 +112,25 @@ typedef enum {
     return intrinsicSize;
 }
 
+- (void)clipViewBoundsChanged:(NSNotification *)note
+{
+    [self calculateVisibleRange];
+}
+
+- (void)viewDidMoveToWindow
+{
+    NSScrollView *scrollView = [self enclosingScrollView];
+    NSClipView *clipView = [scrollView contentView];
+
+    // Post the clip view bounds changed so we can track it with the overview bar
+    [clipView setPostsBoundsChangedNotifications:YES];
+    NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+    [nc addObserver:self
+           selector:@selector(clipViewBoundsChanged:)
+               name:NSViewBoundsDidChangeNotification
+             object:clipView];
+}
+
 #pragma mark - Sample view drawing
 
 - (CGContextRef)newMaskContextForRect:(NSRect)scaledRect
@@ -705,7 +724,7 @@ static void *sampleContext = &sampleContext;
     }
 }
 
-- (void)setFramesPerPixel:(NSUInteger)framesPerPixel
+- (void)realSetFramesPerPixel:(NSUInteger)framesPerPixel
 {
     if (_framesPerPixel == framesPerPixel) {
         return;
@@ -733,6 +752,13 @@ static void *sampleContext = &sampleContext;
     }
 }
 
+- (void)setFramesPerPixel:(NSUInteger)framesPerPixel
+{
+    [self realSetFramesPerPixel:framesPerPixel];
+    
+    [self calculateVisibleRange];
+}
+
 - (NSUInteger)framesPerPixel
 {
     return _framesPerPixel;
@@ -750,7 +776,31 @@ static void *sampleContext = &sampleContext;
     }
 }
 
-- (void)setVisibleRange:(NSRange)newVisibleRange
+- (void)calculateVisibleRange
+{
+    NSScrollView *scrollView = [self enclosingScrollView];
+    NSClipView *clipView = [scrollView contentView];
+    
+    NSRect visibleRect = [clipView bounds];
+    visibleRect.origin.x *= _framesPerPixel;
+    visibleRect.size.width *= _framesPerPixel;
+    
+    NSRect scaledVisibleRect = [self convertRectToBacking:visibleRect];
+    
+    if (scaledVisibleRect.origin.x < 0) {
+        scaledVisibleRect.size.width += (scaledVisibleRect.origin.x);
+        scaledVisibleRect.origin.x = 0;
+    }
+    
+    NSUInteger location = scaledVisibleRect.origin.x;// * _framesPerPixel;
+    NSUInteger length = scaledVisibleRect.size.width;// * _framesPerPixel;
+    
+    [self willChangeValueForKey:@"visibleRange"];
+    _visibleRange = NSMakeRange(location, length);
+    [self didChangeValueForKey:@"visibleRange"];
+}
+
+- (void)requestNewVisibleRange:(NSRange)newVisibleRange
 {
     NSRect visibleRect = [self visibleRect];
     NSRect scaledRect = [self convertRectToBacking:visibleRect];
@@ -770,7 +820,6 @@ static void *sampleContext = &sampleContext;
     NSRect changedRect = NSMakeRect(range.location / _framesPerPixel, 0,
                                     range.length / _framesPerPixel, [self bounds].size.height);
     
-    DDLogVerbose(@"Sample changed: %@ %@", NSStringFromRange(range), NSStringFromRect(changedRect));
     [self setNeedsDisplayInRect:changedRect];
 }
 
@@ -1040,7 +1089,11 @@ static void *sampleContext = &sampleContext;
     NSScrollView *scrollView = [self enclosingScrollView];
     NSClipView *clipView = [scrollView contentView];
     
-    NSUInteger zoomFrame = [clipView bounds].origin.x * _framesPerPixel;
+    DDLogVerbose(@"visible.origin.x: %f", [clipView bounds].origin.x);
+
+    NSPoint scaledPoint = [self convertPointToBacking:[clipView bounds].origin];
+    NSUInteger zoomFrame = scaledPoint.x * _framesPerPixel;
+    DDLogVerbose(@"Zoom Frame: %lu", zoomFrame);
     
     if (newFramesPerPixel < 1) {
         newFramesPerPixel = 1;
@@ -1048,11 +1101,14 @@ static void *sampleContext = &sampleContext;
         newFramesPerPixel = 65536;
     }
     
-    [self setFramesPerPixel:newFramesPerPixel];
+    [self realSetFramesPerPixel:newFramesPerPixel];
+    
+    // Force the update of the intrinsic width to have happened before we attempt to scroll
+    [self layoutSubtreeIfNeeded];
     
     if (offsetFrame == (NSUInteger)-1) {
-        NSUInteger newPosition = (zoomFrame / newFramesPerPixel);
-        [self scrollPoint:NSMakePoint(newPosition, 0)];
+        NSPoint scrollPoint = [self convertFrameToPoint:zoomFrame];
+        [self scrollPoint:scrollPoint];
     } else {
         NSPoint scrollPoint = [self convertFrameToPoint:offsetFrame];
         [self scrollPoint:scrollPoint];

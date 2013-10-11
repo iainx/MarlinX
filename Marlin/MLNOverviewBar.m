@@ -310,22 +310,37 @@ static void *sampleContext = &sampleContext;
     
     NSPoint mouseLoc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
     
+    if (_dragRegion == DragRegionEnd) {
+        if (mouseLoc.x <= (_visiblePixelRect.origin.x)) {
+            mouseLoc.x = _visiblePixelRect.origin.x + 1;
+        }
+    } else if (_dragRegion == DragRegionStart) {
+        if (mouseLoc.x >= NSMaxX(_visiblePixelRect)) {
+            mouseLoc.x = NSMaxX(_visiblePixelRect) - 1;
+        }
+    }
+    
     NSUInteger newFrameLocation;
     NSUInteger newFrameLength;
+    
+    NSSize visibleRectSize = NSMakeSize(_visiblePixelRect.origin.x - mouseLoc.x, 0);
+    NSSize scaledRectSize = [self convertSizeToBacking:visibleRectSize];
     
     NSPoint scaledLengthPoint = [self convertPointToBacking:mouseLoc];
     
     if (_dragRegion == DragRegionEnd) {
         newFrameLocation = _visibleFrameRange.location;
-        newFrameLength = (scaledLengthPoint.x * _framesPerPixel) - newFrameLocation;
+        newFrameLength = scaledRectSize.width * _framesPerPixel;
     } else {
         NSUInteger lastFrame = NSMaxRange(_visibleFrameRange) - 1;
+        
         newFrameLocation = scaledLengthPoint.x * _framesPerPixel;
         newFrameLength = lastFrame - newFrameLocation;
     }
     
     NSRange newFrameRange;
     newFrameRange = NSMakeRange(newFrameLocation, newFrameLength);
+    
     [_delegate overviewBar:self requestVisibleRange:newFrameRange];
 }
 
