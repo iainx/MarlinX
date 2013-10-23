@@ -30,7 +30,11 @@
     // If fpp is < framesPerCachePoint then we need to use the raw data, rather than the precalculated cache data
     // FIXME: These should be able to be consolidated because they're essentially the same thing
     // just using different data sources
-    if (fpp < framesPerCachePoint) {
+    
+    // FIXME: Disabled cache points as the current implementation breaks really badly with framesPerPixel values
+    // that aren't nice multiples of 256.
+    //if (fpp < framesPerCachePoint) {
+    if (1) {
         const float *data = MLNSampleBlockSampleData(block);
         int cachePointsPerPixel = fpp;
         int j;
@@ -86,7 +90,7 @@
         cacheData = MLNSampleBlockSampleCacheData(block);
         
         posInCache = (startFrame - block->startFrame) / framesPerCachePoint;
-        //DDLogVerbose(@"Position in cache: %lu", posInCache);
+        DDLogVerbose(@"Position in cache: %lu start frame: %lu", posInCache, startFrame);
         cachePointsPerPixel = fpp / framesPerCachePoint;
         
         // Go through the blocks getting the required number of CGPoints to fill the array
