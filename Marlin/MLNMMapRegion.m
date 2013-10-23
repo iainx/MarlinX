@@ -114,8 +114,9 @@ MLNMapRegionWriteData (MLNMapRegion *region,
         bytesLeft -= bytesWritten;
     }
     
-    paddingBytes = pagesize - (byteLength % pagesize);
+    paddingBytes = (byteLength % pagesize);
     if (paddingBytes > 0) {
+        paddingBytes = pagesize - paddingBytes;
         DDLogCVerbose(@"Need to pad with %ld bytes", paddingBytes);
         
         off_t paddingOffset = lseek(fd, paddingBytes, SEEK_END);
