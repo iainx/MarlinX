@@ -29,4 +29,7 @@
 - (void)insertSilenceAtFrame:(NSUInteger)frame
               numberOfFrames:(NSUInteger)numberOfFrames
                  undoManager:(NSUndoManager *)undoManager;
+- (void)clearRange:(NSRange)clearRange
+   withUndoManager:(NSUndoManager *)undoManager;
+
 @end

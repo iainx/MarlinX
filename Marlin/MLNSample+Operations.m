@@ -144,10 +144,30 @@
               numberOfFrames:(NSUInteger)numberOfFrames
                  undoManager:(NSUndoManager *)undoManager
 {
-    /*
     for (MLNSampleChannel *channel in [self channelData]) {
-        <#statements#>
+        [channel insertSilenceAtFrame:frame frameDuration:numberOfFrames];
     }
-     */
+    
+    [self setNumberOfFrames:[self numberOfFrames] + numberOfFrames];
+    
+    NSRange changedRange = NSMakeRange(frame, numberOfFrames);
+    [self postChangeInRangeNotification:changedRange];
+
+    changedRange = NSMakeRange(frame, numberOfFrames);
+    [[undoManager prepareWithInvocationTarget:self] deleteRange:changedRange
+                                                    undoManager:undoManager];
+}
+
+- (void)clearRange:(NSRange)clearRange
+   withUndoManager:(NSUndoManager *)undoManager
+{
+    if (![self containsRange:clearRange]) {
+        return;
+    }
+    
+    [undoManager beginUndoGrouping];
+    [self deleteRange:clearRange undoManager:undoManager];
+    [self insertSilenceAtFrame:clearRange.location numberOfFrames:clearRange.length undoManager:undoManager];
+    [undoManager endUndoGrouping];
 }
 @end

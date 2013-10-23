@@ -184,7 +184,7 @@
                             <menuItem title="Clear Selection" id="xwN-Be-LWK">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <action selector="clear:" target="-1" id="kq4-6y-AFe"/>
+                                    <action selector="clearSelection:" target="-1" id="q5H-pF-Pfe"/>
                                 </connections>
                             </menuItem>
                         </items>

@@ -185,7 +185,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
         buffer[i] = (float)i;
     }
     
-    [channel addData:buffer withLength:BUFFER_FRAME_SIZE * sizeof(float)];
+    [channel addData:buffer withByteLength:BUFFER_FRAME_SIZE * sizeof(float)];
     
     return channel;
 }

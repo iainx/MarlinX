@@ -380,9 +380,12 @@ static void *sampleViewContext = &sampleViewContext;
     [_sample insertChannels:[content channels] atFrame:[_sampleView cursorFramePosition] withUndoManager:undoManager];
 }
 
-- (void)clear:(id)sender
+- (void)clearSelection:(id)sender
 {
+    NSUndoManager *undoManager = [self undoManager];
     
+    [undoManager setActionName:@"Clear Selection"];
+    [_sample clearRange:[_sampleView selection] withUndoManager:undoManager];
 }
 
 - (IBAction)selectAll:(id)sender
@@ -440,7 +443,7 @@ static void *sampleViewContext = &sampleViewContext;
         return NO;
     }
     
-    if (action == @selector(clear:)) {
+    if (action == @selector(clearSelection:)) {
         return [_sampleView hasSelection];
     }
     

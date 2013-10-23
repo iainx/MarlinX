@@ -27,7 +27,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
         buffer[i] = (float)i;
     }
     
-    [channel addData:buffer withLength:BUFFER_FRAME_SIZE * sizeof(float)];
+    [channel addData:buffer withByteLength:BUFFER_FRAME_SIZE * sizeof(float)];
     
     return channel;
 }
@@ -412,6 +412,39 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
 
     for (int i = 0; i < byteSize / sizeof(float); i++) {
         STAssertEquals(buffer[i], (float)startFrame + i, @"");
+    }
+}
+
+- (void)testInsertSilence
+{
+    _channel = [self createChannel];
+    
+    [_channel insertSilenceAtFrame:100 frameDuration:100];
+    
+    STAssertEquals([_channel numberOfFrames], (NSUInteger)44200, @"");
+    
+    MLNSampleBlock *block = [_channel firstBlock];
+    const float *data = MLNSampleBlockSampleData(block);
+    NSUInteger offsetInBlock = 0;
+    
+    for (int i = 0; i < 44200; i++) {
+        float checkValue;
+        if (i <= 100) {
+            checkValue = i;
+        } else if (i > 199) {
+            checkValue = i - 100;
+        } else {
+            checkValue = 0.0;
+        }
+        
+        STAssertEquals(data[offsetInBlock], checkValue, @"");
+        
+        offsetInBlock++;
+        if (offsetInBlock > block->numberOfFrames) {
+            block = block->nextBlock;
+            data = MLNSampleBlockSampleData(block);
+            offsetInBlock = 0;
+        }
     }
 }
 @end
