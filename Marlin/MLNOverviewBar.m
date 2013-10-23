@@ -9,6 +9,7 @@
 #import "MLNOverviewBar.h"
 #import "MLNSample.h"
 #import "MLNSample+Drawing.h"
+#import "Constants.h"
 
 typedef enum {
     DragRegionNone,
@@ -369,6 +370,12 @@ static void *sampleContext = &sampleContext;
     [super setFrameSize:newSize];
 }
 
+- (void)sampleDataDidChangeInRange:(NSNotification *)note
+{
+    [self createChannelMasks];
+    [self setNeedsDisplay:YES];
+}
+
 - (void)setSample:(MLNSample *)sample
 {
     if (_sample == sample) {
@@ -384,6 +391,10 @@ static void *sampleContext = &sampleContext;
               forKeyPath:@"loaded"
                  options:NSKeyValueObservingOptionNew
                  context:sampleContext];
+    
+    NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+    [nc addObserver:self selector:@selector(sampleDataDidChangeInRange:)
+               name:kMLNSampleDataDidChangeInRange object:_sample];
     
     if ([_sample isLoaded]) {
         _framesPerPixel = [_sample numberOfFrames] / [self bounds].size.width;
