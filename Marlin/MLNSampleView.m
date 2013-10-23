@@ -1034,10 +1034,20 @@ static void *sampleContext = &sampleContext;
     }
 }
 
+// After the fpp is larger than the number of frames per cache point
+// we need to lock the allowed frames per pixel to a multiple of frames per cache point
+// otherwise the display gets incredibly broken with frames not appearing in the right place
 - (NSUInteger)calculateFramesPerPixelForMagnification:(CGFloat)magnification
 {
     NSUInteger fpp;
-    CGFloat dfpp = (_framesPerPixel * magnification);
+    CGFloat dfpp;
+    
+    if (_framesPerPixel >= 256) {
+        dfpp = (_summedMagnificationLevel * magnification);
+    } else {
+        dfpp = (_framesPerPixel * magnification);
+    }
+    
     if (ABS(dfpp) < 1) {
         if (magnification < 0) {
             dfpp = -1;
@@ -1045,7 +1055,12 @@ static void *sampleContext = &sampleContext;
             dfpp = 1;
         }
     }
-    fpp = _framesPerPixel - dfpp;
+    
+    if (_framesPerPixel >= 256) {
+        fpp = _summedMagnificationLevel - dfpp;
+    } else {
+        fpp = _framesPerPixel - dfpp;
+    }
     
     if (fpp < 1) {
         fpp = 1;
@@ -1055,6 +1070,10 @@ static void *sampleContext = &sampleContext;
         fpp = 65536;
     }
     
+    if (fpp >= 256) {
+        _summedMagnificationLevel = fpp;
+        fpp = (fpp / 256) * 256;
+    }
     return fpp;
 }
 
