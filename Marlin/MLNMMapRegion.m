@@ -13,12 +13,19 @@ static BOOL MLNMapRegionWriteData (MLNMapRegion *region,
                                    void *data,
                                    size_t byteLength);
 
+static int pagesize = -1;
+
 MLNMapRegion *
 MLNMapRegionCreateRegion(MLNCacheFile *cacheFile,
                          void *data,
                          size_t byteLength)
 {
     MLNMapRegion *newRegion;
+    
+    // Get this the first time we create a region
+    if (pagesize == -1) {
+        pagesize = getpagesize();
+    }
     
     newRegion = malloc(sizeof(MLNMapRegion));
     newRegion->cacheFile = cacheFile;
@@ -82,6 +89,8 @@ MLNMapRegionWriteData (MLNMapRegion *region,
                        size_t byteLength)
 {
     NSUInteger bytesLeft;
+    NSInteger paddingBytes = 0;
+    
     int fd = [region->cacheFile fd];
     
     region->filePos = lseek(fd, 0, SEEK_CUR);
@@ -103,10 +112,22 @@ MLNMapRegionWriteData (MLNMapRegion *region,
         
         data += bytesWritten;
         bytesLeft -= bytesWritten;
-        
-        //fprintf(stdout, "Wrote %lu bytes (%lu/%lu left)\n", bytesWritten, bytesLeft, byteLength);
     }
     
+    paddingBytes = pagesize - (byteLength % pagesize);
+    if (paddingBytes > 0) {
+        DDLogCVerbose(@"Need to pad with %ld bytes", paddingBytes);
+        
+        off_t paddingOffset = lseek(fd, paddingBytes, SEEK_END);
+        if (paddingOffset == -1) {
+            DDLogCError(@"Error padding file for page size: errno - %d", errno);
+        }
+        
+        if (paddingOffset % pagesize) {
+            DDLogCError(@"Error padding file for page size: Padding offset says: %lld", paddingOffset);
+        }
+    }
+
     return YES;
 }
 
@@ -123,12 +144,17 @@ MLNMapRegionMapData (MLNMapRegion *region)
         return NO;
     }
     
+    if (region->mapped == YES) {
+        return YES;
+    }
+    
     fd = [region->cacheFile fd];
     region->dataRegion = mmap(NULL, region->byteLength,
                               PROT_READ | PROT_WRITE, MAP_SHARED,
                               fd, region->filePos);
     if (region->dataRegion == MAP_FAILED) {
         DDLogCError(@"Error mmapping data: %d", errno);
+        DDLogCError(@"   - %lld %lu", region->filePos, region->byteLength);
         
         // Return error properly
         return NO;
