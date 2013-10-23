@@ -170,4 +170,14 @@
     [self insertSilenceAtFrame:clearRange.location numberOfFrames:clearRange.length undoManager:undoManager];
     [undoManager endUndoGrouping];
 }
+
+- (void)dumpDataInRange:(NSRange)range
+{
+    for (MLNSampleChannel *channel in [self channelData]) {
+        NSData *dump = [channel dumpChannelRange:range];
+
+        [dump writeToFile:[NSString stringWithFormat:@"/Users/iain/Marlin Test/dump-%@.dump", [channel channelName]]
+               atomically:YES];                           
+    }
+}
 @end

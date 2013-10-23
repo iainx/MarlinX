@@ -45,5 +45,6 @@
 - (void)insertBlockList:(MLNSampleBlock *)blockList
                 atFrame:(NSUInteger)frame;
 
+- (NSData *)dumpChannelRange:(NSRange)range;
 - (void)dumpChannel:(BOOL)withBlocks;
 @end

@@ -418,6 +418,11 @@ static void *sampleViewContext = &sampleViewContext;
     [_sampleView zoomToNormal];
 }
 
+- (IBAction)dumpSelectionData:(id)sender
+{
+    [_sample dumpDataInRange:[_sampleView selection]];
+}
+
 #pragma mark - Validators
 
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem

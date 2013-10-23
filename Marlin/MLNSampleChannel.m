@@ -77,17 +77,17 @@
 {
     NSUInteger sampleLength = (byteLength / sizeof(float));
     
-    UInt32 numberOFCachePoints = ((UInt32)sampleLength / SAMPLES_PER_CACHE_POINT);
+    UInt32 numberOfCachePoints = ((UInt32)sampleLength / SAMPLES_PER_CACHE_POINT);
     if (sampleLength % SAMPLES_PER_CACHE_POINT != 0) {
         // There will be one cachepoint which doesn't represent the full number of samples.
-        numberOFCachePoints++;
+        numberOfCachePoints++;
     }
     
-    size_t dataSize = numberOFCachePoints * sizeof(MLNSampleCachePoint);
+    size_t dataSize = numberOfCachePoints * sizeof(MLNSampleCachePoint);
     MLNSampleCachePoint *cacheData = (MLNSampleCachePoint *)malloc(dataSize);
     
     if (cacheData == NULL) {
-        // FIXME Should return error
+        DDLogCError(@"Unable to create cacheData");
         return NULL;
     }
     
@@ -543,4 +543,81 @@
     }
 }
 
+- (NSData *)dumpChannelRange:(NSRange)range
+{
+    MLNSampleBlock *firstBlock;
+    NSMutableData *dumpData = [NSMutableData data];
+    const float *data;
+    const MLNSampleCachePoint *cacheData;
+    NSUInteger frameOffsetInBlock, numberOfFrames, frame, offsetInCache;
+    NSString *line;
+    
+    firstBlock = [self sampleBlockForFrame:range.location];
+    data = MLNSampleBlockSampleData(firstBlock);
+    cacheData = MLNSampleBlockSampleCacheData(firstBlock);
+    
+    frameOffsetInBlock = range.location - firstBlock->startFrame;
+    numberOfFrames = range.length;
+    
+    offsetInCache = frameOffsetInBlock / SAMPLES_PER_CACHE_POINT;
+    
+    frame = range.location;
+    
+    line = [NSString stringWithFormat:@"Dump range: %@\n\n\nSample Data\n\n\n", NSStringFromRange(range)];
+    [dumpData appendData:[line dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    while (numberOfFrames) {
+        line = [NSString stringWithFormat:@"%lu > %f\n", frame, data[frameOffsetInBlock]];
+        
+        [dumpData appendData:[line dataUsingEncoding:NSUTF8StringEncoding]];
+        frameOffsetInBlock++;
+        
+        if (frameOffsetInBlock >= MLNSampleBlockLastFrame(firstBlock)) {
+            firstBlock = firstBlock->nextBlock;
+            data = MLNSampleBlockSampleData(firstBlock);
+            
+            frameOffsetInBlock = 0;
+        }
+        
+        frame++;
+        numberOfFrames--;
+    }
+    
+    line = [NSString stringWithFormat:@"\n\n\nSample Cache\n\n\n"];
+
+    firstBlock = [self sampleBlockForFrame:range.location];
+    cacheData = MLNSampleBlockSampleCacheData(firstBlock);
+    
+    frameOffsetInBlock = range.location - firstBlock->startFrame;
+    numberOfFrames = range.length;
+    
+    offsetInCache = frameOffsetInBlock / SAMPLES_PER_CACHE_POINT;
+
+    frame = offsetInCache;
+    
+    numberOfFrames = (range.length / SAMPLES_PER_CACHE_POINT);
+    while (numberOfFrames) {
+        MLNSampleCachePoint point = cacheData[offsetInCache];
+        
+        line = [NSString stringWithFormat:@"%lu > Min: %f - Max: %f - Avg Min: %f - Avg Max: %f\n", frame,
+                point.minValue, point.maxValue, point.avgMinValue, point.avgMaxValue];
+        [dumpData appendData:[line dataUsingEncoding:NSUTF8StringEncoding]];
+        
+        offsetInCache++;
+        if (offsetInCache * sizeof(MLNSampleCachePoint) >= firstBlock->cacheByteLength) {
+            firstBlock = firstBlock->nextBlock;
+            cacheData = MLNSampleBlockSampleCacheData(firstBlock);
+            
+            offsetInCache = 0;
+            
+            if (cacheData == NULL) {
+                break;
+            }
+        }
+        
+        numberOfFrames -= SAMPLES_PER_CACHE_POINT;
+    }
+    
+    return dumpData;
+}
 @end

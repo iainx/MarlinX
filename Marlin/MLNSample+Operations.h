@@ -32,4 +32,6 @@
 - (void)clearRange:(NSRange)clearRange
    withUndoManager:(NSUndoManager *)undoManager;
 
+- (void)dumpDataInRange:(NSRange)range;
+
 @end

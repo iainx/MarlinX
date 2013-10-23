@@ -38,4 +38,5 @@
 
 - (IBAction)showInformation:(id)sender;
 
+- (IBAction)dumpSelectionData:(id)sender;
 @end
