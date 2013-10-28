@@ -84,7 +84,7 @@
         NSUInteger posInCache;
         
         cacheData = MLNSampleBlockSampleCacheData(block);
-        
+        assert(cacheData);
         posInCache = (startFrame - block->startFrame) / framesPerCachePoint;
         //DDLogVerbose(@"Position in cache: %lu start frame: %lu", posInCache, startFrame);
         

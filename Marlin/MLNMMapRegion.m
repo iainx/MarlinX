@@ -33,7 +33,8 @@ MLNMapRegionCreateRegion(MLNCacheFile *cacheFile,
     MLNMapRegionWriteData(newRegion, data, byteLength);
     
     newRegion->byteLength = byteLength;
-    
+
+    newRegion->mapped = NO;
     MLNMapRegionMapData(newRegion);
     
     newRegion->refCount = 1;
@@ -144,11 +145,12 @@ MLNMapRegionMapData (MLNMapRegion *region)
     if (region == NULL) {
         return NO;
     }
-    
+
     if (region->mapped == YES) {
+        fprintf(stderr, "Block already mapped\n");
         return YES;
     }
-    
+
     fd = [region->cacheFile fd];
     region->dataRegion = mmap(NULL, region->byteLength,
                               PROT_READ | PROT_WRITE, MAP_SHARED,
@@ -169,6 +171,10 @@ void
 MLNMapRegionUnmapData (MLNMapRegion *region)
 {
     if (region == NULL) {
+        return;
+    }
+    
+    if (region->mapped == NO) {
         return;
     }
     
