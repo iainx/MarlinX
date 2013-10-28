@@ -37,8 +37,6 @@ typedef enum {
     CGGradientRef _shadowGradient;
     
     NSTimer *_cursorTimer;
-    BOOL _cursorOpacityDirection;
-    float _cursorOpacity;
     BOOL _drawCursor;
     
     MLNSelectionToolbar *_selectionToolbar;
@@ -50,7 +48,7 @@ typedef enum {
 
 @synthesize framesPerPixel = _framesPerPixel;
 
-#define CURSOR_FADE_TIME 0.1
+#define CURSOR_FADE_TIME 0.5
 #define CURSOR_PAUSE_TIME 0.3
 #define CURSOR_MIN_OPACITY 0.60
 #define CURSOR_MAX_OPACITY 0.85
@@ -67,10 +65,8 @@ typedef enum {
     _framesPerPixel = DEFAULT_FRAMES_PER_PIXEL;
     _summedMagnificationLevel = 0;
     _drawCursor = YES;
-    _cursorFramePosition = 0;
-    _cursorOpacityDirection = NO;
     
-    [self resetCursorTimer:CURSOR_FADE_TIME withSelector:@selector(increaseCursorOpacity:)];
+    [self resetTimers];
     
     [self setContentCompressionResistancePriority:NSLayoutPriorityRequired
                                    forOrientation:NSLayoutConstraintOrientationVertical];
@@ -112,9 +108,20 @@ typedef enum {
     return intrinsicSize;
 }
 
+- (BOOL)isCursorVisible
+{
+    return !(_cursorFramePosition < _visibleRange.location || _cursorFramePosition >= NSMaxRange(_visibleRange));
+}
+
 - (void)clipViewBoundsChanged:(NSNotification *)note
 {
     [self calculateVisibleRange];
+    
+    if([self isCursorVisible]) {
+        [self resetTimers];
+    } else {
+        [self stopTimers];
+    }
 }
 
 - (void)viewDidMoveToWindow
@@ -324,7 +331,7 @@ static const int GUTTER_SIZE = 24;
         NSPoint cursorPoint = [self convertFrameToPoint:_cursorFramePosition];
         NSRect cursorRect = NSMakeRect(cursorPoint.x + 0.5, 0, 1, [self bounds].size.height - GUTTER_SIZE);
         if (NSIntersectsRect(cursorRect, dirtyRect)) {
-            NSColor *cursorColour = [NSColor colorWithCalibratedWhite:1.0 alpha:_cursorOpacity];
+            NSColor *cursorColour = [NSColor colorWithCalibratedWhite:1.0 alpha:1.0];
             [cursorColour set];
             
             NSRectFillUsingOperation(cursorRect, NSCompositeSourceOver);
@@ -1558,72 +1565,37 @@ subtractSelectionRects (NSRect a, NSRect b)
 }
 
 #pragma mark - Cursor
-// FIXME We should pause the cursor when it's off screen
-- (void)resetCursorTimer:(NSTimeInterval)interval
-            withSelector:(SEL)selector
-{
-    [_cursorTimer invalidate];
-    _cursorTimer = [NSTimer scheduledTimerWithTimeInterval:interval
-                                                    target:self
-                                                  selector:selector
-                                                  userInfo:nil
-                                                   repeats:YES];
-}
-
-- (void)pauseCursor:(NSTimer *)timer
-{
-    if (_cursorOpacity >= CURSOR_MAX_OPACITY) {
-        [self resetCursorTimer:CURSOR_FADE_TIME withSelector:@selector(decreaseCursorOpacity:)];
-    } else {
-        _cursorOpacity = CURSOR_MIN_OPACITY;
-        [self resetCursorTimer:CURSOR_FADE_TIME withSelector:@selector(increaseCursorOpacity:)];
-    }
-}
-
-- (void)increaseCursorOpacity:(NSTimer *)timer
-{
-    _cursorOpacity += 0.05;
-    [self invalidateCursor:timer];
-}
-
-- (void)decreaseCursorOpacity:(NSTimer *)timer
-{
-    _cursorOpacity -= 0.05;
-    if (_cursorOpacity <= CURSOR_MIN_OPACITY) {
-        _cursorOpacity = 0.0;
-    }
-    [self invalidateCursor:timer];
-}
-
 - (void)invalidateCursor:(NSTimer *)timer
 {
     NSPoint cursorPoint = [self convertFrameToPoint:_cursorFramePosition];
     
     NSRect cursorRect = NSMakeRect(cursorPoint.x + 0.5, 0.0, 1.0, [self bounds].size.height);
-    [self setNeedsDisplayInRect:cursorRect];
     
-    if (_cursorOpacity <= 0.0 || _cursorOpacity >= CURSOR_MAX_OPACITY) {
-        _cursorOpacityDirection = !_cursorOpacityDirection;
-        [self resetCursorTimer:CURSOR_PAUSE_TIME withSelector:@selector(pauseCursor:)];
-    }
+    _drawCursor = !_drawCursor;
+    [self setNeedsDisplayInRect:cursorRect];
 }
 
 - (void)stopTimers
 {
     [_cursorTimer invalidate];
-    _cursorOpacity = 0;
+    _cursorTimer = nil;
 }
 
 - (void)resetTimers
 {
+    if (_cursorTimer) {
+        return;
+    }
+    
+    _drawCursor = NO;
     [self invalidateCursor:nil];
+    _cursorTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(invalidateCursor:) userInfo:nil repeats:YES];
 }
 
 - (void)moveCursorTo:(NSUInteger)cursorFrame
 {
     NSPoint cursorPoint = [self convertFrameToPoint:_cursorFramePosition];
     
-    DDLogVerbose(@"old cursor at %@", NSStringFromPoint(cursorPoint));
     // Invalidate the old cursor
     NSRect cursorRect = NSMakeRect(cursorPoint.x + 0.5, 0.0, 1.0, [self bounds].size.height);
     [self setNeedsDisplayInRect:cursorRect];
@@ -1636,8 +1608,10 @@ subtractSelectionRects (NSRect a, NSRect b)
     cursorRect = NSMakeRect(cursorPoint.x + 0.5, 0.0, 1.0, [self bounds].size.height);
     _drawCursor = YES;
     
-    _cursorOpacity = CURSOR_MAX_OPACITY;
-    [self setNeedsDisplayInRect:cursorRect];
+    if ([self isCursorVisible]) {
+        [self setNeedsDisplayInRect:cursorRect];
+        [self resetTimers];
+    }
 }
 
 - (void)centreOnCursor
