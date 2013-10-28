@@ -84,12 +84,10 @@
         NSUInteger posInCache;
         
         cacheData = MLNSampleBlockSampleCacheData(block);
-        assert(cacheData);
         posInCache = (startFrame - block->startFrame) / framesPerCachePoint;
         //DDLogVerbose(@"Position in cache: %lu start frame: %lu", posInCache, startFrame);
         
         cachePointsPerPixel = fpp / framesPerCachePoint;
-        NSLog(@"CPPP: %d - fpp: %d", cachePointsPerPixel, fpp);
         
         // Go through the blocks getting the required number of CGPoints to fill the array
         while (block && i < length) {
@@ -115,7 +113,6 @@
                         break;
                     }
                     cacheData = MLNSampleBlockSampleCacheData(block);
-                    assert(cacheData);
                     
                     // Reset the position in the cache
                     posInCache = 0;
