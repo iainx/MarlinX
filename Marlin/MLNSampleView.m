@@ -1608,6 +1608,17 @@ subtractSelectionRects (NSRect a, NSRect b)
     }
 }
 
+- (void)stopTimers
+{
+    [_cursorTimer invalidate];
+    _cursorOpacity = 0;
+}
+
+- (void)resetTimers
+{
+    [self invalidateCursor:nil];
+}
+
 - (void)moveCursorTo:(NSUInteger)cursorFrame
 {
     NSPoint cursorPoint = [self convertFrameToPoint:_cursorFramePosition];

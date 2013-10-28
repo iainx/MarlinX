@@ -33,6 +33,8 @@
 
 - (void)requestNewVisibleRange:(NSRange)newVisibleRange;
 
+- (void)stopTimers;
+- (void)resetTimers;
 - (void)dumpCacheImage;
 
 @end

@@ -137,6 +137,8 @@ static void *sampleViewContext = &sampleViewContext;
     [_sampleView setDelegate:self];
     
     NSWindow *window = [aController window];
+    [window setDelegate:self];
+    
     [[window contentView] addSubview:_overviewBarView];
     [[window contentView] addSubview:_scrollView];
     [[window contentView] addSubview:_progressView];
@@ -559,5 +561,15 @@ selectionDidChange:(NSRange)selection
 requestVisibleRange:(NSRange)newVisibleRange
 {
     [_sampleView requestNewVisibleRange:newVisibleRange];
+}
+
+#pragma mark - Window delegate
+- (void)windowDidChangeOcclusionState:(NSNotification *)notification
+{
+    if ([[notification object] occlusionState] & NSWindowOcclusionStateVisible) {
+        [_sampleView resetTimers];
+    } else {
+        [_sampleView stopTimers];
+    }
 }
 @end

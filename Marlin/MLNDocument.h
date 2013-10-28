@@ -15,7 +15,7 @@
 @class MLNSampleView;
 @class MLNOverviewBar;
 
-@interface MLNDocument : NSDocument <MLNExportPanelControllerDelegate, MLNSampleViewDelegate, MLNOverviewBarDelegate, MLNSampleDelegate>
+@interface MLNDocument : NSDocument <MLNExportPanelControllerDelegate, MLNSampleViewDelegate, MLNOverviewBarDelegate, MLNSampleDelegate, NSWindowDelegate>
 
 @property (readwrite, weak) IBOutlet NSToolbar *toolbar;
 @property (readwrite, strong) NSScrollView *scrollView;
