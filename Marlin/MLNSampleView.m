@@ -165,6 +165,7 @@ typedef enum {
 }
 
 static const int GUTTER_SIZE = 24;
+static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
 
 - (void)drawRect:(NSRect)dirtyRect
 {
@@ -185,35 +186,35 @@ static const int GUTTER_SIZE = 24;
     
     // If there is only 1 channel, we need extra room for the marker gutter
     // We also make the bottom gutter smaller because we don't need the second row of ticks
-    int extraGutterHeight = (numberOfChannels == 1) ? GUTTER_SIZE - 7 : 0;
-    CGFloat channelHeight = (realDrawRect.size.height - extraGutterHeight) / numberOfChannels;
+    CGFloat channelHeight = (realDrawRect.size.height - ((numberOfChannels - 1) * GUTTER_SIZE)) / numberOfChannels;
+    if (numberOfChannels == 1) {
+        channelHeight -= SMALL_GUTTER_SIZE;
+    }
     
     // 55 56 58
     NSColor *darkBG = [NSColor colorWithCalibratedRed:0.214 green:0.218 blue:0.226 alpha:1.0];
     
     channelRect.size.height = channelHeight;
-    
-    NSRect maskRect = channelRect;
-    maskRect.size.height -= GUTTER_SIZE;
+
+
     
     // Scale to take Retina display into consideration
-    NSRect scaledRect = [self convertRectToBacking:maskRect];
+    NSRect scaledRect = [self convertRectToBacking:channelRect];
     NSUInteger channel;
     
     for (channel = 0; channel < numberOfChannels; channel++) {
-        channelRect.origin.y = realDrawRect.size.height - (channelHeight * (channel + 1));
-        maskRect.origin.y = channelRect.origin.y;
+        channelRect.origin.y = realDrawRect.size.height - (((channel + 1) * channelHeight) + (channel * GUTTER_SIZE));
         
-        NSRect channelBackgroundRect = maskRect;
+        NSRect channelBackgroundRect = channelRect;
         channelBackgroundRect.origin.x = bounds.origin.x;
         channelBackgroundRect.size.width = bounds.size.width;
-        
+
         /*
         if (NSIntersectsRect(dirtyRect, channelBackgroundRect) == NO) {
             continue;
         }
          */
-        
+    
         if (_shadowGradient == nil) {
             // Draw the shadow gradients
             CGFloat components[8] = {0.45, 0.45, 0.45, 1.0,  // Start color
@@ -233,7 +234,7 @@ static const int GUTTER_SIZE = 24;
         startPoint = CGPointMake(channelBackgroundRect.origin.x, channelBackgroundRect.origin.y + 10);
         endPoint = CGPointMake(channelBackgroundRect.origin.x, channelBackgroundRect.origin.y - 7);
         CGContextDrawLinearGradient(context, _shadowGradient, startPoint, endPoint, 0);
-        
+
         NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:channelBackgroundRect xRadius:10.0 yRadius:10.0];
         [darkBG setFill];
         [path fill];
@@ -252,9 +253,9 @@ static const int GUTTER_SIZE = 24;
         // If there is only one channel, we draw the ruler below the channel, otherwise it is above
         if (numberOfChannels == 1) {
             rulerY = 0;
-            rulerGutterSize = GUTTER_SIZE - 7;
+            rulerGutterSize = SMALL_GUTTER_SIZE;
         } else {
-            rulerY = realDrawRect.size.height - (channelHeight * channel) - GUTTER_SIZE;
+            rulerY = realDrawRect.size.height - (channelHeight * channel) - (channel * GUTTER_SIZE);
             rulerGutterSize = GUTTER_SIZE;
         }
         NSRect rulerRect = NSMakeRect(bounds.origin.x, rulerY,
@@ -267,7 +268,7 @@ static const int GUTTER_SIZE = 24;
         
         [self drawRulerInContext:context inRect:intersectRect onlyDrawTop:(numberOfChannels == 1)];
     }
-    
+
     NSBezierPath *selectionPath = nil;
     NSRect selectionRect;
     
@@ -289,14 +290,13 @@ static const int GUTTER_SIZE = 24;
             [selectionPath fill];
         }
     }
-    
+
     for (NSUInteger channel = 0; channel < numberOfChannels; channel++) {
         CGContextRef maskContext;
         CGImageRef sampleMask;
         
-        channelRect.origin.y = realDrawRect.size.height - (channelHeight * (channel + 1));
-        maskRect.origin.y = channelRect.origin.y;
-        
+        channelRect.origin.y = realDrawRect.size.height - (((channel + 1) * channelHeight) + (channel * GUTTER_SIZE));
+
         if (NSIntersectsRect(dirtyRect, channelRect) == NO) {
             continue;
         }
@@ -310,7 +310,7 @@ static const int GUTTER_SIZE = 24;
         
         CGContextSaveGState(context);
         
-        NSRect smallerMaskRect = NSInsetRect(maskRect, 0, 6);
+        NSRect smallerMaskRect = NSInsetRect(channelRect, 0, 6);
         CGContextClipToMask(context, smallerMaskRect, sampleMask);
 
         NSColor *waveformColour = [NSColor colorWithCalibratedRed:0.5 green:0.5 blue:0.2 alpha:1.0];
@@ -324,7 +324,7 @@ static const int GUTTER_SIZE = 24;
         CGImageRelease(sampleMask);
         CGContextRelease(maskContext);
         
-        [self drawNameForChannel:channel InRect:maskRect];
+        [self drawNameForChannel:channel InRect:channelRect];
     }
 
     // Draw the outline of the selection over the waveform
@@ -332,10 +332,10 @@ static const int GUTTER_SIZE = 24;
     if (_hasSelection && NSIntersectsRect(dirtyRect, [self selectionRectToDirtyRect:selectionRect]) == YES) {
         [self drawSelectionFrameInRect:selectionRect];
     }
-    
+
     if (_drawCursor && _hasSelection == NO) {
         NSPoint cursorPoint = [self convertFrameToPoint:_cursorFramePosition];
-        NSRect cursorRect = NSMakeRect(cursorPoint.x + 0.5, 0, 1, [self bounds].size.height - GUTTER_SIZE);
+        NSRect cursorRect = NSMakeRect(cursorPoint.x + 0.5, 0, 1, [self bounds].size.height);
         if (NSIntersectsRect(cursorRect, dirtyRect)) {
             NSColor *cursorColour = [NSColor colorWithCalibratedWhite:1.0 alpha:1.0];
             [cursorColour set];
@@ -1246,7 +1246,7 @@ subtractSelectionRects (NSRect a, NSRect b)
     
     // Overload NSPoint here to convert a frame to the backing store pixel format
     NSPoint selectionWidth = [self convertFrameToPoint:selectionFrameWidth];
-    NSRect selectionRect = NSMakeRect(startPoint.x, 0, selectionWidth.x, [self bounds].size.height - GUTTER_SIZE);
+    NSRect selectionRect = NSMakeRect(startPoint.x, 0, selectionWidth.x, [self bounds].size.height);
     
     return selectionRect;
 }
@@ -1436,7 +1436,7 @@ subtractSelectionRects (NSRect a, NSRect b)
         [self addSubview:_selectionToolbar];
         
         NSDictionary *viewsDict = @{@"toolbar": _selectionToolbar};
-        NSDictionary *verticalMetrics = @{@"offset": @(GUTTER_SIZE + 10.0)};
+        NSDictionary *verticalMetrics = @{@"offset": @(10.0)};
         
         // Setup the constraint that pins the toolbar to the top of the view
         NSArray *constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-offset-[toolbar]"
