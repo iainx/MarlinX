@@ -113,7 +113,7 @@ typedef enum {
     return !(_cursorFramePosition < _visibleRange.location || _cursorFramePosition >= NSMaxRange(_visibleRange));
 }
 
-- (void)clipViewBoundsChanged:(NSNotification *)note
+- (void)clipviewBoundsOrFrameChanged:(NSNotification *)note
 {
     [self calculateVisibleRange];
     
@@ -128,12 +128,18 @@ typedef enum {
 {
     NSScrollView *scrollView = [self enclosingScrollView];
     NSClipView *clipView = [scrollView contentView];
-
-    // Post the clip view bounds changed so we can track it with the overview bar
-    [clipView setPostsBoundsChangedNotifications:YES];
     NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+    
+    // Bounds track the scrolling changes
+    // Frame track the size changes
+    [clipView setPostsFrameChangedNotifications:YES];
+    [clipView setPostsBoundsChangedNotifications:YES];
     [nc addObserver:self
-           selector:@selector(clipViewBoundsChanged:)
+           selector:@selector(clipviewBoundsOrFrameChanged:)
+               name:NSViewFrameDidChangeNotification
+             object:clipView];
+    [nc addObserver:self
+           selector:@selector(clipviewBoundsOrFrameChanged:)
                name:NSViewBoundsDidChangeNotification
              object:clipView];
 }
