@@ -84,6 +84,9 @@
         NSUInteger posInCache;
         
         cacheData = MLNSampleBlockSampleCacheData(block);
+        if (cacheData == NULL) {
+            DDLogError(@"Cachedata is NULL for initial block");
+        }
         posInCache = (startFrame - block->startFrame) / framesPerCachePoint;
         //DDLogVerbose(@"Position in cache: %lu start frame: %lu", posInCache, startFrame);
         
@@ -113,6 +116,10 @@
                         break;
                     }
                     cacheData = MLNSampleBlockSampleCacheData(block);
+                    if (cacheData == NULL) {
+                        DDLogError(@"cacheData is NULL for block");
+                        break;
+                    }
                     
                     // Reset the position in the cache
                     posInCache = 0;
