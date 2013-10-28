@@ -1125,12 +1125,17 @@ static void *sampleContext = &sampleContext;
     // Force the update of the intrinsic width to have happened before we attempt to scroll
     [self layoutSubtreeIfNeeded];
     
+    NSPoint scrollPoint;
     if (offsetFrame == (NSUInteger)-1) {
-        NSPoint scrollPoint = [self convertFrameToPoint:zoomFrame];
+        scrollPoint = [self convertFrameToPoint:zoomFrame];
         [self scrollPoint:scrollPoint];
     } else {
-        NSPoint scrollPoint = [self convertFrameToPoint:offsetFrame];
+        scrollPoint = [self convertFrameToPoint:offsetFrame];
         [self scrollPoint:scrollPoint];
+    }
+    
+    if (scaledPoint.x == scrollPoint.x) {
+        [self calculateVisibleRange];
     }
 }
 
