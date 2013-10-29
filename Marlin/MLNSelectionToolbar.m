@@ -28,6 +28,7 @@
     return self;
 }
 
+/*
 - (void)drawRect:(NSRect)dirtyRect
 {
     NSColor *bgColor = [NSColor colorWithCalibratedRed:0.687 green:0.687 blue:1.0 alpha:1.0];
@@ -45,6 +46,7 @@
     _borderPath = [NSBezierPath bezierPathWithRoundedRect:borderRect
                                                   xRadius:5.0 yRadius:5.0];
 }
+ */
 #pragma mark - Constraints
 
 + (BOOL)requiresConstraintBasedLayout
@@ -52,8 +54,8 @@
     return YES;
 }
 
-#define TOOLBAR_PADDING 5.0
-#define TOOLBAR_SPACING 2.0
+static const float TOOLBAR_PADDING = 0.0;
+static const float TOOLBAR_SPACING = 2.0;
 
 - (NSSize)intrinsicContentSize
 {

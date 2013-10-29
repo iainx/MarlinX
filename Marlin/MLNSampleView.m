@@ -23,6 +23,12 @@ typedef enum {
     DragHandleEnd
 } DragHandle;
 
+typedef enum {
+    ToolbarPositionInside,
+    ToolbarPositionLeft,
+    ToolbarPositionRight,
+} ToolbarPosition;
+
 @implementation MLNSampleView {
     CGFloat _intrinsicWidth;
     CGFloat _summedMagnificationLevel;
@@ -43,7 +49,8 @@ typedef enum {
     NSMutableArray *_toolbarConstraints;
     NSLayoutConstraint *_toolbarXConstraint;
     NSLayoutConstraint *_leftXConstraint;
-    BOOL _toolbarIsOnRight;
+    ToolbarPosition _toolbarPosition;
+    //BOOL _toolbarIsOnRight;
 }
 
 @synthesize framesPerPixel = _framesPerPixel;
@@ -471,12 +478,6 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
                            startStringSize:(NSSize)startSize
                              endStringSize:(NSSize)endSize
 {
-    // If the strings don't fit on the selection then tough
-    if (startSize.width + endSize.width + 25 > innerSelectionRect.size.width) {
-        return [NSBezierPath bezierPathWithRoundedRect:innerSelectionRect
-                                               xRadius:4.0 yRadius:4.0];
-    }
-
     NSBezierPath *innerPath = [[NSBezierPath alloc] init];
     
     CGFloat x1, y1, x2, y2;
@@ -489,8 +490,6 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
     x2 = NSMaxX(innerSelectionRect);
     y2 = NSMaxY(innerSelectionRect);
     
-    topRight = NSMakePoint(x2 - 5, y2);
-    rightTop = NSMakePoint(x2, y2 - 5);
     rightBottom = NSMakePoint(x2, y1 + endSize.height + 15.0);
     bottomRight = NSMakePoint(x2 - 10 - endSize.width, y1);
     endTopCorner = NSMakePoint(bottomRight.x + 5, rightBottom.y - 5);
@@ -502,35 +501,68 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
     
     // Top line
     [innerPath moveToPoint:topLeft];
-    [innerPath lineToPoint:topRight];
     
-    // Top right corner
-    [innerPath appendBezierPathWithArcFromPoint:NSMakePoint(x2, y2) toPoint:rightTop radius:5.0];
+    if (_toolbarPosition == ToolbarPositionInside) {
+        NSSize _toolbarSize = [_selectionToolbar intrinsicContentSize];
+        CGFloat tbx = x2 - (5.5 + _toolbarSize.width);
+        
+        topRight = NSMakePoint(x2 - (8 + _toolbarSize.width), y2);
+        rightTop = NSMakePoint(x2, y2 - (2 + _toolbarSize.height));
+        
+        [innerPath lineToPoint:topRight];
+        
+        [innerPath appendBezierPathWithArcFromPoint:NSMakePoint(tbx + 2.5, y2) toPoint:NSMakePoint(tbx + 2.5, y2 - 2) radius:5.0];
+        
+        [innerPath lineToPoint:NSMakePoint(tbx + 2.5, rightTop.y + 5)];
+        
+        [innerPath appendBezierPathWithArcFromPoint:NSMakePoint(tbx + 2.5, rightTop.y)
+                                            toPoint:NSMakePoint(tbx + 7.5, rightTop.y)
+                                             radius:5.0];
+        [innerPath lineToPoint:NSMakePoint(x2 - 3, rightTop.y)];
+        
+        [innerPath appendBezierPathWithArcFromPoint:NSMakePoint(x2, rightTop.y) toPoint:NSMakePoint(x2, rightTop.y - 2) radius:5.0];
+    } else {
+        topRight = NSMakePoint(x2 - 5, y2);
+        rightTop = NSMakePoint(x2, y2 - 5);
+
+        [innerPath lineToPoint:topRight];
     
-    // Right side
-    [innerPath lineToPoint:rightBottom];
-    [innerPath appendBezierPathWithArcFromPoint:NSMakePoint(x2, y1 + endSize.height + 10) toPoint:endCorner radius:5.0];
+        // Top right corner
+        [innerPath appendBezierPathWithArcFromPoint:NSMakePoint(x2, y2) toPoint:rightTop radius:5.0];
+    }
     
-    [innerPath lineToPoint:endTopCorner];
-    [innerPath appendBezierPathWithArcFromPoint:endCorner toPoint:NSMakePoint(x2 - endSize.width - 10, y1) radius:5.0];
-    
-    [innerPath lineToPoint:NSMakePoint(x2-endSize.width - 10, y1 + 5)];
-    [innerPath appendBezierPathWithArcFromPoint:NSMakePoint(x2 - endSize.width - 10, y1)
-                                        toPoint:NSMakePoint(x2 - endSize.width - 15, y1) radius:5.0];
-    
-    // Bottom line
-    [innerPath lineToPoint:bottomLeft];
-    [innerPath appendBezierPathWithArcFromPoint:NSMakePoint(bottomLeft.x - 5, y1)
-                                        toPoint:NSMakePoint(bottomLeft.x - 5, y1 + 5) radius:5.0];
-    
-    [innerPath lineToPoint:NSMakePoint(bottomLeft.x - 5, y1 + startSize.height + 5)];
-    [innerPath appendBezierPathWithArcFromPoint:NSMakePoint(bottomLeft.x - 5, y1 + startSize.height + 10)
-                                        toPoint:NSMakePoint(bottomLeft.x - 10, y1 + startSize.height + 10)
-                                         radius:5.0];
-    
-    [innerPath lineToPoint:NSMakePoint(x1 + 5, y1 + startSize.height + 10)];
-    [innerPath appendBezierPathWithArcFromPoint:NSMakePoint(x1, y1 + startSize.height + 10)
-                                        toPoint:NSMakePoint(x1, y1 + startSize.height + 15) radius:5.0];
+    if (startSize.width + endSize.width + 25 > innerSelectionRect.size.width) {
+        [innerPath lineToPoint:NSMakePoint(x2, y1 + 5)];
+        [innerPath appendBezierPathWithArcFromPoint:NSMakePoint(x2, y1) toPoint:NSMakePoint(x2 - 5, y1) radius:5.0];
+        
+        [innerPath lineToPoint:NSMakePoint(x1 + 5, y1)];
+        [innerPath appendBezierPathWithArcFromPoint:NSMakePoint(x1, y1) toPoint:NSMakePoint(x1, y1 + 5) radius:5.0];
+    } else {
+        // Right side
+        [innerPath lineToPoint:rightBottom];
+        [innerPath appendBezierPathWithArcFromPoint:NSMakePoint(x2, y1 + endSize.height + 10) toPoint:endCorner radius:5.0];
+
+        [innerPath lineToPoint:endTopCorner];
+        [innerPath appendBezierPathWithArcFromPoint:endCorner toPoint:NSMakePoint(x2 - endSize.width - 10, y1) radius:5.0];
+        
+        [innerPath lineToPoint:NSMakePoint(x2-endSize.width - 10, y1 + 5)];
+        [innerPath appendBezierPathWithArcFromPoint:NSMakePoint(x2 - endSize.width - 10, y1)
+                                            toPoint:NSMakePoint(x2 - endSize.width - 15, y1) radius:5.0];
+        
+            // Bottom line
+        [innerPath lineToPoint:bottomLeft];
+        [innerPath appendBezierPathWithArcFromPoint:NSMakePoint(bottomLeft.x - 5, y1)
+                                            toPoint:NSMakePoint(bottomLeft.x - 5, y1 + 5) radius:5.0];
+        
+        [innerPath lineToPoint:NSMakePoint(bottomLeft.x - 5, y1 + startSize.height + 5)];
+        [innerPath appendBezierPathWithArcFromPoint:NSMakePoint(bottomLeft.x - 5, y1 + startSize.height + 10)
+                                            toPoint:NSMakePoint(bottomLeft.x - 10, y1 + startSize.height + 10)
+                                             radius:5.0];
+        
+        [innerPath lineToPoint:NSMakePoint(x1 + 5, y1 + startSize.height + 10)];
+        [innerPath appendBezierPathWithArcFromPoint:NSMakePoint(x1, y1 + startSize.height + 10)
+                                            toPoint:NSMakePoint(x1, y1 + startSize.height + 15) radius:5.0];
+    }
     // Left side
     [innerPath lineToPoint:leftTop];
     
@@ -1411,8 +1443,10 @@ subtractSelectionRects (NSRect a, NSRect b)
     _toolbarXConstraint = nil;
 }
 
-#define X_DISTANCE_FROM_OUTER_FRAME 10.0
-#define X_DISTANCE_FROM_INNER_FRAME 5.0
+static const CGFloat X_DISTANCE_FROM_OUTER_FRAME = 10.0;
+static const CGFloat X_DISTANCE_FROM_INNER_FRAME = 0.0;
+static const CGFloat Y_DISTANCE_FROM_FRAME = 4.0;
+
 - (void)updateSelectionToolbarInSelectionRect:(NSRect)newSelectionRect
 {
     if (_selectionToolbar == nil) {
@@ -1436,7 +1470,7 @@ subtractSelectionRects (NSRect a, NSRect b)
         [self addSubview:_selectionToolbar];
         
         NSDictionary *viewsDict = @{@"toolbar": _selectionToolbar};
-        NSDictionary *verticalMetrics = @{@"offset": @(10.0)};
+        NSDictionary *verticalMetrics = @{@"offset": @(Y_DISTANCE_FROM_FRAME)};
         
         // Setup the constraint that pins the toolbar to the top of the view
         NSArray *constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-offset-[toolbar]"
@@ -1474,7 +1508,7 @@ subtractSelectionRects (NSRect a, NSRect b)
                                                                    attribute:NSLayoutAttributeLeft
                                                                   multiplier:0
                                                                     constant:newSelectionRect.origin.x - X_DISTANCE_FROM_OUTER_FRAME];
-                _toolbarIsOnRight = NO;
+                _toolbarPosition = ToolbarPositionLeft;
             } else {
                 _toolbarXConstraint = [NSLayoutConstraint constraintWithItem:_selectionToolbar
                                                                    attribute:NSLayoutAttributeLeft
@@ -1483,7 +1517,7 @@ subtractSelectionRects (NSRect a, NSRect b)
                                                                    attribute:NSLayoutAttributeLeft
                                                                   multiplier:0
                                                                     constant:NSMaxX(newSelectionRect) + X_DISTANCE_FROM_OUTER_FRAME];
-                _toolbarIsOnRight = YES;
+                _toolbarPosition = ToolbarPositionRight;
             }
             
             [self addConstraint:_toolbarXConstraint];
@@ -1494,11 +1528,11 @@ subtractSelectionRects (NSRect a, NSRect b)
             BOOL changeSide = NO;
             
             if ((NSMaxX(newSelectionRect) + intrinsicSize.width + X_DISTANCE_FROM_OUTER_FRAME) > NSMaxX([self bounds])) {
-                if (_toolbarIsOnRight) {
+                if (_toolbarPosition == ToolbarPositionRight) {
                     changeSide = YES;
                 }
             } else {
-                if (!_toolbarIsOnRight) {
+                if (_toolbarPosition == ToolbarPositionLeft) {
                     changeSide = YES;
                 }
             }
@@ -1506,7 +1540,7 @@ subtractSelectionRects (NSRect a, NSRect b)
             // Reposition
             if (changeSide) {
                 [self removeConstraint:_toolbarXConstraint];
-                if (_toolbarIsOnRight) {
+                if (_toolbarPosition == ToolbarPositionRight) {
                     _toolbarXConstraint = [NSLayoutConstraint constraintWithItem:_selectionToolbar
                                                                        attribute:NSLayoutAttributeRight
                                                                        relatedBy:NSLayoutRelationEqual
@@ -1514,7 +1548,7 @@ subtractSelectionRects (NSRect a, NSRect b)
                                                                        attribute:NSLayoutAttributeLeft
                                                                       multiplier:0
                                                                         constant:newSelectionRect.origin.x - X_DISTANCE_FROM_OUTER_FRAME];
-                    _toolbarIsOnRight = NO;
+                    _toolbarPosition = ToolbarPositionLeft;
                 } else {
                     _toolbarXConstraint = [NSLayoutConstraint constraintWithItem:_selectionToolbar
                                                                        attribute:NSLayoutAttributeLeft
@@ -1523,14 +1557,14 @@ subtractSelectionRects (NSRect a, NSRect b)
                                                                        attribute:NSLayoutAttributeLeft
                                                                       multiplier:0
                                                                         constant:NSMaxX(newSelectionRect) + X_DISTANCE_FROM_OUTER_FRAME];
-                    _toolbarIsOnRight = YES;
+                    _toolbarPosition = ToolbarPositionRight;
                 }
                 [self addConstraint:_toolbarXConstraint];
             } else {
                 // Don't need to change the side, just set the constant
                 CGFloat newConstant;
                 
-                if (!_toolbarIsOnRight) {
+                if (_toolbarPosition == ToolbarPositionLeft) {
                     newConstant = newSelectionRect.origin.x - X_DISTANCE_FROM_OUTER_FRAME;
                 } else {
                     newConstant = NSMaxX(newSelectionRect) + X_DISTANCE_FROM_OUTER_FRAME;
@@ -1567,6 +1601,8 @@ subtractSelectionRects (NSRect a, NSRect b)
                                                                 constant:NSMaxX(newSelectionRect) - X_DISTANCE_FROM_INNER_FRAME];
             [self addConstraint:_toolbarXConstraint];
         }
+        
+        _toolbarPosition = ToolbarPositionInside;
     }
 }
 
