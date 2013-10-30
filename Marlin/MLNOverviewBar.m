@@ -227,7 +227,8 @@ static void *sampleContext = &sampleContext;
     if ([keyPath isEqualToString:@"loaded"]) {
         NSSize scaledSize = [self convertSizeToBacking:[self bounds].size];
         _framesPerPixel = [_sample numberOfFrames] / scaledSize.width;
-        
+
+        _visiblePixelRect = [self visibleRangeToRect:_visibleFrameRange];
         [self createChannelMasks];
         [self invalidateIntrinsicContentSize];
         [self setNeedsDisplay:YES];
@@ -366,13 +367,17 @@ static void *sampleContext = &sampleContext;
 {
     NSSize scaledSize = [self convertSizeToBacking:newSize];
     _framesPerPixel = [_sample numberOfFrames] / scaledSize.width;
-
+    
     [super setFrameSize:newSize];
+    
+    _visiblePixelRect = [self visibleRangeToRect:_visibleFrameRange];
 }
 
 - (void)sampleDataDidChangeInRange:(NSNotification *)note
 {
     [self createChannelMasks];
+    _visiblePixelRect = [self visibleRangeToRect:_visibleFrameRange];
+    
     [self setNeedsDisplay:YES];
 }
 
@@ -399,6 +404,9 @@ static void *sampleContext = &sampleContext;
     if ([_sample isLoaded]) {
         _framesPerPixel = [_sample numberOfFrames] / [self bounds].size.width;
         [self createChannelMasks];
+
+        _visiblePixelRect = [self visibleRangeToRect:_visibleFrameRange];
+
         [self invalidateIntrinsicContentSize];
         [self setNeedsDisplay:YES];
     }
