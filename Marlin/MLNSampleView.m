@@ -365,6 +365,9 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
     NSPoint rightHandleRightBottom, rightHandleBottom, rightHandleLeftBottom;
     NSPoint leftHandleLeftTop, leftHandleTop, leftHandleRightTop;
     NSPoint leftHandleLeftBottom, leftHandleBottom, leftHandleRightBottom;
+    NSSize toolbarSize;
+    
+    toolbarSize = [_selectionToolbar intrinsicContentSize];
     
     x1 = outerRect.origin.x;
     y1 = outerRect.origin.y;
@@ -374,14 +377,25 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
     midY = NSMidY(outerRect);
     handleBottomY = midY - 20.0;
     handleTopY = midY + 20.0;
+
+    if (_toolbarPosition == ToolbarPositionRight) {
+        topRight = NSMakePoint((x2 + toolbarSize.width), y2);
+        rightTop = NSMakePoint((x2 + toolbarSize.width) + 5, y2 - 5);
+    } else {
+        topRight = NSMakePoint(x2 - 5, y2);
+        rightTop = NSMakePoint(x2, y2 - 5);
+    }
     
-    topRight = NSMakePoint(x2 - 5, y2);
-    rightTop = NSMakePoint(x2, y2 - 5);
     rightBottom = NSMakePoint(x2, y1 + 5);
     bottomRight = NSMakePoint(x2 - 5, y1);
     
-    topLeft = NSMakePoint(x1 + 5, y2);
-    leftTop = NSMakePoint(x1, y2 - 5);
+    if (_toolbarPosition == ToolbarPositionLeft) {
+        topLeft = NSMakePoint(x1 - toolbarSize.width, y2);
+        leftTop = NSMakePoint(x1 - toolbarSize.width - 5, y2 - 5);
+    } else {
+        topLeft = NSMakePoint(x1 + 5, y2);
+        leftTop = NSMakePoint(x1, y2 - 5);
+    }
     leftBottom = NSMakePoint(x1, y1 + 5);
     bottomLeft = NSMakePoint(x1 + 5, y1);
     
@@ -405,12 +419,23 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
     // Top line
     [outerPath moveToPoint:topLeft];
     [outerPath lineToPoint:topRight];
-    
-    // Top right corner
-    [outerPath appendBezierPathWithArcFromPoint:NSMakePoint(x2, y2) toPoint:rightTop radius:5.0];
-    
-    // Right side
-    [outerPath lineToPoint:rightHandleLeftTop];
+
+    if (_toolbarPosition == ToolbarPositionRight) {
+        CGFloat outerX = x2 + toolbarSize.width + 5;
+        [outerPath appendBezierPathWithArcFromPoint:NSMakePoint(outerX, y2) toPoint:rightTop radius:5.0];
+        [outerPath lineToPoint:NSMakePoint(outerX, y2 - (toolbarSize.height + 4))];
+        [outerPath appendBezierPathWithArcFromPoint:NSMakePoint(outerX, y2 - (toolbarSize.height + 9))
+                                            toPoint:NSMakePoint(outerX - 5, y2 - (toolbarSize.height + 9))
+                                             radius:5.0];
+        [outerPath lineToPoint:NSMakePoint(x2 + 5, y2 - (toolbarSize.height + 9))];
+        [outerPath appendBezierPathWithArcFromPoint:NSMakePoint(x2, y2 - (toolbarSize.height + 9))
+                                            toPoint:NSMakePoint(x2, y2 - (toolbarSize.height + 14))
+                                             radius:5.0];
+        [outerPath lineToPoint:rightHandleLeftTop];
+    } else {
+        [outerPath appendBezierPathWithArcFromPoint:NSMakePoint(x2, y2) toPoint:rightTop radius:5.0];
+        [outerPath lineToPoint:rightHandleLeftTop];
+    }
     
     [outerPath appendBezierPathWithArcFromPoint:NSMakePoint(x2, handleTopY) toPoint:rightHandleTop radius:2.0];
     [outerPath appendBezierPathWithArcFromPoint:NSMakePoint(x2 + 4, handleTopY) toPoint:rightHandleRightTop radius:2.0];
@@ -438,10 +463,23 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
     [outerPath appendBezierPathWithArcFromPoint:NSMakePoint(x1 - 4, handleTopY) toPoint:leftHandleTop radius:2.0];
     [outerPath appendBezierPathWithArcFromPoint:NSMakePoint(x1, handleTopY) toPoint:leftHandleRightTop radius:2.0];
     
-    [outerPath lineToPoint:leftTop];
+    if (_toolbarPosition == ToolbarPositionLeft) {
+        [outerPath lineToPoint:NSMakePoint(x1, y2 - (toolbarSize.height + 14))];
+        [outerPath appendBezierPathWithArcFromPoint:NSMakePoint(x1, y2 - (toolbarSize.height + 9))
+                                            toPoint:NSMakePoint(x1 - 5, y2 - (toolbarSize.height + 9))
+                                             radius:5.0];
+        [outerPath lineToPoint:NSMakePoint(x1 - (toolbarSize.width), y2 - (toolbarSize.height + 9))];
+        [outerPath appendBezierPathWithArcFromPoint:NSMakePoint(x1 - (toolbarSize.width + 5), y2 - (toolbarSize.height + 9))
+                                            toPoint:NSMakePoint(x1 - (toolbarSize.width + 5), y2 - (toolbarSize.height + 4))
+                                             radius:5.0];
+        [outerPath lineToPoint:leftTop];
+        [outerPath appendBezierPathWithArcFromPoint:NSMakePoint(x1 - (toolbarSize.width + 5), y2) toPoint:NSMakePoint(x1, y2) radius:5.0];
+    } else {
+        [outerPath lineToPoint:leftTop];
     
-    // Top left corner
-    [outerPath appendBezierPathWithArcFromPoint:NSMakePoint(x1, y2) toPoint:topLeft radius:5.0];
+        // Top left corner
+        [outerPath appendBezierPathWithArcFromPoint:NSMakePoint(x1, y2) toPoint:topLeft radius:5.0];
+    }
     
     NSBezierPath *innerPath;
     
@@ -1286,7 +1324,7 @@ subtractSelectionRects (NSRect a, NSRect b)
 // Take into consideration the handles of the visible selection
 - (NSRect)selectionRectToDirtyRect:(NSRect)selectionRect
 {
-    return NSInsetRect(selectionRect, -10.0, 0.0);
+    return NSInsetRect(selectionRect, -40.0, 0.0);
 }
 
 - (void)repositionSelectionResizeTrackingAreas:(NSRect)newSelectionRect
@@ -1443,9 +1481,9 @@ subtractSelectionRects (NSRect a, NSRect b)
     _toolbarXConstraint = nil;
 }
 
-static const CGFloat X_DISTANCE_FROM_OUTER_FRAME = 10.0;
+static const CGFloat X_DISTANCE_FROM_OUTER_FRAME = 5.0;
 static const CGFloat X_DISTANCE_FROM_INNER_FRAME = 0.0;
-static const CGFloat Y_DISTANCE_FROM_FRAME = 4.0;
+static const CGFloat Y_DISTANCE_FROM_FRAME = 5.0;
 
 - (void)updateSelectionToolbarInSelectionRect:(NSRect)newSelectionRect
 {
