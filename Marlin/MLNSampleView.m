@@ -542,19 +542,19 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
     
     if (_toolbarPosition == ToolbarPositionInside) {
         NSSize _toolbarSize = [_selectionToolbar intrinsicContentSize];
-        CGFloat tbx = x2 - (5.5 + _toolbarSize.width);
+        CGFloat tbx = x2 - (7 + _toolbarSize.width);
         
-        topRight = NSMakePoint(x2 - (8 + _toolbarSize.width), y2);
-        rightTop = NSMakePoint(x2, y2 - (2 + _toolbarSize.height));
+        topRight = NSMakePoint(x2 - (10 + _toolbarSize.width), y2);
+        rightTop = NSMakePoint(x2, y2 - (4 + _toolbarSize.height));
         
         [innerPath lineToPoint:topRight];
         
-        [innerPath appendBezierPathWithArcFromPoint:NSMakePoint(tbx + 2.5, y2) toPoint:NSMakePoint(tbx + 2.5, y2 - 2) radius:5.0];
+        [innerPath appendBezierPathWithArcFromPoint:NSMakePoint(tbx + 2, y2) toPoint:NSMakePoint(tbx + 2, y2 - 2) radius:5.0];
         
-        [innerPath lineToPoint:NSMakePoint(tbx + 2.5, rightTop.y + 5)];
+        [innerPath lineToPoint:NSMakePoint(tbx + 2, rightTop.y + 6)];
         
-        [innerPath appendBezierPathWithArcFromPoint:NSMakePoint(tbx + 2.5, rightTop.y)
-                                            toPoint:NSMakePoint(tbx + 7.5, rightTop.y)
+        [innerPath appendBezierPathWithArcFromPoint:NSMakePoint(tbx + 2, rightTop.y)
+                                            toPoint:NSMakePoint(tbx + 7, rightTop.y)
                                              radius:5.0];
         [innerPath lineToPoint:NSMakePoint(x2 - 3, rightTop.y)];
         
