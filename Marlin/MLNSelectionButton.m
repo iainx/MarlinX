@@ -24,7 +24,11 @@
     [self setAction:@selector(invokeSelectionAction:)];
     [self setTarget:self];
     
+    [self setBordered:NO];
+    [self setButtonType:NSMomentaryChangeButton];
+    
     [self setToolTip:[_selectionAction name]];
+    [self setImage:[_selectionAction icon]];
     
     [self setContentCompressionResistancePriority:NSLayoutPriorityRequired
                                    forOrientation:NSLayoutConstraintOrientationHorizontal];
@@ -39,9 +43,16 @@
 
 - (void)drawRect:(NSRect)dirtyRect
 {
-
+    /*
     [[NSColor orangeColor] setFill];
     NSRectFill(dirtyRect);
+     */
+    /*
+    NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:[self bounds]
+                                                         xRadius:2.0 yRadius:2.0];
+    [path stroke];
+     */
+    [super drawRect:dirtyRect];
 }
 
 - (NSSize)intrinsicContentSize

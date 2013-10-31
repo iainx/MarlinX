@@ -536,6 +536,7 @@ selectionDidChange:(NSRange)selection
         [invocation setSelector:actionMethod];
         
         [action setName:@"Test"];
+        [action setIcon:[NSImage imageNamed:NSImageNameRefreshTemplate]];
         [action setInvocation:invocation];
         
         [toolbarItems addObject:action];
