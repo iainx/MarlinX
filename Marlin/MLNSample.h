@@ -29,6 +29,7 @@ enum {
 @property (readonly) NSURL *url;
 
 @property (readonly) MLNOperation *currentOperation;
+@property (readonly) NSArrayController *markerController;
 
 - (id)initWithURL:(NSURL *)url;
 - (id)initWithChannels:(NSArray *)channelData;

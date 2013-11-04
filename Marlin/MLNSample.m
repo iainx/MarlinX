@@ -58,6 +58,9 @@ typedef struct PlaybackData {
     
     PlaybackData *_playbackData;
     NSTimer *_playbackTimer;
+    
+    // Marker Model
+    NSMutableArray *_markers;
 }
 
 #pragma mark Class methods
@@ -84,6 +87,9 @@ typedef struct PlaybackData {
     
     _url = url;
     _loaded = NO;
+    
+    _markers = [[NSMutableArray alloc] init];
+    _markerController = [[NSArrayController alloc] initWithContent:_markers];
     
     [self startLoad];
     
