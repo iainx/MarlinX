@@ -69,7 +69,7 @@ typedef struct PlaybackData {
     
     dispatch_once(&onceToken, ^{
         defaultOperationQueue = [[NSOperationQueue alloc] init];
-        [defaultOperationQueue setName:@"com.sleepfive.Marlin.SampleLoaderQueue"];
+        [defaultOperationQueue setName:@"com.sleepfive.Marlin.SampleQueue"];
     });
 
     return defaultOperationQueue;
