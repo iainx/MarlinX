@@ -17,6 +17,7 @@
 #import "MLNSelectionAction.h"
 #import "MLNProgressViewController.h"
 #import "MLNExportPanelController.h"
+#import "MLNMarker.h"
 #import "Constants.h"
 
 @implementation MLNDocument {
@@ -423,6 +424,15 @@ static void *sampleViewContext = &sampleViewContext;
 - (IBAction)dumpSelectionData:(id)sender
 {
     [_sample dumpDataInRange:[_sampleView selection]];
+}
+
+- (IBAction)addMarker:(id)sender
+{
+    MLNMarker *newMarker = [[MLNMarker alloc] init];
+    [newMarker setName:@"New"];
+    [newMarker setFrame:[NSNumber numberWithUnsignedInteger:[_sampleView cursorFramePosition]]];
+    
+    [[_sample markerController] addObject:newMarker];
 }
 
 #pragma mark - Validators
