@@ -9,8 +9,11 @@
 #import <Foundation/Foundation.h>
 #import "MLNLoadOperationDelegate.h"
 #import "MLNSampleDelegate.h"
+#import "MLNArrayController.h"
 
 @class MLNOperation;
+@class MLNMarker;
+
 @interface MLNSample : NSObject <MLNLoadOperationDelegate>
 
 enum {
@@ -29,7 +32,8 @@ enum {
 @property (readonly) NSURL *url;
 
 @property (readonly) MLNOperation *currentOperation;
-@property (readonly) NSArrayController *markerController;
+@property (readwrite) NSMutableArray *markers;
+@property (readonly) MLNArrayController *markerController;
 
 - (id)initWithURL:(NSURL *)url;
 - (id)initWithChannels:(NSArray *)channelData;
@@ -40,5 +44,8 @@ enum {
 - (void)stop;
 
 - (BOOL)containsRange:(NSRange)range;
+
+- (void)insertObject:(MLNMarker *)object inMarkersAtIndex:(NSUInteger)index;
+- (void)removeObjectFromMarkersAtIndex:(NSUInteger)index;
 
 @end

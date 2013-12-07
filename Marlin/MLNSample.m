@@ -8,14 +8,17 @@
 
 #import <AudioToolbox/AudioToolbox.h>
 #import "Constants.h"
+#import "MLNArrayController.h"
 #import "MLNSample.h"
 #import "MLNSampleChannel.h"
 #import "MLNSampleBlock.h"
 #import "MLNLoadOperation.h"
 #import "MLNExportOperation.h"
+#import "MLNMarker.h"
 
 #import "pa_ringbuffer.h"
 #import "utils.h"
+
 
 typedef struct PlaybackBlock {
     MLNSampleBlock *block;
@@ -58,9 +61,6 @@ typedef struct PlaybackData {
     
     PlaybackData *_playbackData;
     NSTimer *_playbackTimer;
-    
-    // Marker Model
-    NSMutableArray *_markers;
 }
 
 #pragma mark Class methods
@@ -89,8 +89,28 @@ typedef struct PlaybackData {
     _loaded = NO;
     
     _markers = [[NSMutableArray alloc] init];
-    _markerController = [[NSArrayController alloc] initWithContent:_markers];
     
+    /* A test */
+    MLNMarker *testMarker = [[MLNMarker alloc] init];
+    
+    [testMarker setName:@"Test 1"];
+    [testMarker setFrame:@(100000)];
+    [_markers addObject:testMarker];
+    
+    testMarker = [[MLNMarker alloc] init];
+    [testMarker setName:@"Test 2"];
+    [testMarker setFrame:@(150)];
+    [_markers addObject:testMarker];
+    
+    _markerController = [[MLNArrayController alloc] init];
+    [_markerController bind:@"contentArray"
+                   toObject:self
+                withKeyPath:@"markers"
+                    options:nil];
+    
+    NSSortDescriptor *frameDescriptor = [[NSSortDescriptor alloc] initWithKey:@"frame" ascending:YES];
+    [_markerController setSortDescriptors:@[frameDescriptor]];
+
     [self startLoad];
     
     return self;
@@ -110,6 +130,8 @@ typedef struct PlaybackData {
     _channelData = [channelData mutableCopy];
     _numberOfFrames = [channelData[0] numberOfFrames];
     
+    _markers = [[NSMutableArray alloc] init];
+
     return self;
 }
 
@@ -425,4 +447,25 @@ MyAQOutputCallback (void *userData,
     return YES;
 }
 
+#pragma mark Array controller methods
+
+- (NSUInteger)countOfMarkers
+{
+    return [_markers count];
+}
+
+- (id)objectInMarkersAtIndex:(NSUInteger)index
+{
+    return _markers[index];
+}
+
+- (void)insertObject:(MLNMarker *)object inMarkersAtIndex:(NSUInteger)index
+{
+    [_markers insertObject:object atIndex:index];
+}
+
+- (void)removeObjectFromMarkersAtIndex:(NSUInteger)index
+{
+    [_markers removeObjectAtIndex:index];
+}
 @end
