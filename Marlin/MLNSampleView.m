@@ -1065,17 +1065,22 @@ static void *markerContext = &markerContext;
     BOOL dragged = NO;
     BOOL timerOn = NO;
     NSPoint mouseLoc;
+    NSUInteger newFrame;
     
     while ((nextEvent = [[self window] nextEventMatchingMask:eventMask])) {
         NSRect visibleRect = [self visibleRect];
         
         switch ([nextEvent type]) {
             case NSPeriodic:
+                mouseLoc = [self convertPoint:[_dragEvent locationInWindow] fromView:nil];
+                
+                newFrame = [self convertPointToFrame:mouseLoc];
+                [_inMarker setFrame:[NSNumber numberWithUnsignedInteger:newFrame]];
+                
                 [self autoscroll:_dragEvent];
                 break;
                 
             case NSLeftMouseDragged:
-                mouseLoc = [self convertPoint:[nextEvent locationInWindow] fromView:nil];
                 dragged = YES;
                 
                 mouseLoc = [self convertPoint:[nextEvent locationInWindow] fromView:nil];
@@ -1092,7 +1097,7 @@ static void *markerContext = &markerContext;
                     _dragEvent = nil;
                 }
                 
-                NSUInteger newFrame = [self convertPointToFrame:mouseLoc];
+                newFrame = [self convertPointToFrame:mouseLoc];
                 [_inMarker setFrame:[NSNumber numberWithUnsignedInteger:newFrame]];
                 break;
                 
