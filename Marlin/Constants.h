@@ -17,3 +17,6 @@ FOUNDATION_EXPORT NSString *const kMLNProgressFramesSoFar;
 FOUNDATION_EXPORT NSString *const kMLNProgressTotalFrames;
 
 FOUNDATION_EXPORT NSString *const kMLNSampleDataDidChangeInRange;
+
+FOUNDATION_EXPORT NSString *const kMLNArrayControllerObjectAdded;
+FOUNDATION_EXPORT NSString *const kMLNArrayControllerObjectRemoved;

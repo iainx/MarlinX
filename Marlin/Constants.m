@@ -17,3 +17,6 @@ NSString *const kMLNProgressTotalFrames = @"totalFrames";
 NSString *const kMLNProgressPercentage = @"percentage";
 
 NSString *const kMLNSampleDataDidChangeInRange = @"com.sleepfive.Marlin.Sample.DataDidChangeInRange";
+
+NSString *const kMLNArrayControllerObjectAdded = @"com.sleepfive.Marlin.ArrayController.ObjectAdded";
+NSString *const kMLNArrayControllerObjectRemoved = @"com.sleepfive.Marlin.ArrayController.ObjectRemoved";

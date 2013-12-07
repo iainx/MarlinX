@@ -8,9 +8,10 @@
 
 #import <Cocoa/Cocoa.h>
 #import "MLNSampleViewDelegate.h"
+#import "MLNMarkerHandlerDelegate.h"
 
 @class MLNSample;
-@interface MLNSampleView : NSView
+@interface MLNSampleView : NSView <MLNMarkerHandlerDelegate>
 
 @property (readwrite, nonatomic, strong) MLNSample *sample;
 @property (readwrite, nonatomic) NSUInteger framesPerPixel; // framesPerPoint in this retina age?
@@ -36,5 +37,10 @@
 - (void)stopTimers;
 - (void)resetTimers;
 - (void)dumpCacheImage;
+
+- (NSRect)calculateGutterRect:(NSUInteger)gutterNumber;
+
+- (NSUInteger)convertPointToFrame:(NSPoint)point;
+- (NSPoint)convertFrameToPoint:(NSUInteger)frame;
 
 @end
