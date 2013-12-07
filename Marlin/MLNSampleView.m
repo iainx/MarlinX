@@ -15,6 +15,8 @@
 #import "MLNSelectionAction.h"
 #import "MLNSelectionButton.h"
 #import "MLNSelectionToolbar.h"
+#import "MLNMarker.h"
+#import "MLNMarkerHandler.h"
 #import "Constants.h"
 
 typedef enum {
@@ -31,6 +33,7 @@ typedef enum {
 
 @implementation MLNSampleView {
     CGFloat _intrinsicWidth;
+    CGFloat _channelHeight;
     CGFloat _summedMagnificationLevel;
     
     int _selectionDirection;
@@ -51,6 +54,12 @@ typedef enum {
     NSLayoutConstraint *_leftXConstraint;
     ToolbarPosition _toolbarPosition;
     //BOOL _toolbarIsOnRight;
+    
+    NSArrayController *_markersController;
+    NSColor *_markerFillColour;
+    
+    NSMapTable *_markersToHandler;
+    MLNMarker *_inMarker;
 }
 
 @synthesize framesPerPixel = _framesPerPixel;
@@ -80,6 +89,10 @@ typedef enum {
     [self setContentHuggingPriority:NSLayoutPriorityDefaultLow
                      forOrientation:NSLayoutConstraintOrientationVertical];
     
+    _markerFillColour = [NSColor colorWithCalibratedRed:0.65 green:0.23 blue:0.23 alpha:0.897];
+    
+    _markersToHandler = [NSMapTable mapTableWithKeyOptions:NSMapTableStrongMemory | NSMapTableObjectPointerPersonality
+                                                    valueOptions:NSMapTableStrongMemory];
     return self;
 }
 
@@ -174,6 +187,54 @@ typedef enum {
 static const int GUTTER_SIZE = 24;
 static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
 
+- (NSArray *)markersInRange:(NSRange)range
+{
+    NSMutableArray *markers = [NSMutableArray array];
+    NSArray *allMarkers = [[_sample markerController] arrangedObjects];
+    
+    for (MLNMarker *marker in allMarkers) {
+        if (NSLocationInRange([[marker frame] unsignedIntegerValue], range)) {
+            [markers addObject:marker];
+        }
+    }
+    
+    DDLogVerbose(@"Found markers: %@ - %@", markers, NSStringFromRange(range));
+    return markers;
+}
+
+- (CGFloat)calculateChannelHeight
+{
+    NSRect bounds = [self bounds];
+    NSUInteger numberOfChannels = [_sample numberOfChannels];
+    
+    CGFloat channelHeight = (bounds.size.height - ((numberOfChannels - 1) * GUTTER_SIZE)) / numberOfChannels;
+    
+    if (numberOfChannels == 1) {
+        channelHeight -= SMALL_GUTTER_SIZE;
+    }
+    return channelHeight;
+}
+
+- (CGFloat)calculateYForChannelNumber:(NSUInteger)channelNumber
+{
+    return [self bounds].size.height - (((channelNumber + 1) * _channelHeight) + (channelNumber * GUTTER_SIZE));
+}
+
+- (NSRect)calculateGutterRect:(NSUInteger)gutterNumber
+{
+    CGFloat rulerY, rulerGutterSize;
+    
+    if ([_sample numberOfChannels] == 1) {
+        rulerY = 0;
+        rulerGutterSize = SMALL_GUTTER_SIZE;
+    } else {
+        rulerY = [self bounds].size.height - (_channelHeight * gutterNumber) - (gutterNumber * GUTTER_SIZE);
+        rulerGutterSize = GUTTER_SIZE;
+    }
+
+    return NSMakeRect(0, rulerY, 0, rulerGutterSize);
+}
+
 - (void)drawRect:(NSRect)dirtyRect
 {
     CGContextRef context = [[NSGraphicsContext currentContext] graphicsPort];
@@ -193,24 +254,30 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
     
     // If there is only 1 channel, we need extra room for the marker gutter
     // We also make the bottom gutter smaller because we don't need the second row of ticks
+/* 
     CGFloat channelHeight = (realDrawRect.size.height - ((numberOfChannels - 1) * GUTTER_SIZE)) / numberOfChannels;
     if (numberOfChannels == 1) {
         channelHeight -= SMALL_GUTTER_SIZE;
     }
-    
+ */
+    CGFloat channelHeight = _channelHeight;
     // 55 56 58
     NSColor *darkBG = [NSColor colorWithCalibratedRed:0.214 green:0.218 blue:0.226 alpha:1.0];
     
     channelRect.size.height = channelHeight;
-
-
     
     // Scale to take Retina display into consideration
     NSRect scaledRect = [self convertRectToBacking:channelRect];
     NSUInteger channel;
     
+    CGFloat origin = MAX(scaledRect.origin.x - 10, 0);
+    NSArray *markers = [self markersInRange:NSMakeRange(origin * _framesPerPixel,
+                                                        (scaledRect.size.width + 20) * _framesPerPixel)];
+
+    CGFloat markerDashPattern[] = {5.0, 2.0};
+    
     for (channel = 0; channel < numberOfChannels; channel++) {
-        channelRect.origin.y = realDrawRect.size.height - (((channel + 1) * channelHeight) + (channel * GUTTER_SIZE));
+        channelRect.origin.y = [self calculateYForChannelNumber:channel];
         
         NSRect channelBackgroundRect = channelRect;
         channelBackgroundRect.origin.x = bounds.origin.x;
@@ -254,19 +321,9 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
     // numberOfChannels - 1 because we don't want to draw one for the bottom channel
     int firstChannel = (numberOfChannels == 1) ? 0 : 1;
     for (channel = firstChannel; channel < numberOfChannels; channel++) {
-        CGFloat rulerY;
-        CGFloat rulerGutterSize;
-        
-        // If there is only one channel, we draw the ruler below the channel, otherwise it is above
-        if (numberOfChannels == 1) {
-            rulerY = 0;
-            rulerGutterSize = SMALL_GUTTER_SIZE;
-        } else {
-            rulerY = realDrawRect.size.height - (channelHeight * channel) - (channel * GUTTER_SIZE);
-            rulerGutterSize = GUTTER_SIZE;
-        }
-        NSRect rulerRect = NSMakeRect(bounds.origin.x, rulerY,
-                                      bounds.size.width, rulerGutterSize);
+        NSRect gutterRect = [self calculateGutterRect:channel];
+        NSRect rulerRect = NSMakeRect(bounds.origin.x, gutterRect.origin.y,
+                                      bounds.size.width, gutterRect.size.height);
         
         NSRect intersectRect = NSIntersectionRect(dirtyRect, rulerRect);
         // We want the horizontal intersect, but to make drawing ticks easier we draw the whole height
@@ -274,8 +331,14 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
         intersectRect.origin.y = rulerRect.origin.y;
         
         [self drawRulerInContext:context inRect:intersectRect onlyDrawTop:(numberOfChannels == 1)];
+        
+        if ([markers count] > 0) {
+            for (MLNMarker *marker in markers) {
+                [self drawMarker:marker inGutter:rulerRect];
+            }
+        }
     }
-
+    
     NSBezierPath *selectionPath = nil;
     NSRect selectionRect;
     
@@ -302,7 +365,7 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
         CGContextRef maskContext;
         CGImageRef sampleMask;
         
-        channelRect.origin.y = realDrawRect.size.height - (((channel + 1) * channelHeight) + (channel * GUTTER_SIZE));
+        channelRect.origin.y = [self calculateYForChannelNumber:channel];
 
         if (NSIntersectsRect(dirtyRect, channelRect) == NO) {
             continue;
@@ -332,8 +395,23 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
         CGContextRelease(maskContext);
         
         [self drawNameForChannel:channel InRect:channelRect];
-    }
+        
+        if ([markers count] > 0) {
+            for (MLNMarker *marker in markers) {
+                NSPoint markerPoint = [self convertFrameToPoint:[[marker frame] unsignedIntegerValue]];
+                NSBezierPath *markerPath = [NSBezierPath bezierPath];
+                
+                [markerPath moveToPoint:NSMakePoint(markerPoint.x + 0.5, channelRect.origin.y)];
+                [markerPath lineToPoint:NSMakePoint(markerPoint.x + 0.5, channelRect.origin.y + channelHeight)];
+                
+                [markerPath setLineDash:markerDashPattern count:2 phase:0];
 
+                [_markerFillColour set];
+                [markerPath stroke];
+            }
+        }
+    }
+    
     // Draw the outline of the selection over the waveform
     // Checking selectionPath will let us know if the background of the selection needed to be draw
     if (_hasSelection && NSIntersectsRect(dirtyRect, [self selectionRectToDirtyRect:selectionRect]) == YES) {
@@ -737,9 +815,33 @@ getIncrementForFramesPerPixel (NSUInteger framesPerPixel)
     
 }
 
+- (void)drawMarker:(MLNMarker *)marker
+          inGutter:(NSRect)gutterRect
+{
+    NSPoint markerPoint = [self convertFrameToPoint:[[marker frame] unsignedIntegerValue]];
+    NSBezierPath *path = [NSBezierPath bezierPath];
+    
+    CGFloat origin = markerPoint.x + 0.5;
+    
+    [path moveToPoint:NSMakePoint(origin, gutterRect.origin.y)];
+    [path lineToPoint:NSMakePoint(origin - 4, gutterRect.origin.y + 4)];
+    [path lineToPoint:NSMakePoint(origin - 4, NSMaxY(gutterRect) - 4)];
+    [path lineToPoint:NSMakePoint(origin, NSMaxY(gutterRect))];
+    [path lineToPoint:NSMakePoint(origin + 4, NSMaxY(gutterRect) - 4)];
+    [path lineToPoint:NSMakePoint(origin + 4, gutterRect.origin.y + 4)];
+    [path lineToPoint:NSMakePoint(origin, gutterRect.origin.y)];
+    
+    [[NSColor blackColor] setStroke];
+    [path stroke];
+    
+    [_markerFillColour setFill];
+    [path fill];
+}
+
 #pragma mark - accessors
 
 static void *sampleContext = &sampleContext;
+static void *markerContext = &markerContext;
 
 - (void)sampledLoadedHandler
 {
@@ -748,6 +850,10 @@ static void *sampleContext = &sampleContext;
     NSSize scaledSize = [self convertSizeFromBacking:size];
     
     _intrinsicWidth = scaledSize.width;
+    
+    _channelHeight = [self calculateChannelHeight];
+
+    [self repositionTrackingAreasForMarkers];
     
     DDLogVerbose(@"Sample loaded handler: numberOfFrames: %lu", [_sample numberOfFrames]);
     DDLogVerbose(@"%lu %@ -> %@", _framesPerPixel, NSStringFromSize(size), NSStringFromSize(scaledSize));
@@ -761,18 +867,22 @@ static void *sampleContext = &sampleContext;
                         change:(NSDictionary *)change
                        context:(void *)context
 {
-    if (context != sampleContext) {
+    if (context != sampleContext && context != markerContext) {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
         return;
     }
     
-    if ([keyPath isEqualToString:@"loaded"]) {
-        [self sampledLoadedHandler];
-        return;
-    }
+    if (context == sampleContext) {
+        if ([keyPath isEqualToString:@"loaded"]) {
+            [self sampledLoadedHandler];
+            return;
+        }
     
-    if ([keyPath isEqualToString:@"numberOfFrames"]) {
-        [self sampledLoadedHandler];
+        if ([keyPath isEqualToString:@"numberOfFrames"]) {
+            [self sampledLoadedHandler];
+            return;
+        }
+        
         return;
     }
 }
@@ -805,6 +915,15 @@ static void *sampleContext = &sampleContext;
                      options:0
                      context:sampleContext];
     }
+    
+    [nc addObserver:self
+           selector:@selector(sampleDidAddMarker:)
+               name:kMLNArrayControllerObjectAdded
+             object:[_sample markerController]];
+    [nc addObserver:self
+           selector:@selector(sampleDidRemoveMarker:)
+               name:kMLNArrayControllerObjectRemoved
+             object:[_sample markerController]];
 }
 
 - (void)realSetFramesPerPixel:(NSUInteger)framesPerPixel
@@ -850,6 +969,10 @@ static void *sampleContext = &sampleContext;
 - (void)setFrameSize:(NSSize)newSize
 {
     [super setFrameSize:newSize];
+    
+    _channelHeight = [self calculateChannelHeight];
+    
+    [self repositionTrackingAreasForMarkers];
     
     // If we have a toolbar, then we may need to reposition it
     if (_hasSelection) {
@@ -906,6 +1029,18 @@ static void *sampleContext = &sampleContext;
     [self setNeedsDisplayInRect:changedRect];
 }
 
+- (void)sampleDidAddMarker:(NSNotification *)note
+{
+    NSDictionary *userInfo = [note userInfo];
+    [self addMarker:userInfo[@"object"]];
+}
+
+- (void)sampleDidRemoveMarker:(NSNotification *)note
+{
+    NSDictionary *userInfo = [note userInfo];
+    [self removeMarker:userInfo[@"object"]];
+}
+
 #pragma mark - Events
 
 - (NSUInteger)convertPointToFrame:(NSPoint)point
@@ -919,7 +1054,57 @@ static void *sampleContext = &sampleContext;
 - (NSPoint)convertFrameToPoint:(NSUInteger)frame
 {
     NSPoint scaledPoint = NSMakePoint(frame / _framesPerPixel, 0.0);
+    
     return [self convertPointFromBacking:scaledPoint];
+}
+
+- (void)handleMarkerMouseDown:(NSEvent *)event
+{
+    NSUInteger eventMask = NSLeftMouseDraggedMask | NSLeftMouseUpMask | NSPeriodicMask;
+    NSEvent *nextEvent;
+    BOOL dragged = NO;
+    BOOL timerOn = NO;
+    NSPoint mouseLoc;
+    
+    while ((nextEvent = [[self window] nextEventMatchingMask:eventMask])) {
+        NSRect visibleRect = [self visibleRect];
+        
+        switch ([nextEvent type]) {
+            case NSPeriodic:
+                [self autoscroll:_dragEvent];
+                break;
+                
+            case NSLeftMouseDragged:
+                mouseLoc = [self convertPoint:[nextEvent locationInWindow] fromView:nil];
+                dragged = YES;
+                
+                mouseLoc = [self convertPoint:[nextEvent locationInWindow] fromView:nil];
+                if (![self mouse:mouseLoc inRect:visibleRect]) {
+                    if (timerOn == NO) {
+                        [NSEvent startPeriodicEventsAfterDelay:0.1 withPeriod:0.1];
+                        timerOn = YES;
+                    }
+                    _dragEvent = nextEvent;
+                    break;
+                } else if (timerOn) {
+                    [NSEvent stopPeriodicEvents];
+                    timerOn = NO;
+                    _dragEvent = nil;
+                }
+                
+                NSUInteger newFrame = [self convertPointToFrame:mouseLoc];
+                [_inMarker setFrame:[NSNumber numberWithUnsignedInteger:newFrame]];
+                break;
+                
+            case NSLeftMouseUp:
+                [NSEvent stopPeriodicEvents];
+                _dragEvent = nil;
+                return;
+                
+            default:
+                break;
+        }
+    }
 }
 
 - (void)mouseDown:(NSEvent *)event
@@ -927,6 +1112,11 @@ static void *sampleContext = &sampleContext;
     NSUInteger possibleStartFrame = 0;
     
     if ([event type] != NSLeftMouseDown) {
+        return;
+    }
+    
+    if (_inMarker != nil) {
+        [self handleMarkerMouseDown:event];
         return;
     }
     
@@ -1100,11 +1290,13 @@ static void *sampleContext = &sampleContext;
 
 - (void)mouseEntered:(NSEvent *)event
 {
+    DDLogVerbose(@"Entered");
     [self setDragHandleForEvent:event];
 }
 
 - (void)mouseExited:(NSEvent *)event
 {
+    DDLogVerbose(@"Exited");
     _dragHandle = DragHandleNone;
 }
 
@@ -1706,6 +1898,72 @@ static const CGFloat Y_DISTANCE_FROM_FRAME = 5.0;
     [self scrollPoint:NSMakePoint(MAX(0, cursorPoint.x - halfWidth), 0.0)];
 }
 
+#pragma mark - Markers
+- (void)repositionTrackingAreasForMarkers
+{
+    NSEnumerator *enumerator = [_markersToHandler objectEnumerator];
+    MLNMarkerHandler *handler;
+    
+    while ((handler = [enumerator nextObject])) {
+        NSArray *trackingAreas = [handler trackingAreas];
+        for (NSTrackingArea *area in trackingAreas) {
+            [self removeTrackingArea:area];
+        }
+    }
+    
+    [_markersToHandler removeAllObjects];
+    
+    for (MLNMarker *marker in [[_sample markerController] arrangedObjects]) {
+        [self addMarker:marker];
+    }
+}
+
+- (void)addMarker:(MLNMarker *)marker
+{
+    MLNMarkerHandler *handler = [[MLNMarkerHandler alloc] initForMarker:marker owner:self];
+    [handler setDelegate:self];
+    
+    [_markersToHandler setObject:handler forKey:marker];
+    [self setNeedsDisplay:YES];
+}
+
+- (void)removeMarker:(MLNMarker *)marker
+{
+    [self setNeedsDisplay:YES];
+}
+
+- (void)moveMarker:(MLNMarker *)marker
+{
+    MLNMarkerHandler *handler = [_markersToHandler objectForKey:marker];
+    NSArray *trackingAreas = [handler trackingAreas];
+    
+    for (NSTrackingArea *area in trackingAreas) {
+        [self removeTrackingArea:area];
+    }
+}
+
+#pragma mark - Marker handler delegate
+
+- (void)handler:(MLNMarkerHandler *)handler
+ didEnterMarker:(MLNMarker *)marker
+{
+    DDLogVerbose(@"In marker");
+    _inMarker = marker;
+}
+
+- (void)handler:(MLNMarkerHandler *)handler
+ didLeaveMarker:(MLNMarker *)marker
+{
+    DDLogVerbose(@"Out of marker");
+    _inMarker = nil;
+}
+
+- (void)handler:(MLNMarkerHandler *)handler
+  didMoveMarker:(MLNMarker *)marker
+           from:(NSUInteger)oldPosition
+{
+    [self setNeedsDisplay:YES];
+}
 #pragma mark - Debugging
 
 // Writes a CGImageRef to a PNG file
