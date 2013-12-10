@@ -44,6 +44,8 @@ static void *markerContext = &markerContext;
 
 - (void)dealloc
 {
+    DDLogVerbose(@"Destroying handler");
+    
     [self removeTrackingAreas];
     [_marker removeObserver:self forKeyPath:@"frame" context:markerContext];
 }
@@ -97,7 +99,7 @@ static void *markerContext = &markerContext;
 - (NSTrackingArea *)trackingAreaForRect:(NSRect)rect
 {
     NSTrackingArea *area = [[NSTrackingArea alloc] initWithRect:rect
-                                                        options:NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow | NSTrackingAssumeInside
+                                                        options:NSTrackingMouseEnteredAndExited | NSTrackingCursorUpdate | NSTrackingActiveInKeyWindow | NSTrackingAssumeInside
                                                           owner:self
                                                        userInfo:nil];
     [_trackingAreas addObject:area];

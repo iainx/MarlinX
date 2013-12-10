@@ -1067,6 +1067,8 @@ static void *markerContext = &markerContext;
     NSPoint mouseLoc;
     NSUInteger newFrame;
     
+    [[NSCursor closedHandCursor] set];
+    
     while ((nextEvent = [[self window] nextEventMatchingMask:eventMask])) {
         NSRect visibleRect = [self visibleRect];
         
@@ -1103,6 +1105,7 @@ static void *markerContext = &markerContext;
                 
             case NSLeftMouseUp:
                 [NSEvent stopPeriodicEvents];
+                [[NSCursor openHandCursor] set];
                 _dragEvent = nil;
                 return;
                 
@@ -1309,7 +1312,9 @@ static void *markerContext = &markerContext;
 {
     if (_dragHandle != DragHandleNone) {
         [[NSCursor resizeLeftRightCursor] set];
-    } else {
+    } else if (_inMarker) {
+        [[NSCursor openHandCursor] set];
+    }else {
         [super cursorUpdate:event];
     }
 }
@@ -1934,6 +1939,7 @@ static const CGFloat Y_DISTANCE_FROM_FRAME = 5.0;
 
 - (void)removeMarker:(MLNMarker *)marker
 {
+    [_markersToHandler removeObjectForKey:marker];
     [self setNeedsDisplay:YES];
 }
 
