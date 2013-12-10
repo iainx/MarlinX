@@ -1058,6 +1058,20 @@ static void *markerContext = &markerContext;
     return [self convertPointFromBacking:scaledPoint];
 }
 
+// We need to pass in fromFrame here, [marker frame] is actually already set to @frame
+// so we can't just rely on it.
+- (void)moveMarker:(MLNMarker *)marker
+         fromFrame:(NSNumber *)oldFrame
+           toFrame:(NSNumber *)frame
+       undoManager:(NSUndoManager *)undoManager
+{
+    [[undoManager prepareWithInvocationTarget:self] moveMarker:marker
+                                                     fromFrame:frame
+                                                       toFrame:oldFrame
+                                                   undoManager:undoManager];
+    [marker setFrame:frame];
+}
+
 - (void)handleMarkerMouseDown:(NSEvent *)event
 {
     NSUInteger eventMask = NSLeftMouseDraggedMask | NSLeftMouseUpMask | NSPeriodicMask;
@@ -1066,8 +1080,15 @@ static void *markerContext = &markerContext;
     BOOL timerOn = NO;
     NSPoint mouseLoc;
     NSUInteger newFrame;
+    NSNumber *initialFrame;
     
     [[NSCursor closedHandCursor] set];
+    
+    NSWindow *window = [self window];
+    NSDocument *document = [[window windowController] document];
+    NSUndoManager *undoManager = [document undoManager];
+    
+    initialFrame = [_inMarker frame];
     
     while ((nextEvent = [[self window] nextEventMatchingMask:eventMask])) {
         NSRect visibleRect = [self visibleRect];
@@ -1104,9 +1125,19 @@ static void *markerContext = &markerContext;
                 break;
                 
             case NSLeftMouseUp:
+                if (dragged) {
+                    [undoManager setActionName:@"Move Marker"];
+                    [self moveMarker:_inMarker
+                           fromFrame:initialFrame
+                             toFrame:[_inMarker frame]
+                         undoManager:undoManager];
+                }
+                
                 [NSEvent stopPeriodicEvents];
                 [[NSCursor openHandCursor] set];
+                
                 _dragEvent = nil;
+                
                 return;
                 
             default:
