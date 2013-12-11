@@ -198,7 +198,6 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
         }
     }
     
-    DDLogVerbose(@"Found markers: %@ - %@", markers, NSStringFromRange(range));
     return markers;
 }
 
@@ -1272,6 +1271,14 @@ static void *markerContext = &markerContext;
                 }
                 
                 if (dragged == NO) {
+                    if ([event clickCount] == 2) {
+                        [self selectRegionContainingFrame:possibleStartFrame];
+                        return;
+                    } else if ([event clickCount] == 3) {
+                        [self selectAll];
+                        return;
+                    }
+                    
                     _selectionStartFrame = 0;
                     _selectionEndFrame = 0;
                     _hasSelection = NO;
@@ -1508,6 +1515,45 @@ static void *markerContext = &markerContext;
     
     //DDLogWarn(@"Selection: %lu, %lu (%@)", _selectionStartFrame, _selectionEndFrame, NSStringFromRect(newSelectionRect));
     [self updateSelection:newSelectionRect oldSelectionRect:oldSelectionRect];
+}
+
+- (void)selectAll
+{
+    [self setSelection:NSMakeRange(0, [_sample numberOfFrames])];
+}
+
+- (void)selectRegionContainingFrame:(NSUInteger)frame
+{
+    NSArray *markers = [[_sample markerController] arrangedObjects];
+    if ([markers count] == 0) {
+        [self selectAll];
+        return;
+    }
+    
+    MLNMarker *marker = markers[0];
+    NSUInteger firstFrame = [[marker frame] unsignedIntegerValue];
+    if (frame < firstFrame) {
+        [self setSelection:NSMakeRange(0, firstFrame)];
+        return;
+    }
+    
+    NSUInteger i;
+    for (i = 0; i < [markers count] - 1; i++) {
+        marker = markers[i];
+        
+        MLNMarker *nextMarker = markers[i + 1];
+        NSUInteger frameA = [[marker frame] unsignedIntegerValue], frameB = [[nextMarker frame] unsignedIntegerValue];
+        
+        if (frameA < frame && frameB > frame) {
+            NSRange newSelection = NSMakeRange(frameA, frameB - frameA);
+            [self setSelection:newSelection];
+            return;
+        }
+    }
+    
+    marker = markers[i];
+    NSUInteger lastFrame = [[marker frame] unsignedIntegerValue];
+    [self setSelection:NSMakeRange(lastFrame, [_sample numberOfFrames] - lastFrame)];
 }
 
 static NSRect

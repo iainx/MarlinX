@@ -28,6 +28,7 @@
 - (void)zoomToNormal;
 
 - (void)clearSelection;
+- (void)selectAll;
 
 - (void)moveCursorTo:(NSUInteger)cursorFrame;
 - (void)centreOnCursor;
