@@ -1031,6 +1031,7 @@ static void *markerContext = &markerContext;
 - (void)sampleDidAddMarker:(NSNotification *)note
 {
     NSDictionary *userInfo = [note userInfo];
+    DDLogVerbose(@"Added marker");
     [self addMarker:userInfo[@"object"]];
 }
 

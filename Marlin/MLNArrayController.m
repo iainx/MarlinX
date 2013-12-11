@@ -22,6 +22,17 @@
                     userInfo:userInfo];
 }
 
+- (void)removeObject:(id)object
+{
+    NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+    
+    NSDictionary *userInfo = @{@"object":object};
+    [nc postNotificationName:kMLNArrayControllerObjectRemoved
+                      object:self
+                    userInfo:userInfo];
+    [super removeObject:object];
+}
+
 - (void)removeObjectAtArrangedObjectIndex:(NSUInteger)index
 {
     NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];

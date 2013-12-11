@@ -426,13 +426,32 @@ static void *sampleViewContext = &sampleViewContext;
     [_sample dumpDataInRange:[_sampleView selection]];
 }
 
+- (void)realRemoveMarker:(MLNMarker *)marker
+{
+    MLNArrayController *ac = [_sample markerController];
+    [ac removeObject:marker];
+    
+    NSUndoManager *undoManager = [self undoManager];
+    [[undoManager prepareWithInvocationTarget:self] realAddMarker:marker];
+}
+
+- (void)realAddMarker:(MLNMarker *)marker
+{
+    [[_sample markerController] addObject:marker];
+    
+    NSUndoManager *undoManager = [self undoManager];
+    [[undoManager prepareWithInvocationTarget:self] realRemoveMarker:marker];
+}
+
 - (IBAction)addMarker:(id)sender
 {
     MLNMarker *newMarker = [[MLNMarker alloc] init];
     [newMarker setName:@"New"];
     [newMarker setFrame:[NSNumber numberWithUnsignedInteger:[_sampleView cursorFramePosition]]];
     
-    [[_sample markerController] addObject:newMarker];
+    NSUndoManager *undoManager = [self undoManager];
+    [undoManager setActionName:@"Add Marker"];
+    [self realAddMarker:newMarker];
 }
 
 #pragma mark - Validators
