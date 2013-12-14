@@ -6,6 +6,8 @@
 //  Copyright (c) 2013 iain. All rights reserved.
 //
 
+#import <QuartzCore/QuartzCore.h>
+
 #import "MLNDocument.h"
 #import "MLNApplicationDelegate.h"
 #import "MLNOverviewBar.h"
@@ -17,6 +19,7 @@
 #import "MLNSelectionAction.h"
 #import "MLNProgressViewController.h"
 #import "MLNExportPanelController.h"
+#import "MLNOperatorIndicator.h"
 #import "MLNMarker.h"
 #import "Constants.h"
 
@@ -27,6 +30,9 @@
     
     NSWindowController *_currentSheetController;
     NSWindow *_currentSheet;
+    
+    MLNOperatorIndicator *_indicator;
+    NSTimer *_indicatorTimer;
 }
 
 + (NSArray *)readableTypes
@@ -323,6 +329,8 @@ static void *sampleViewContext = &sampleViewContext;
     [_sample deleteRange:selection undoManager:undoManager];
     
     [_sampleView clearSelection];
+    
+    [self displayIndicatorForOperationName:@"Delete Range"];
 }
 
 - (IBAction)crop:(id)sender
@@ -334,6 +342,8 @@ static void *sampleViewContext = &sampleViewContext;
     
     [_sample cropRange:selection withUndoManager:undoManager];
     [_sampleView clearSelection];
+    
+    [self displayIndicatorForOperationName:@"Crop Range"];
 }
 
 - (IBAction)showInformation:(id)sender
@@ -351,6 +361,8 @@ static void *sampleViewContext = &sampleViewContext;
     MLNPasteboardSampleData *content = [[MLNPasteboardSampleData alloc] initWithContent:copyChannels
                                                                              sampleRate:[_sample sampleRate]];
     [appDelegate setClipboardContent:content];
+    
+    [self displayIndicatorForOperationName:@"Copy"];
 }
 
 - (void)cut:(id)sender
@@ -369,6 +381,8 @@ static void *sampleViewContext = &sampleViewContext;
     [undoManager setActionName:@"Cut"];
     [_sample deleteRange:selection undoManager:undoManager];
     [_sampleView clearSelection];
+    
+    [self displayIndicatorForOperationName:@"Cut"];
 }
 
 - (void)paste:(id)sender
@@ -381,6 +395,8 @@ static void *sampleViewContext = &sampleViewContext;
     [undoManager setActionName:@"Paste"];
     
     [_sample insertChannels:[content channels] atFrame:[_sampleView cursorFramePosition] withUndoManager:undoManager];
+    
+    [self displayIndicatorForOperationName:@"Paste"];
 }
 
 - (void)clearSelection:(id)sender
@@ -389,36 +405,44 @@ static void *sampleViewContext = &sampleViewContext;
     
     [undoManager setActionName:@"Clear Selection"];
     [_sample clearRange:[_sampleView selection] withUndoManager:undoManager];
+    
+    [self displayIndicatorForOperationName:@"Clear Selection"];
 }
 
 - (IBAction)selectAll:(id)sender
 {
     [_sampleView selectAll];
+    [self displayIndicatorForOperationName:@"Select All"];
 }
 
 - (IBAction)selectNone:(id)sender
 {
     [_sampleView clearSelection];
+    [self displayIndicatorForOperationName:@"Select None"];
 }
 
 - (IBAction)zoomIn:(id)sender
 {
     [_sampleView zoomIn];
+    [self displayIndicatorForOperationName:@"Zoom In"];
 }
 
 - (IBAction)zoomOut:(id)sender
 {
     [_sampleView zoomOut];
+    [self displayIndicatorForOperationName:@"Zoom Out"];
 }
 
 - (IBAction)zoomToFit:(id)sender
 {
     [_sampleView zoomToFit];
+    [self displayIndicatorForOperationName:@"Zoom To Fit"];
 }
 
 - (IBAction)zoomToNormal:(id)sender
 {
     [_sampleView zoomToNormal];
+    [self displayIndicatorForOperationName:@"Zoom To Normal"];
 }
 
 - (IBAction)dumpSelectionData:(id)sender
@@ -452,6 +476,58 @@ static void *sampleViewContext = &sampleViewContext;
     NSUndoManager *undoManager = [self undoManager];
     [undoManager setActionName:@"Add Marker"];
     [self realAddMarker:newMarker];
+    
+    [self displayIndicatorForOperationName:@"Add Marker"];
+}
+
+#pragma mark - Indicator
+
+- (void)displayIndicatorForOperationName:(NSString *)name
+{
+    NSWindow *window = [[[self windowControllers] objectAtIndex:0] window];
+    NSView *parentView = [window contentView];
+    
+    if (_indicator) {
+        [_indicatorTimer invalidate];
+        _indicatorTimer = nil;
+        [_indicator removeFromSuperview];
+        _indicator = nil;
+    }
+    
+    _indicator = [[MLNOperatorIndicator alloc] initWithLabel:name];
+    [parentView addSubview:_indicator];
+    
+    [parentView addConstraint:[NSLayoutConstraint constraintWithItem:_indicator
+                                                            attribute:NSLayoutAttributeCenterX
+                                                            relatedBy:NSLayoutRelationEqual
+                                                               toItem:_scrollView
+                                                            attribute:NSLayoutAttributeCenterX
+                                                           multiplier:1.0 constant:0]];
+    [parentView addConstraint:[NSLayoutConstraint constraintWithItem:_indicator
+                                                           attribute:NSLayoutAttributeCenterY
+                                                           relatedBy:NSLayoutRelationEqual
+                                                              toItem:_scrollView
+                                                           attribute:NSLayoutAttributeCenterY
+                                                          multiplier:1.0
+                                                            constant:0.0]];
+    _indicatorTimer = [NSTimer scheduledTimerWithTimeInterval:0.75
+                                                       target:self
+                                                     selector:@selector(fadeOutIndicatorFromTimer:)
+                                                     userInfo:nil
+                                                      repeats:NO];
+}
+
+- (void)fadeOutIndicatorFromTimer:(NSTimer *)timer
+{
+    [NSAnimationContext beginGrouping];
+    [[NSAnimationContext currentContext] setCompletionHandler:^{
+        [_indicator removeFromSuperview];
+        _indicator = nil;
+    }];
+    [[_indicator animator] setAlphaValue:0.0];
+    [NSAnimationContext endGrouping];
+    
+    [timer invalidate];
 }
 
 #pragma mark - Validators

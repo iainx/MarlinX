@@ -23,6 +23,8 @@
 		AE298D8116F7CC720031334A /* README.txt in Resources */ = {isa = PBXBuildFile; fileRef = AE298D7916F7CC720031334A /* README.txt */; };
 		AE2E4437172333B8005463FB /* MLNCacheFile.m in Sources */ = {isa = PBXBuildFile; fileRef = AE2E4436172333B8005463FB /* MLNCacheFile.m */; };
 		AE31A9C916F146ED0051CF41 /* MLNSample+Operations.m in Sources */ = {isa = PBXBuildFile; fileRef = AE31A9C816F146ED0051CF41 /* MLNSample+Operations.m */; };
+		AE41C728185BD2A500E68819 /* MLNOperatorIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = AE41C727185BD2A500E68819 /* MLNOperatorIndicator.m */; };
+		AE41C72A185BEDE200E68819 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE41C729185BEDE200E68819 /* QuartzCore.framework */; };
 		AE47540917FDD51E001105F8 /* utils.m in Sources */ = {isa = PBXBuildFile; fileRef = AE47540817FDD51E001105F8 /* utils.m */; };
 		AE48B5B0184554C800F5642E /* MLNMarkerHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = AE48B5AF184554C800F5642E /* MLNMarkerHandler.m */; };
 		AE57CA4B170F73250043E690 /* MLNSelectionButton.m in Sources */ = {isa = PBXBuildFile; fileRef = AE57CA4A170F73250043E690 /* MLNSelectionButton.m */; };
@@ -103,6 +105,9 @@
 		AE31A9C716F146ED0051CF41 /* MLNSample+Operations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MLNSample+Operations.h"; sourceTree = "<group>"; };
 		AE31A9C816F146ED0051CF41 /* MLNSample+Operations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MLNSample+Operations.m"; sourceTree = "<group>"; };
 		AE31A9CA16F28D3E0051CF41 /* MLNSampleDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNSampleDelegate.h; sourceTree = "<group>"; };
+		AE41C726185BD2A500E68819 /* MLNOperatorIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNOperatorIndicator.h; sourceTree = "<group>"; };
+		AE41C727185BD2A500E68819 /* MLNOperatorIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNOperatorIndicator.m; sourceTree = "<group>"; };
+		AE41C729185BEDE200E68819 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		AE47540817FDD51E001105F8 /* utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = utils.m; sourceTree = "<group>"; };
 		AE47540A17FDD5D1001105F8 /* utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
 		AE48B5AE184554C800F5642E /* MLNMarkerHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNMarkerHandler.h; sourceTree = "<group>"; };
@@ -196,6 +201,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AE41C72A185BEDE200E68819 /* QuartzCore.framework in Frameworks */,
 				AECDE7E516B7C3B900DE94D5 /* AudioToolbox.framework in Frameworks */,
 				AECDE7C216B7C0C300DE94D5 /* Cocoa.framework in Frameworks */,
 			);
@@ -308,6 +314,7 @@
 		AECDE7C016B7C0C300DE94D5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				AE41C729185BEDE200E68819 /* QuartzCore.framework */,
 				AECDE7E416B7C3B900DE94D5 /* AudioToolbox.framework */,
 				AECDE7C116B7C0C300DE94D5 /* Cocoa.framework */,
 				AE7254B1171B7EAC00B48145 /* SenTestingKit.framework */,
@@ -384,6 +391,8 @@
 				AE6FB1D416B8FC9200139735 /* MLNLoadOperationDelegate.h */,
 				AEEE7EA417E7607F00ECA24B /* MLNExportOperation.h */,
 				AEEE7EA517E7607F00ECA24B /* MLNExportOperation.m */,
+				AE41C726185BD2A500E68819 /* MLNOperatorIndicator.h */,
+				AE41C727185BD2A500E68819 /* MLNOperatorIndicator.m */,
 				AE1A2F651833CDC10012E510 /* MLNMarker.h */,
 				AE1A2F661833CDC10012E510 /* MLNMarker.m */,
 				AE6FB1D616B8FF6E00139735 /* Constants.h */,
@@ -576,6 +585,7 @@
 				AEEE3AAA17EB38BB00578740 /* MLNExportableTypeView.m in Sources */,
 				AE298D7A16F7CC720031334A /* DDAbstractDatabaseLogger.m in Sources */,
 				AE298D7B16F7CC720031334A /* DDASLLogger.m in Sources */,
+				AE41C728185BD2A500E68819 /* MLNOperatorIndicator.m in Sources */,
 				AEEE3AA717EB115100578740 /* MLNExportableType.m in Sources */,
 				AE298D7C16F7CC720031334A /* DDFileLogger.m in Sources */,
 				AE298D7D16F7CC720031334A /* DDLog.m in Sources */,
