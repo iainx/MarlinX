@@ -450,23 +450,6 @@ static void *sampleViewContext = &sampleViewContext;
     [_sample dumpDataInRange:[_sampleView selection]];
 }
 
-- (void)realRemoveMarker:(MLNMarker *)marker
-{
-    MLNArrayController *ac = [_sample markerController];
-    [ac removeObject:marker];
-    
-    NSUndoManager *undoManager = [self undoManager];
-    [[undoManager prepareWithInvocationTarget:self] realAddMarker:marker];
-}
-
-- (void)realAddMarker:(MLNMarker *)marker
-{
-    [[_sample markerController] addObject:marker];
-    
-    NSUndoManager *undoManager = [self undoManager];
-    [[undoManager prepareWithInvocationTarget:self] realRemoveMarker:marker];
-}
-
 - (IBAction)addMarker:(id)sender
 {
     MLNMarker *newMarker = [[MLNMarker alloc] init];
@@ -475,7 +458,7 @@ static void *sampleViewContext = &sampleViewContext;
     
     NSUndoManager *undoManager = [self undoManager];
     [undoManager setActionName:@"Add Marker"];
-    [self realAddMarker:newMarker];
+    [_sample addMarker:newMarker undoManager:undoManager];
     
     [self displayIndicatorForOperationName:@"Add Marker"];
 }

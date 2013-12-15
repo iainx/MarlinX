@@ -10,6 +10,15 @@
 
 @interface MLNSample (Operations)
 
+- (void)addMarker:(MLNMarker *)marker
+      undoManager:(NSUndoManager *)undoManager;
+- (void)removeMarker:(MLNMarker *)marker
+         undoManager:(NSUndoManager *)undoManager;
+- (void)moveMarker:(MLNMarker *)marker
+         fromFrame:(NSNumber *)fromFrame
+           toFrame:(NSNumber *)toFrame
+       undoManager:(NSUndoManager *)undoManager;
+
 - (BOOL)deleteRange:(NSRange)range
         undoManager:(NSUndoManager *)undoManager;
 

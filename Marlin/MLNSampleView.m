@@ -10,6 +10,7 @@
 #import "MLNSampleView.h"
 #import "MLNSample.h"
 #import "MLNSample+Drawing.h"
+#import "MLNSample+Operations.h"
 #import "MLNSampleBlock.h"
 #import "MLNSampleChannel.h"
 #import "MLNSelectionAction.h"
@@ -1058,20 +1059,6 @@ static void *markerContext = &markerContext;
     return [self convertPointFromBacking:scaledPoint];
 }
 
-// We need to pass in fromFrame here, [marker frame] is actually already set to @frame
-// so we can't just rely on it.
-- (void)moveMarker:(MLNMarker *)marker
-         fromFrame:(NSNumber *)oldFrame
-           toFrame:(NSNumber *)frame
-       undoManager:(NSUndoManager *)undoManager
-{
-    [[undoManager prepareWithInvocationTarget:self] moveMarker:marker
-                                                     fromFrame:frame
-                                                       toFrame:oldFrame
-                                                   undoManager:undoManager];
-    [marker setFrame:frame];
-}
-
 - (void)handleMarkerMouseDown:(NSEvent *)event
 {
     NSUInteger eventMask = NSLeftMouseDraggedMask | NSLeftMouseUpMask | NSPeriodicMask;
@@ -1127,10 +1114,10 @@ static void *markerContext = &markerContext;
             case NSLeftMouseUp:
                 if (dragged) {
                     [undoManager setActionName:@"Move Marker"];
-                    [self moveMarker:_inMarker
-                           fromFrame:initialFrame
-                             toFrame:[_inMarker frame]
-                         undoManager:undoManager];
+                    [_sample moveMarker:_inMarker
+                              fromFrame:initialFrame
+                                toFrame:[_inMarker frame]
+                            undoManager:undoManager];
                 }
                 
                 [NSEvent stopPeriodicEvents];

@@ -9,6 +9,7 @@
 #import "MLNPasteboardSampleData.h"
 #import "MLNSampleChannel.h"
 #import "MLNSample+Operations.h"
+#import "MLNMarker.h"
 #import "Constants.h"
 
 @implementation MLNSample (Operations)
@@ -22,6 +23,37 @@
     
     NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
     [nc postNotification:note];
+}
+
+- (void)removeMarker:(MLNMarker *)marker
+         undoManager:(NSUndoManager *)undoManager
+{
+    MLNArrayController *ac = [self markerController];
+    [ac removeObject:marker];
+    
+    [[undoManager prepareWithInvocationTarget:self] addMarker:marker
+                                                  undoManager:undoManager];
+}
+
+- (void)addMarker:(MLNMarker *)marker
+      undoManager:(NSUndoManager *)undoManager
+{
+    [[self markerController] addObject:marker];
+    
+    [[undoManager prepareWithInvocationTarget:self] removeMarker:marker
+                                                     undoManager:undoManager];
+}
+
+- (void)moveMarker:(MLNMarker *)marker
+         fromFrame:(NSNumber *)fromFrame
+           toFrame:(NSNumber *)toFrame
+       undoManager:(NSUndoManager *)undoManager
+{
+    [[undoManager prepareWithInvocationTarget:self] moveMarker:marker
+                                                     fromFrame:toFrame
+                                                       toFrame:fromFrame
+                                                   undoManager:undoManager];
+    [marker setFrame:toFrame];
 }
 
 - (BOOL)deleteRange:(NSRange)range
