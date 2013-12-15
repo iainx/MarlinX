@@ -56,11 +56,56 @@
     [marker setFrame:toFrame];
 }
 
+- (void)removeMarkersForRange:(NSRange)range
+                  undoManager:(NSUndoManager *)undoManager
+{
+    NSArray *markers = [[self markerController] arrangedObjects];
+    
+    for (MLNMarker *marker in markers) {
+        NSUInteger frame = [[marker frame] unsignedIntegerValue];
+        
+        if (NSLocationInRange(frame, range)) {
+            [self removeMarker:marker undoManager:undoManager];
+        } else if (frame > NSMaxRange(range)) {
+            [self moveMarker:marker
+                   fromFrame:[marker frame]
+                     toFrame:@(frame - range.length)
+                 undoManager:undoManager];
+        }
+    }
+}
+
+- (void)moveMarkersForRange:(NSRange)range
+                undoManager:(NSUndoManager *)undoManager
+{
+    NSArray *markers = [[self markerController] arrangedObjects];
+    
+    for (MLNMarker *marker in markers) {
+        NSUInteger frame = [[marker frame] unsignedIntegerValue];
+        if (frame > range.location) {
+            [self moveMarker:marker
+                   fromFrame:[marker frame]
+                     toFrame:@(frame + range.length)
+                 undoManager:undoManager];
+        }
+    }
+}
+
+// In all these methods:
+// We only want the markers to be moved when the undo manager isn't doing anything
+// because the marker move registers itself with the undo manager, and otherwise
+// it will be executed twice.
+
 - (BOOL)deleteRange:(NSRange)range
         undoManager:(NSUndoManager *)undoManager
 {
     if (![self containsRange:range]) {
         return NO;
+    }
+    
+    if (![undoManager isUndoing] && ![undoManager isRedoing]) {
+        [self removeMarkersForRange:range
+                        undoManager:undoManager];
     }
     
     NSMutableArray *deletedBlocks = [NSMutableArray arrayWithCapacity:[self numberOfChannels]];
@@ -90,20 +135,24 @@
     NSValue *value = blockArray[0];
     NSUInteger extraFrames = MLNSampleBlockListNumberOfFrames([value pointerValue]);
 
+    NSRange changedRange = NSMakeRange(frame, extraFrames);
+    if (![undoManager isUndoing] && ![undoManager isRedoing]) {
+        [self moveMarkersForRange:changedRange undoManager:undoManager];
+    }
+    
     for (MLNSampleChannel *channel in [self channelData]) {
         NSValue *blockListValue = blockArray[channelNumber];
         MLNSampleBlock *blockList = [blockListValue pointerValue];
         [channel insertBlockList:blockList atFrame:frame];
         channelNumber++;
     }
-    
-    [self setNumberOfFrames:[self numberOfFrames] + extraFrames];
-    
-    NSRange changedRange = NSMakeRange(frame, extraFrames);
-    [self postChangeInRangeNotification:changedRange];
-    
+
     [[undoManager prepareWithInvocationTarget:self] deleteRange:changedRange
                                                     undoManager:undoManager];
+
+    [self setNumberOfFrames:[self numberOfFrames] + extraFrames];
+
+    [self postChangeInRangeNotification:changedRange];
 }
 
 - (NSArray *)copyRange:(NSRange)range
@@ -176,13 +225,18 @@
               numberOfFrames:(NSUInteger)numberOfFrames
                  undoManager:(NSUndoManager *)undoManager
 {
+    NSRange changedRange = NSMakeRange(frame, numberOfFrames);
+    
+    if (![undoManager isUndoing] && ![undoManager isRedoing]) {
+        [self moveMarkersForRange:changedRange
+                      undoManager:undoManager];
+    }
     for (MLNSampleChannel *channel in [self channelData]) {
         [channel insertSilenceAtFrame:frame frameDuration:numberOfFrames];
     }
     
     [self setNumberOfFrames:[self numberOfFrames] + numberOfFrames];
     
-    NSRange changedRange = NSMakeRange(frame, numberOfFrames);
     [self postChangeInRangeNotification:changedRange];
 
     changedRange = NSMakeRange(frame, numberOfFrames);
