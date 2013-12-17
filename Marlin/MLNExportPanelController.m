@@ -24,6 +24,7 @@ struct _exportableTypeDetails {
     BOOL bigEndian;
 } etDetails[] = {
     {"M4A", "Create a compressed M4A file with some loss of quality", kAudioFormatMPEG4AAC, kAudioFileM4AType, NO},
+    {"ALAC", "Create a compressed ALAC file with no loss of quality", kAudioFormatAppleLossless, kAudioFileM4AType, NO},
     {"WAV", "Create an uncompressed WAV file with no loss of quality", kAudioFormatLinearPCM, kAudioFileWAVEType, NO},
     {"AIFF", "Create an uncompressed AIFF file with no loss of quality", kAudioFormatLinearPCM, kAudioFileAIFFType, YES},
     {NULL, NULL}
