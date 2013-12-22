@@ -88,18 +88,18 @@
 			</array>
 		</dict>
 		<dict>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.sleepfive.marlin</string>
+			</array>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>marlin</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string></string>
+			<key>LSTypeIsPackage</key>
+			<true/>
 			<key>CFBundleTypeName</key>
 			<string>Marlin</string>
-			<key>CFBundleTypeOSTypes</key>
-			<array>
-				<string>????</string>
-			</array>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>NSDocumentClass</key>
@@ -136,5 +136,30 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>com.apple.package</string>
+				<string>public.composite-content</string>
+			</array>
+			<key>UTTypeReferenceURL</key>
+			<string>http://sleepfive.com/marlin</string>
+			<key>UTTypeDescription</key>
+			<string></string>
+			<key>UTTypeIdentifier</key>
+			<string>com.sleepfive.marlin</string>
+			<key>UTTypeIconFile</key>
+			<string>Marlin</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>marlin</string>
+				</array>
+			</dict>
+		</dict>
+	</array>
 </dict>
 </plist>
