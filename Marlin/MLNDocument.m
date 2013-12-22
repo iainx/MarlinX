@@ -38,6 +38,7 @@
 + (NSArray *)readableTypes
 {
     UInt32 size;
+    NSMutableArray *types;
     NSArray *all;
     OSStatus err;
     
@@ -48,7 +49,9 @@
     if (err == noErr)
         NSLog(@"UTIs: %@", all);
     
-    return all;
+    types = [NSMutableArray arrayWithArray:all];
+    [types addObject:@"com.sleepfive.marlin"];
+    return types;
 }
 
 + (NSArray *)writableTypes
@@ -250,7 +253,7 @@ static void *sampleViewContext = &sampleViewContext;
 
 - (BOOL)readFromURL:(NSURL *)url ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
 {
-    DDLogVerbose(@"Opening %@, %p", url, self);
+    DDLogVerbose(@"Opening %@, %@", url, typeName);
     
     _sample = [[MLNSample alloc] initWithURL:url];
     [_sample setDelegate:self];
@@ -258,6 +261,19 @@ static void *sampleViewContext = &sampleViewContext;
     return YES;
 }
 
+- (BOOL)readFromFileWrapper:(NSFileWrapper *)fileWrapper
+                     ofType:(NSString *)typeName
+                      error:(NSError *__autoreleasing *)outError
+{
+    DDLogInfo(@"Opening file wrapper");
+    return YES;
+}
+
+- (NSFileWrapper *)fileWrapperOfType:(NSString *)typeName
+                               error:(NSError *__autoreleasing *)outError
+{
+    return nil;
+}
 - (void)didEndExportSheet:(NSWindow *)sheet
                returnCode:(NSInteger)returnCode
               contextInfo:(void *)contextInfo
