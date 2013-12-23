@@ -27,8 +27,27 @@ struct _exportableTypeDetails {
     {"ALAC", "Create a compressed ALAC file with no loss of quality", kAudioFormatAppleLossless, kAudioFileM4AType, NO},
     {"WAV", "Create an uncompressed WAV file with no loss of quality", kAudioFormatLinearPCM, kAudioFileWAVEType, NO},
     {"AIFF", "Create an uncompressed AIFF file with no loss of quality", kAudioFormatLinearPCM, kAudioFileAIFFType, YES},
-    {NULL, NULL}
+    {NULL, NULL, 0, 0, NO}
 };
+
++ (MLNExportableType *)exportableTypeForName:(NSString *)name
+{
+    const char *cName = [name UTF8String];
+    
+    for (int i = 0; etDetails[i].name; i++) {
+        if (strcmp(etDetails[i].name, cName) == 0) {
+            MLNExportableType *type = [[MLNExportableType alloc] initWithName:name];
+            [type setInfo:[NSString stringWithUTF8String:etDetails[i].blurb]];
+            [type setFormatID:etDetails[i].formatID];
+            [type setTypeID:etDetails[i].typeID];
+            [type setBigEndian:etDetails[i].bigEndian];
+            
+            return type;
+        }
+    }
+    
+    return nil;
+}
 
 - (id)init
 {

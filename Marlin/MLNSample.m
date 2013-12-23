@@ -14,6 +14,7 @@
 #import "MLNSampleBlock.h"
 #import "MLNLoadOperation.h"
 #import "MLNExportOperation.h"
+#import "MLNExportPanelController.h"
 #import "MLNMarker.h"
 
 #import "pa_ringbuffer.h"
@@ -146,7 +147,22 @@ typedef struct PlaybackData {
     [_delegate sample:self operationDidStart:_currentOperation];
 }
 
-- (void)startExportTo:(NSURL *)url asFormat:(NSDictionary *)format
+- (void)startWriteTo:(NSURL *)url
+{
+    NSFileManager *fm = [NSFileManager defaultManager];
+    
+    [fm createDirectoryAtURL:url withIntermediateDirectories:YES
+                  attributes:nil error:nil];
+    
+    NSURL *realURL = [NSURL URLWithString:@"marlin-filedata.wav"
+                            relativeToURL:url];
+    
+    NSDictionary *format = @{@"formatDetails": [MLNExportPanelController exportableTypeForName:@"WAV"]};
+    [self startExportTo:realURL asFormat:format];
+}
+
+- (void)startExportTo:(NSURL *)url
+             asFormat:(NSDictionary *)format
 {
     _currentOperation = [[MLNExportOperation alloc] initWithSample:self URL:url format:format];
     NSOperationQueue *defaultQueue = [MLNSample defaultOperationQueue];

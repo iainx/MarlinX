@@ -16,7 +16,7 @@
 				<string>caf</string>
 			</array>
 			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
+			<string>Viewer</string>
 			<key>LSItemContentTypes</key>
 			<array>
 				<string>com.apple.coreaudio-​format</string>
@@ -33,7 +33,7 @@
 				<string>aif</string>
 			</array>
 			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
+			<string>Viewer</string>
 			<key>LSItemContentTypes</key>
 			<array>
 				<string>public.aiff-audio</string>
@@ -49,7 +49,7 @@
 				<string>m4a</string>
 			</array>
 			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
+			<string>Viewer</string>
 			<key>LSItemContentTypes</key>
 			<array>
 				<string>public.mpeg-4-audio</string>
@@ -69,7 +69,7 @@
 				<string>com.microsoft.waveform-audio</string>
 			</array>
 			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
+			<string>Viewer</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeName</key>
@@ -81,7 +81,7 @@
 				<string>mp3</string>
 			</array>
 			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
+			<string>Viewer</string>
 			<key>LSItemContentTypes</key>
 			<array>
 				<string>public.mp3</string>

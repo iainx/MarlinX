@@ -56,7 +56,12 @@
 
 + (NSArray *)writableTypes
 {
-    return @[@"com.microsoft.waveform-audio", @"public.mpeg-4-audio"];
+    return @[@"com.sleepfive.marlin"];
+}
+
++ (BOOL)isNativeType:(NSString *)type
+{
+    return [type isEqualToString:@"com.sleepfive.marlin"];
 }
 
 - (id)init
@@ -230,6 +235,12 @@ static void *sampleViewContext = &sampleViewContext;
     return NO;
 }
 
+- (BOOL)canAsynchronouslyWriteToURL:(NSURL *)URL ofType:(NSString *)type forSaveOperation:(NSSaveOperationType)op
+{
+    return YES;
+}
+
+/*
 - (NSData *)dataOfType:(NSString *)typeName error:(NSError **)outError
 {
     // Insert code here to write your document to data of the specified type. If outError != NULL, ensure that you create and set an appropriate error when returning nil.
@@ -238,7 +249,7 @@ static void *sampleViewContext = &sampleViewContext;
     @throw exception;
     return nil;
 }
-
+*/
 /*
 - (BOOL)readFromData:(NSData *)data ofType:(NSString *)typeName error:(NSError **)outError
 {
@@ -251,16 +262,30 @@ static void *sampleViewContext = &sampleViewContext;
 }
 */
 
-- (BOOL)readFromURL:(NSURL *)url ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
+- (BOOL)readFromURL:(NSURL *)url
+             ofType:(NSString *)typeName
+              error:(NSError *__autoreleasing *)outError
 {
-    DDLogVerbose(@"Opening %@, %@", url, typeName);
+    DDLogInfo(@"Opening %@, %@", url, typeName);
     
-    _sample = [[MLNSample alloc] initWithURL:url];
-    [_sample setDelegate:self];
-    
+    if ([typeName isEqualToString:@"com.sleepfive.marlin"]) {
+        NSURL *realFile = [NSURL URLWithString:@"marlin-filedata.wav" relativeToURL:url];
+        DDLogInfo(@"Real file: %@", [realFile absoluteString]);
+    } else {
+        _sample = [[MLNSample alloc] initWithURL:url];
+        [_sample setDelegate:self];
+        
+        [self setFileType:@"com.sleepfive.marlin"];
+        [self setFileURL:nil];
+        
+        NSArray *filenameParts = [[url lastPathComponent] componentsSeparatedByString:@"."];
+        [self setDisplayName:filenameParts[0]];
+        
+    }
     return YES;
 }
 
+/*
 - (BOOL)readFromFileWrapper:(NSFileWrapper *)fileWrapper
                      ofType:(NSString *)typeName
                       error:(NSError *__autoreleasing *)outError
@@ -268,12 +293,32 @@ static void *sampleViewContext = &sampleViewContext;
     DDLogInfo(@"Opening file wrapper");
     return YES;
 }
+*/
+
+/*
+- (BOOL)writeToURL:(NSURL *)url
+            ofType:(NSString *)typeName
+             error:(NSError *__autoreleasing *)outError
+{
+    DDLogInfo(@"writeTOURL:%@ - %@", url, typeName);
+    
+    [_sample startWriteTo:url];
+    return YES;
+}
+*/
 
 - (NSFileWrapper *)fileWrapperOfType:(NSString *)typeName
                                error:(NSError *__autoreleasing *)outError
 {
-    return nil;
+    if ([self documentFileWrapper] == nil) {
+        NSFileWrapper * documentFileWrapper = [[NSFileWrapper alloc]
+                                               initDirectoryWithFileWrappers:nil];
+        [self setDocumentFileWrapper:documentFileWrapper];
+    }
+    
+    return [self documentFileWrapper];
 }
+
 - (void)didEndExportSheet:(NSWindow *)sheet
                returnCode:(NSInteger)returnCode
               contextInfo:(void *)contextInfo
@@ -577,11 +622,12 @@ static void *sampleViewContext = &sampleViewContext;
     }
     
     // These are not implemented yet
+    /*
     if (action == @selector(revertDocumentToSaved:)
         || action == @selector(saveDocument:)) {
         return NO;
     }
-    
+    */
     return YES;
 }
 

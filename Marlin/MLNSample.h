@@ -38,6 +38,7 @@ enum {
 - (id)initWithURL:(NSURL *)url;
 - (id)initWithChannels:(NSArray *)channelData;
 
+- (void)startWriteTo:(NSURL *)url;
 - (void)startExportTo:(NSURL *)url asFormat:(NSDictionary *)format;
 
 - (void)play;

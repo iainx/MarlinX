@@ -21,6 +21,7 @@
 @property (readwrite, strong) NSScrollView *scrollView;
 @property (readwrite, strong) MLNSampleView *sampleView;
 @property (readwrite, strong) MLNOverviewBar *overviewBarView;
+@property (readwrite, strong) NSFileWrapper *documentFileWrapper;
 
 - (IBAction)exportDocumentAs:(id)sender;
 - (IBAction)selectAll:(id)sender;
