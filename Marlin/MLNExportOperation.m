@@ -51,13 +51,14 @@
     
     _outputFormat.mSampleRate = [sample sampleRate];
     _outputFormat.mFormatID = [exportableType formatID];
+    _outputFormat.mFormatFlags = [exportableType formatFlags];
     _outputFormat.mChannelsPerFrame = (UInt32)[sample numberOfChannels];
     if (_outputFormat.mFormatID == kAudioFormatLinearPCM) {
         _outputFormat.mBitsPerChannel = 16;
         _outputFormat.mBytesPerPacket = _outputFormat.mChannelsPerFrame * (_outputFormat.mBitsPerChannel / 8);
         _outputFormat.mFramesPerPacket = 1;
         _outputFormat.mBytesPerFrame = _outputFormat.mBytesPerPacket;
-        _outputFormat.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger | kLinearPCMFormatFlagIsPacked;
+        _outputFormat.mFormatFlags |= (kLinearPCMFormatFlagIsSignedInteger | kLinearPCMFormatFlagIsPacked);
         
         if ([exportableType isBigEndian]) {
             _outputFormat.mFormatFlags |= kLinearPCMFormatFlagIsBigEndian;
