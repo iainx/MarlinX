@@ -231,10 +231,12 @@ static void *sampleViewContext = &sampleViewContext;
 
 + (BOOL)autosavesInPlace
 {
-    return NO;
+    return YES;
 }
 
-- (BOOL)canAsynchronouslyWriteToURL:(NSURL *)URL ofType:(NSString *)type forSaveOperation:(NSSaveOperationType)op
+- (BOOL)canAsynchronouslyWriteToURL:(NSURL *)URL
+                             ofType:(NSString *)type
+                   forSaveOperation:(NSSaveOperationType)op
 {
     return YES;
 }
