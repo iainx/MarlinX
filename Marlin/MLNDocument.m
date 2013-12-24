@@ -231,7 +231,6 @@ static void *sampleViewContext = &sampleViewContext;
 
 + (BOOL)autosavesInPlace
 {
-    //return YES;
     return NO;
 }
 
@@ -240,28 +239,6 @@ static void *sampleViewContext = &sampleViewContext;
     return YES;
 }
 
-/*
-- (NSData *)dataOfType:(NSString *)typeName error:(NSError **)outError
-{
-    // Insert code here to write your document to data of the specified type. If outError != NULL, ensure that you create and set an appropriate error when returning nil.
-    // You can also choose to override -fileWrapperOfType:error:, -writeToURL:ofType:error:, or -writeToURL:ofType:forSaveOperation:originalContentsURL:error: instead.
-    NSException *exception = [NSException exceptionWithName:@"UnimplementedMethod" reason:[NSString stringWithFormat:@"%@ is unimplemented", NSStringFromSelector(_cmd)] userInfo:nil];
-    @throw exception;
-    return nil;
-}
-*/
-/*
-- (BOOL)readFromData:(NSData *)data ofType:(NSString *)typeName error:(NSError **)outError
-{
-    // Insert code here to read your document from the given data of the specified type. If outError != NULL, ensure that you create and set an appropriate error when returning NO.
-    // You can also choose to override -readFromFileWrapper:ofType:error: or -readFromURL:ofType:error: instead.
-    // If you override either of these, you should also override -isEntireFileLoaded to return NO if the contents are lazily loaded.
-    NSException *exception = [NSException exceptionWithName:@"UnimplementedMethod" reason:[NSString stringWithFormat:@"%@ is unimplemented", NSStringFromSelector(_cmd)] userInfo:nil];
-    @throw exception;
-    return YES;
-}
-*/
-
 - (BOOL)readFromURL:(NSURL *)url
              ofType:(NSString *)typeName
               error:(NSError *__autoreleasing *)outError
@@ -269,8 +246,10 @@ static void *sampleViewContext = &sampleViewContext;
     DDLogInfo(@"Opening %@, %@", url, typeName);
     
     if ([typeName isEqualToString:@"com.sleepfive.marlin"]) {
-        NSURL *realFile = [NSURL URLWithString:@"marlin-filedata.wav" relativeToURL:url];
-        DDLogInfo(@"Real file: %@", [realFile absoluteString]);
+        NSURL *realURL = [url URLByAppendingPathComponent:@"marlin-filedata.wav"];
+
+        _sample = [[MLNSample alloc] initWithURL:realURL];
+        [_sample setDelegate:self];
     } else {
         _sample = [[MLNSample alloc] initWithURL:url];
         [_sample setDelegate:self];
@@ -285,38 +264,19 @@ static void *sampleViewContext = &sampleViewContext;
     return YES;
 }
 
-/*
-- (BOOL)readFromFileWrapper:(NSFileWrapper *)fileWrapper
-                     ofType:(NSString *)typeName
-                      error:(NSError *__autoreleasing *)outError
+- (void)saveToURL:(NSURL *)url
+           ofType:(NSString *)typeName
+ forSaveOperation:(NSSaveOperationType)saveOperation
+completionHandler:(void (^)(NSError *))completionHandler
 {
-    DDLogInfo(@"Opening file wrapper");
-    return YES;
-}
-*/
-
-/*
-- (BOOL)writeToURL:(NSURL *)url
-            ofType:(NSString *)typeName
-             error:(NSError *__autoreleasing *)outError
-{
-    DDLogInfo(@"writeTOURL:%@ - %@", url, typeName);
+    id token = [self changeCountTokenForSaveOperation:saveOperation];
     
-    [_sample startWriteTo:url];
-    return YES;
-}
-*/
-
-- (NSFileWrapper *)fileWrapperOfType:(NSString *)typeName
-                               error:(NSError *__autoreleasing *)outError
-{
-    if ([self documentFileWrapper] == nil) {
-        NSFileWrapper * documentFileWrapper = [[NSFileWrapper alloc]
-                                               initDirectoryWithFileWrappers:nil];
-        [self setDocumentFileWrapper:documentFileWrapper];
-    }
+    DDLogInfo(@"saveToURL:%@ ofType:%@", [url absoluteString], typeName);
     
-    return [self documentFileWrapper];
+    [_sample startWriteToURL:url completionHandler:completionHandler];
+    [self unblockUserInteraction];
+    
+    [self updateChangeCountWithToken:token forSaveOperation:saveOperation];
 }
 
 - (void)didEndExportSheet:(NSWindow *)sheet

@@ -62,6 +62,7 @@ typedef struct PlaybackData {
     
     PlaybackData *_playbackData;
     NSTimer *_playbackTimer;
+    void (^_saveCompletionHandler)(NSError *);
 }
 
 #pragma mark Class methods
@@ -147,17 +148,21 @@ typedef struct PlaybackData {
     [_delegate sample:self operationDidStart:_currentOperation];
 }
 
-- (void)startWriteTo:(NSURL *)url
+- (void)startWriteToURL:(NSURL *)url
+      completionHandler:(void (^)(NSError *))completionHandler
 {
     NSFileManager *fm = [NSFileManager defaultManager];
+    
+    _saveCompletionHandler = completionHandler;
     
     [fm createDirectoryAtURL:url withIntermediateDirectories:YES
                   attributes:nil error:nil];
     
-    NSURL *realURL = [NSURL URLWithString:@"marlin-filedata.wav"
-                            relativeToURL:url];
+    NSURL *realURL = [url URLByAppendingPathComponent:@"marlin-filedata.wav"];
     
     NSDictionary *format = @{@"formatDetails": [MLNExportPanelController exportableTypeForName:@"WAV"]};
+    
+    DDLogVerbose(@"Exporting to %@: %@", [realURL absoluteString], format);
     [self startExportTo:realURL asFormat:format];
 }
 
@@ -182,6 +187,11 @@ typedef struct PlaybackData {
 
 - (void)operationDidFinish:(MLNOperation *)operation
 {
+    if (_saveCompletionHandler) {
+        _saveCompletionHandler(nil);
+        _saveCompletionHandler = nil;
+    }
+    
     [_delegate sample:self operationDidEnd:operation];
 }
 #pragma mark - MLNLoadOperationDelegate functions
