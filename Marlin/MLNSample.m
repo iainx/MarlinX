@@ -158,8 +158,13 @@ typedef struct PlaybackData {
     [fm createDirectoryAtURL:url withIntermediateDirectories:YES
                   attributes:nil error:nil];
     
-    NSURL *realURL = [url URLByAppendingPathComponent:@"marlin-filedata.wav"];
+    // Markers
+    NSURL *markerURL = [url URLByAppendingPathComponent:@"markers.data"];
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:_markers];
+    [data writeToURL:markerURL options:0 error:nil];
     
+    // Write data
+    NSURL *realURL = [url URLByAppendingPathComponent:@"marlin-filedata.wav"];
     NSDictionary *format = @{@"formatDetails": [MLNExportPanelController exportableTypeForName:@"WAV"]};
     
     DDLogVerbose(@"Exporting to %@: %@", [realURL absoluteString], format);
