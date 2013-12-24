@@ -16,6 +16,6 @@
 
 @property (readwrite, weak) id<MLNLoadOperationDelegate> delegate;
 
-- (id)initForSample:(MLNSample *)sample;
+- (id)initForSample:(MLNSample *)sample fromURL:(NSURL *)url;
 
 @end

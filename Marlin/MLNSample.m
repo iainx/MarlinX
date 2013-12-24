@@ -80,30 +80,16 @@ typedef struct PlaybackData {
     return defaultOperationQueue;
 }
 
-- (id)initWithURL:(NSURL *)url
+- (id)init
 {
     self = [super init];
     if (!self) {
         return nil;
     }
     
-    _url = url;
     _loaded = NO;
     
     _markers = [[NSMutableArray alloc] init];
-    
-    /* A test */
-    MLNMarker *testMarker = [[MLNMarker alloc] init];
-    
-    [testMarker setName:@"Test 1"];
-    [testMarker setFrame:@(100000)];
-    [_markers addObject:testMarker];
-    
-    testMarker = [[MLNMarker alloc] init];
-    [testMarker setName:@"Test 2"];
-    [testMarker setFrame:@(150)];
-    [_markers addObject:testMarker];
-    
     _markerController = [[MLNArrayController alloc] init];
     [_markerController bind:@"contentArray"
                    toObject:self
@@ -112,8 +98,6 @@ typedef struct PlaybackData {
     
     NSSortDescriptor *frameDescriptor = [[NSSortDescriptor alloc] initWithKey:@"frame" ascending:YES];
     [_markerController setSortDescriptors:@[frameDescriptor]];
-
-    [self startLoad];
     
     return self;
 }
@@ -137,9 +121,29 @@ typedef struct PlaybackData {
     return self;
 }
 
-- (void)startLoad
+- (void)startLoadFromURL:(NSURL *)url
 {
-    _currentOperation = [[MLNLoadOperation alloc] initForSample:self];
+    NSURL *markerURL = [url URLByAppendingPathComponent:@"markers.data"];
+    NSData *markerData = [NSData dataWithContentsOfURL:markerURL];
+    
+    NSArray *markers = [NSKeyedUnarchiver unarchiveObjectWithData:markerData];
+    [_markers addObjectsFromArray:markers];
+    
+    NSURL *dataURL = [url URLByAppendingPathComponent:@"marlin-filedata.wav"];
+
+    [self importFromURL:dataURL];
+}
+
+- (void)startImportFromURL:(NSURL *)url
+{
+    _url = url;
+    
+    [self importFromURL:url];
+}
+
+- (void)importFromURL:(NSURL *)url
+{
+    _currentOperation = [[MLNLoadOperation alloc] initForSample:self fromURL:url];
     NSOperationQueue *defaultQueue = [MLNSample defaultOperationQueue];
     
     [_currentOperation setDelegate:self];

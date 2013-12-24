@@ -35,8 +35,10 @@ enum {
 @property (readwrite) NSMutableArray *markers;
 @property (readonly) MLNArrayController *markerController;
 
-- (id)initWithURL:(NSURL *)url;
 - (id)initWithChannels:(NSArray *)channelData;
+
+- (void)startLoadFromURL:(NSURL *)url;
+- (void)startImportFromURL:(NSURL *)url;
 
 - (void)startWriteToURL:(NSURL *)url completionHandler:(void (^)(NSError *))completionHandler;
 - (void)startExportTo:(NSURL *)url asFormat:(NSDictionary *)format;

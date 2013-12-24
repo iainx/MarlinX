@@ -26,6 +26,7 @@
 @dynamic delegate;
 
 - (id)initForSample:(MLNSample *)sample
+            fromURL:(NSURL *)url
 {
     self = [super init];
     if (!self) {
@@ -43,7 +44,7 @@
     }];
     
     OSStatus status;
-    CFURLRef urlRef = (__bridge CFURLRef)[sample url];
+    CFURLRef urlRef = (__bridge CFURLRef)url;
 
     // Set up the fileRef on the main thread so we keep sample/url as main thread objects
     // _fileRef can now be safely handed over to the worker thread as it is never used

@@ -244,15 +244,15 @@ static void *sampleViewContext = &sampleViewContext;
               error:(NSError *__autoreleasing *)outError
 {
     DDLogInfo(@"Opening %@, %@", url, typeName);
-    
-    if ([typeName isEqualToString:@"com.sleepfive.marlin"]) {
-        NSURL *realURL = [url URLByAppendingPathComponent:@"marlin-filedata.wav"];
 
-        _sample = [[MLNSample alloc] initWithURL:realURL];
-        [_sample setDelegate:self];
+    _sample = [[MLNSample alloc] init];
+    [_sample setDelegate:self];
+
+    if ([typeName isEqualToString:@"com.sleepfive.marlin"]) {
+        [_sample startLoadFromURL:url];
     } else {
-        _sample = [[MLNSample alloc] initWithURL:url];
-        [_sample setDelegate:self];
+        
+        [_sample startImportFromURL:url];
         
         [self setFileType:@"com.sleepfive.marlin"];
         [self setFileURL:nil];
