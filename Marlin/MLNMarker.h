@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface MLNMarker : NSObject
+@interface MLNMarker : NSObject <NSCoding>
 
 @property (readwrite) NSNumber *frame;
 @property (readwrite, copy) NSString *name;
