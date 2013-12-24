@@ -1095,16 +1095,30 @@ static void *markerContext = &markerContext;
                 
                 mouseLoc = [self convertPoint:[nextEvent locationInWindow] fromView:nil];
                 if (![self mouse:mouseLoc inRect:visibleRect]) {
-                    if (timerOn == NO) {
-                        [NSEvent startPeriodicEventsAfterDelay:0.1 withPeriod:0.1];
-                        timerOn = YES;
+                    if (mouseLoc.y < 0 || mouseLoc.y > [self bounds].size.height) {
+                        [[NSCursor disappearingItemCursor] set];
+                        // If we're deleting we also want to stop scrolling
+                        if (timerOn) {
+                            [NSEvent stopPeriodicEvents];
+                            timerOn = NO;
+                            _dragEvent = nil;
+                        }
+                    } else {
+                        [[NSCursor closedHandCursor] set];
+                        if (timerOn == NO) {
+                            [NSEvent startPeriodicEventsAfterDelay:0.1 withPeriod:0.1];
+                            timerOn = YES;
+                        }
                     }
                     _dragEvent = nextEvent;
                     break;
                 } else if (timerOn) {
+                    [[NSCursor closedHandCursor] set];
                     [NSEvent stopPeriodicEvents];
                     timerOn = NO;
                     _dragEvent = nil;
+                } else {
+                    [[NSCursor closedHandCursor] set];
                 }
                 
                 newFrame = [self convertPointToFrame:mouseLoc];
@@ -1113,13 +1127,21 @@ static void *markerContext = &markerContext;
                 
             case NSLeftMouseUp:
                 if (dragged) {
-                    [undoManager setActionName:@"Move Marker"];
-                    [_sample moveMarker:_inMarker
-                              fromFrame:initialFrame
-                                toFrame:[_inMarker frame]
-                            undoManager:undoManager];
+                    mouseLoc = [self convertPoint:[nextEvent locationInWindow] fromView:nil];
+                    
+                    if (mouseLoc.y < 0 || mouseLoc.y > [self bounds].size.height) {
+                        [undoManager setActionName:@"Delete Marker"];
+                        [_sample removeMarker:_inMarker undoManager:undoManager];
+                        [[NSCursor arrowCursor] set];
+                        NSShowAnimationEffect(NSAnimationEffectPoof, [NSEvent mouseLocation], NSZeroSize, nil, nil, NULL);
+                    } else {
+                        [undoManager setActionName:@"Move Marker"];
+                        [_sample moveMarker:_inMarker
+                                  fromFrame:initialFrame
+                                    toFrame:[_inMarker frame]
+                                undoManager:undoManager];
+                    }
                 }
-                
                 [NSEvent stopPeriodicEvents];
                 [[NSCursor openHandCursor] set];
                 
