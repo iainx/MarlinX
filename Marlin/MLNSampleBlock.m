@@ -42,6 +42,8 @@ MLNSampleBlockCreateBlock (MLNMapRegion *region,
     block->nextBlock = NULL;
     block->previousBlock = NULL;
     
+    block->reversed = NO;
+    
     return block;
 }
 
@@ -121,6 +123,7 @@ MLNSampleBlockSplitBlockAtFrame (MLNSampleBlock *block,
                                  NSUInteger splitFrame)
 {
     MLNSampleBlock *newBlock;
+    NSUInteger realSplitFrame;
     NSUInteger numberFramesInSelf;
     NSUInteger numberFramesInOther;
     NSUInteger otherStart;
@@ -136,21 +139,37 @@ MLNSampleBlockSplitBlockAtFrame (MLNSampleBlock *block,
         return NULL;
     }
     
-    numberFramesInSelf = splitFrame - block->startFrame;
+    DDLogCVerbose(@"Splitting block at %lu", splitFrame);
+    if (block->reversed) {
+        realSplitFrame = ((MLNSampleBlockLastFrame(block) + 1) - splitFrame) + block->startFrame;
+    } else {
+        realSplitFrame = splitFrame;
+    }
+    DDLogCVerbose(@"Real split frame: %lu", realSplitFrame);
+    MLNSampleBlockDumpBlock(block);
+    
+    numberFramesInSelf = realSplitFrame - block->startFrame;
     numberFramesInOther = block->numberOfFrames - numberFramesInSelf;
     otherStart = block->startFrame + numberFramesInSelf;
     
+    DDLogCVerbose(@"Number frames in self: %lu", numberFramesInSelf);
+    DDLogCVerbose(@"Number frames in new block: %lu", numberFramesInOther);
+    DDLogCVerbose(@"Other start: %lu", otherStart);
+    
     numberOfCachePoints = block->cacheByteLength / sizeof(MLNSampleCachePoint);
     
-    // FIXME: Don't make this a magic number!
-    numberOfCachePointsInSelf = numberFramesInSelf / 256;
-    if (numberFramesInSelf % 256 != 0) {
+    DDLogCVerbose(@"Total cache points: %lu", numberOfCachePoints);
+    
+    numberOfCachePointsInSelf = numberFramesInSelf / MLNSampleChannelFramesPerCachePoint();
+    if (numberFramesInSelf % MLNSampleChannelFramesPerCachePoint() != 0) {
         numberOfCachePointsInSelf++;
     }
     
     numberOfCachePointsInOther = numberOfCachePoints - numberOfCachePointsInSelf;
     
-    if (splitFrame == block->startFrame) {
+    DDLogCVerbose(@"number cache points in self: %lu", numberOfCachePointsInSelf);
+    DDLogCVerbose(@"number cache points in other: %lu", numberOfCachePointsInOther);
+    if (realSplitFrame == block->startFrame) {
         DDLogCVerbose(@"Split frame == _startFrame, returning self");
         
         // FIXME: Do blocks need to be ref-counted?
@@ -164,12 +183,19 @@ MLNSampleBlockSplitBlockAtFrame (MLNSampleBlock *block,
                                          numberOfCachePointsInOther * sizeof(MLNSampleCachePoint),
                                          block->cacheByteOffset + (numberOfCachePointsInSelf * sizeof(MLNSampleCachePoint)));
     newBlock->startFrame = otherStart;
+    newBlock->reversed = block->reversed;
     
     block->numberOfFrames = numberFramesInSelf;
     block->sampleByteLength = block->numberOfFrames * sizeof(float);
     block->cacheByteLength = numberOfCachePointsInSelf * sizeof(MLNSampleCachePoint);
     
-    MLNSampleBlockAppendBlock(block, newBlock);
+    if (block->reversed) {
+        MLNSampleBlockPrependBlock(block, newBlock);
+    } else {
+        MLNSampleBlockAppendBlock(block, newBlock);
+    }
+    
+    MLNSampleBlockDumpBlock(newBlock);
     
     return newBlock;
 }
@@ -409,6 +435,45 @@ MLNSampleBlockInsertList(MLNSampleBlock *block,
     blockList->previousBlock = block;
 }
 
+void
+MLNSampleBlockListReverse(MLNSampleBlock *first,
+                          MLNSampleBlock *last)
+{
+    MLNSampleBlock *block, *nextBlock;
+    
+    DDLogCVerbose(@"Reversing %p -> %p", first, last);
+    block = first;
+
+    while (block != last && block) {
+        DDLogCVerbose(@"***Before***");
+        MLNSampleBlockDumpBlock(block);
+        
+        nextBlock = block->nextBlock;
+        
+        block->nextBlock = block->previousBlock;
+        block->previousBlock = nextBlock;
+
+        block->reversed = !block->reversed;
+        
+        DDLogCVerbose(@"***After***");
+        MLNSampleBlockDumpBlock(block);
+        
+        block = nextBlock;
+    }
+    
+    DDLogCVerbose(@"***Before (final) ***");
+    MLNSampleBlockDumpBlock(block);
+    
+    nextBlock = block->nextBlock;
+    block->nextBlock = block->previousBlock;
+    block->previousBlock = nextBlock;
+    
+    block->reversed = !block->reversed;
+    
+    DDLogCVerbose(@"***After (final) ***");
+    MLNSampleBlockDumpBlock(block);
+}
+
 #pragma mark - Debugging
 void
 MLNSampleBlockDumpBlock (MLNSampleBlock *block)
@@ -419,6 +484,7 @@ MLNSampleBlockDumpBlock (MLNSampleBlock *block)
     
     DDLogCInfo(@"[%p] - [%p] - [%p]", block->previousBlock, block, block->nextBlock);
     DDLogCInfo(@"   Region: %p - (offset: %llu)", block->region, block->byteOffset);
+    DDLogCInfo(@"   Direction: %@", block->reversed ? @"Reversed":@"Normal");
     DDLogCInfo(@"   %lu bytes", block->sampleByteLength);
     DDLogCInfo(@"   %lu cache", block->cacheByteLength);
     DDLogCInfo(@"   %lu -> %lu", block->startFrame, MLNSampleBlockLastFrame(block));

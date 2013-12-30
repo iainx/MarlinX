@@ -486,6 +486,11 @@ completionHandler:(void (^)(NSError *))completionHandler
     [self displayIndicatorForOperationName:@"Add Marker"];
 }
 
+- (IBAction)reverseSelection:(id)sender
+{
+    [_sample reverseRange:[_sampleView selection] withUndoManager:[self undoManager]];
+}
+
 #pragma mark - Indicator
 
 - (void)displayIndicatorForOperationName:(NSString *)name

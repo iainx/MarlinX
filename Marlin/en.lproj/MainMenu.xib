@@ -151,6 +151,7 @@
                                     <action selector="paste:" target="-1" id="226"/>
                                 </connections>
                             </menuItem>
+                            <menuItem isSeparatorItem="YES" id="Kyv-zy-vco"/>
                             <menuItem title="Add Marker" keyEquivalent="m" id="QhS-Wx-xf9">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
@@ -191,6 +192,12 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="clearSelection:" target="-1" id="q5H-pF-Pfe"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Reverse Selection" id="Q3g-7R-lo8">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="reverseSelection:" target="-1" id="Zko-B5-oHX"/>
                                 </connections>
                             </menuItem>
                         </items>

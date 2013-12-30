@@ -238,8 +238,6 @@
     [self setNumberOfFrames:[self numberOfFrames] + numberOfFrames];
     
     [self postChangeInRangeNotification:changedRange];
-
-    changedRange = NSMakeRange(frame, numberOfFrames);
     [[undoManager prepareWithInvocationTarget:self] deleteRange:changedRange
                                                     undoManager:undoManager];
 }
@@ -255,6 +253,24 @@
     [self deleteRange:clearRange undoManager:undoManager];
     [self insertSilenceAtFrame:clearRange.location numberOfFrames:clearRange.length undoManager:undoManager];
     [undoManager endUndoGrouping];
+}
+
+- (void)reverseRange:(NSRange)range
+     withUndoManager:(NSUndoManager *)undoManager
+{
+    if (![self containsRange:range]) {
+        return;
+    }
+    
+    for (MLNSampleChannel *channel in [self channelData]) {
+        [channel reverseRange:range];
+        
+        [channel dumpChannel:YES];
+    }
+    
+    [self postChangeInRangeNotification:range];
+    [[undoManager prepareWithInvocationTarget:self] reverseRange:range
+                                                 withUndoManager:undoManager];
 }
 
 - (void)dumpDataInRange:(NSRange)range

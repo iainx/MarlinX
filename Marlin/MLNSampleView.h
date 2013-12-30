@@ -21,6 +21,7 @@
 @property (readwrite) NSRange selection;
 @property (readwrite, strong) NSArray *selectionActions;
 @property (readonly) NSUInteger cursorFramePosition;
+@property (readwrite) NSUInteger playbackCursorFramePosition;
 
 - (void)zoomIn;
 - (void)zoomOut;

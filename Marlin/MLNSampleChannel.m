@@ -421,7 +421,7 @@ int MLNSampleChannelFramesPerCachePoint(void)
     MLNSampleBlock *insertBlock, *followBlock;
     
     if (frame != 0) {
-        insertBlock = [self sampleBlockForFrame:frame - 1];
+        insertBlock = [self sampleBlockForFrame:frame];
     } else {
         insertBlock = _firstBlock;
     }
@@ -450,8 +450,15 @@ int MLNSampleChannelFramesPerCachePoint(void)
         _lastBlock = followBlock;
     }
     
-    *firstBlock = insertBlock;
-    *secondBlock = followBlock;
+    // FIXME: MLNSampleBlockSplitBlockAtFrame should take firstBlock&secondBlock as pointers so we don't
+    // need to know/care whether insertBlock was reversed or not.
+    if (insertBlock->reversed) {
+        *firstBlock = followBlock;
+        *secondBlock = insertBlock;
+    } else {
+        *firstBlock = insertBlock;
+        *secondBlock = followBlock;
+    }
 }
 
 - (void)insertBlockList:(MLNSampleBlock *)blockList
@@ -527,6 +534,27 @@ int MLNSampleChannelFramesPerCachePoint(void)
     }
     
     return YES;
+}
+
+- (void)reverseRange:(NSRange)range
+{
+    NSUInteger lastFrame = NSMaxRange(range);
+    MLNSampleBlock *firstBlock, *previousBlock;
+    MLNSampleBlock *lastBlock, *nextBlock;
+    
+    [self splitAtFrame:range.location firstBlock:&previousBlock secondBlock:&firstBlock];
+    [self splitAtFrame:lastFrame firstBlock:&lastBlock secondBlock:&nextBlock];
+    
+    MLNSampleBlockListReverse(firstBlock, lastBlock);
+    
+    // Hook the list back in
+    previousBlock->nextBlock = lastBlock;
+    lastBlock->previousBlock = previousBlock;
+    
+    firstBlock->nextBlock = nextBlock;
+    nextBlock->previousBlock = firstBlock;
+    
+    [self updateBlockCount];
 }
 
 #pragma mark - Debugging

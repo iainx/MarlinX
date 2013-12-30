@@ -1019,14 +1019,16 @@ static void *markerContext = &markerContext;
 #pragma mark - Notifications
 - (void)sampleDataDidChangeInRange:(NSNotification *)note
 {
+    // FIXME: Should only redraw section that was changed
+    /*
     NSDictionary *userInfo = [note userInfo];
     NSValue *value = userInfo[@"range"];
     NSRange range = [value rangeValue];
     
     NSRect changedRect = NSMakeRect(range.location / _framesPerPixel, 0,
                                     range.length / _framesPerPixel, [self bounds].size.height);
-    
-    [self setNeedsDisplayInRect:changedRect];
+    */
+    [self setNeedsDisplay:YES];
 }
 
 - (void)sampleDidAddMarker:(NSNotification *)note

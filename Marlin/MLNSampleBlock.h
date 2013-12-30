@@ -34,6 +34,8 @@ typedef struct _MLNSampleBlock {
     
     MLNMapRegion *cacheRegion;
     off_t cacheByteOffset;
+    
+    BOOL reversed;
 } MLNSampleBlock;
 
 #define FRAME_IN_BLOCK(b, f) (((f) >= (b)->startFrame) && ((f) < (b)->startFrame + (b)->numberOfFrames))
@@ -71,6 +73,9 @@ NSUInteger MLNSampleBlockListNumberOfFrames(MLNSampleBlock *blockList);
 
 void MLNSampleBlockInsertList(MLNSampleBlock *block,
                               MLNSampleBlock *blockList);
+
+void MLNSampleBlockListReverse(MLNSampleBlock *start, MLNSampleBlock *last);
+
 void MLNSampleBlockDumpBlock (MLNSampleBlock *block);
 void MLNSampleBlockListDump (MLNSampleBlock *block);
 

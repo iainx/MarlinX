@@ -40,6 +40,8 @@
                  undoManager:(NSUndoManager *)undoManager;
 - (void)clearRange:(NSRange)clearRange
    withUndoManager:(NSUndoManager *)undoManager;
+- (void)reverseRange:(NSRange)range
+     withUndoManager:(NSUndoManager *)undoManager;
 
 - (void)dumpDataInRange:(NSRange)range;
 

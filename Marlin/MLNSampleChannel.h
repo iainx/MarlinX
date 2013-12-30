@@ -45,6 +45,7 @@ int MLNSampleChannelFramesPerCachePoint(void);
               atFrame:(NSUInteger)frame;
 - (void)insertBlockList:(MLNSampleBlock *)blockList
                 atFrame:(NSUInteger)frame;
+- (void)reverseRange:(NSRange)range;
 
 - (NSData *)dumpChannelRange:(NSRange)range;
 - (void)dumpChannel:(BOOL)withBlocks;
