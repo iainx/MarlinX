@@ -12,6 +12,7 @@
 #import "MLNExportableType.h"
 #import "MLNSample.h"
 #import "MLNSampleChannel.h"
+#import "MLNSampleChannelIterator.h"
 #import "utils.h"
 
 @implementation MLNExportOperation {
@@ -132,7 +133,12 @@
         channelLocations[i] = 0;
     }
     
-    NSArray *channelArray = [_sample channelData];
+    //NSArray *channelArray = [_sample channelData];
+    NSMutableArray *channelIters = [NSMutableArray array];
+    for (MLNSampleChannel *channel in [_sample channelData]) {
+        MLNSampleChannelIterator *iter = [[MLNSampleChannelIterator alloc] initWithChannel:channel atFrame:0];
+        [channelIters addObject:iter];
+    }
     
     BOOL channelIsFinished = NO;
     
@@ -146,17 +152,17 @@
         }
         
         for (i = 0; i < bufferList->mNumberBuffers; i++) {
-            MLNSampleChannel *channel = channelArray[i];            
-            bytesInBuffer = [channel fillBuffer:bufferList->mBuffers[i].mData
-                                     withLength:BUFFER_SIZE * sizeof(float)
-                                      fromFrame:channelLocations[i]];
+            MLNSampleChannelIterator *iter = channelIters[i];
+            NSUInteger framesInBuffer = [iter fillBufferWithData:bufferList->mBuffers[i].mData
+                                                   ofFrameLength:BUFFER_SIZE];
+            bytesInBuffer = framesInBuffer * sizeof(float);
             
             if (bytesInBuffer == 0) {
                 channelIsFinished = YES;
                 break;
             }
 
-            channelLocations[i] += bytesInBuffer / sizeof(float);
+            channelLocations[i] += framesInBuffer;
 
             bufferList->mBuffers[i].mDataByteSize = (UInt32)bytesInBuffer;
         }

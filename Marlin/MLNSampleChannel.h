@@ -19,6 +19,7 @@
 @property (readonly) NSUInteger numberOfFrames;
 
 + (int)framesPerCachePoint;
+int MLNSampleChannelFramesPerCachePoint(void);
 
 - (id)initWithDataFile:(MLNCacheFile *)dataFile
              cacheFile:(MLNCacheFile *)cacheFile;

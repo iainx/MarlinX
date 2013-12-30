@@ -69,6 +69,11 @@
     return SAMPLES_PER_CACHE_POINT;
 }
 
+int MLNSampleChannelFramesPerCachePoint(void)
+{
+    return SAMPLES_PER_CACHE_POINT;
+}
+
 // We turn bytes into SampleCachePoints by taking every 256 (SAMPLES_PER_CACHE_POINT) samples
 // minimaxing them, and collecting the average values above and below 0
 - (MLNSampleCachePoint *)createCacheDataFromBytes:(float *)bytes

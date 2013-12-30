@@ -11,6 +11,7 @@
 #import "MLNArrayController.h"
 #import "MLNSample.h"
 #import "MLNSampleChannel.h"
+#import "MLNSampleChannelIterator.h"
 #import "MLNSampleBlock.h"
 #import "MLNLoadOperation.h"
 #import "MLNExportOperation.h"
@@ -22,10 +23,13 @@
 
 
 typedef struct PlaybackBlock {
+    /*
     MLNSampleBlock *block;
     const float *data;
     NSUInteger framesInBlocks;
     UInt32 positionInBlock;
+     */
+    MLNSampleChannelCIterator *cIter;
 } PlaybackBlock;
 
 typedef enum MessageType {
@@ -281,63 +285,27 @@ MyAQOutputCallback (void *userData,
     UInt32 bufferFramesPerChannel = (UInt32)bufferSizePerChannel / sizeof(float);
     UInt32 framesWritten = 0;
     
-    //DDLogCVerbose(@"bufferSizePerChannel: %lu", bufferSizePerChannel);
     for (ushort channel = 0; channel < data->numberOfChannels; channel++) {
+        BOOL moreData = YES;
+        
         // If there are no blocks, we're done.
-        if (data->blocks[channel].block == NULL) {
+        if (MLNSampleChannelIteratorHasMoreData(data->blocks[channel].cIter) == NO) {
             handleEos(data, queue);
             
             return;
         }
         
-        NSUInteger positionInBlock = data->blocks[channel].positionInBlock;
         size_t positionInBuffer = 0;
-        
-        //DDLogCVerbose(@"Writing channel: %d/%d", channel, data->numberOfChannels);
-        
         UInt32 j;
-        for (j = 0; j < bufferFramesPerChannel; j++) {
-            
-            if (positionInBlock >= data->blocks[channel].framesInBlocks) {
-                MLNSampleBlock *oldBlock = data->blocks[channel].block;
-                
-                if (oldBlock) {
-                    // Need the next block
-                    // FIXME: Would like blocks to be structures because we can't
-                    // call objc from the realtime thread
-                    data->blocks[channel].block = oldBlock->nextBlock;
-                    if (data->blocks[channel].block) {
-                        data->blocks[channel].data = MLNSampleBlockSampleData(data->blocks[channel].block);
-                        data->blocks[channel].framesInBlocks = data->blocks[channel].block->numberOfFrames;
-                        data->blocks[channel].positionInBlock = 0;
-                        
-                        positionInBlock = 0;
-                    } else {
-                        data->blocks[channel].block = NULL;
-                        data->blocks[channel].data = NULL;
-                        data->blocks[channel].framesInBlocks = 0;
-                        data->blocks[channel].positionInBlock = 0;
-                    }
-                } else {
-                    data->blocks[channel].block = NULL;
-                    data->blocks[channel].data = NULL;
-                    data->blocks[channel].framesInBlocks = 0;
-                    data->blocks[channel].positionInBlock = 0;
-                }
-            }
-            
+        
+        for (j = 0; j < bufferFramesPerChannel && moreData; j++) {
+            float value;
             float *bufferData = (float *)buffer->mAudioData;
-            if (data->blocks[channel].data != NULL) {
-                //fprintf(stderr, "positionInBlock: %d", positionInBlock);
-                bufferData[(positionInBuffer * data->numberOfChannels) + channel] = data->blocks[channel].data[positionInBlock];
-                framesWritten++;
-            } else {
-                break;
-            }
             
+            moreData = MLNSampleChannelIteratorNextFrameData(data->blocks[channel].cIter, &value);
+            bufferData[(positionInBuffer * data->numberOfChannels) + channel] = value;
             positionInBuffer++;
-            positionInBlock++;
-            data->blocks[channel].positionInBlock++;
+            framesWritten++;
         }
     }
     
@@ -393,11 +361,9 @@ MyAQOutputCallback (void *userData,
     _playbackData->blocks = malloc(sizeof (PlaybackBlock) * _format.mChannelsPerFrame);
     for (i = 0; i < _format.mChannelsPerFrame; i++) {
         MLNSampleChannel *channel = [self channelData][i];
-        MLNSampleBlock *block = [channel sampleBlockForFrame:_playbackPosition];
-        _playbackData->blocks[i].block = block;
-        _playbackData->blocks[i].data = MLNSampleBlockSampleData(block);
-        _playbackData->blocks[i].framesInBlocks = block->numberOfFrames;
-        _playbackData->blocks[i].positionInBlock = (UInt32)(_playbackPosition - block->startFrame);
+        //MLNSampleChannelIterator *iter = [[MLNSampleChannelIterator alloc] initWithChannel:channel atFrame:0];
+        
+        _playbackData->blocks[i].cIter = MLNSampleChannelIteratorNew(channel, 0, NO);
     }
     
     AudioQueueNewOutput(&newAsbd, MyAQOutputCallback, _playbackData, NULL, NULL, 0, &_playbackQueue);

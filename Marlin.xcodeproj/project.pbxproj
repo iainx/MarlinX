@@ -23,6 +23,7 @@
 		AE298D8116F7CC720031334A /* README.txt in Resources */ = {isa = PBXBuildFile; fileRef = AE298D7916F7CC720031334A /* README.txt */; };
 		AE2E4437172333B8005463FB /* MLNCacheFile.m in Sources */ = {isa = PBXBuildFile; fileRef = AE2E4436172333B8005463FB /* MLNCacheFile.m */; };
 		AE31A9C916F146ED0051CF41 /* MLNSample+Operations.m in Sources */ = {isa = PBXBuildFile; fileRef = AE31A9C816F146ED0051CF41 /* MLNSample+Operations.m */; };
+		AE36D487186BB35E00070FC6 /* MLNSampleChannelIterator.m in Sources */ = {isa = PBXBuildFile; fileRef = AE36D486186BB35E00070FC6 /* MLNSampleChannelIterator.m */; };
 		AE41C728185BD2A500E68819 /* MLNOperatorIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = AE41C727185BD2A500E68819 /* MLNOperatorIndicator.m */; };
 		AE41C72A185BEDE200E68819 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE41C729185BEDE200E68819 /* QuartzCore.framework */; };
 		AE47540917FDD51E001105F8 /* utils.m in Sources */ = {isa = PBXBuildFile; fileRef = AE47540817FDD51E001105F8 /* utils.m */; };
@@ -105,6 +106,8 @@
 		AE31A9C716F146ED0051CF41 /* MLNSample+Operations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MLNSample+Operations.h"; sourceTree = "<group>"; };
 		AE31A9C816F146ED0051CF41 /* MLNSample+Operations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MLNSample+Operations.m"; sourceTree = "<group>"; };
 		AE31A9CA16F28D3E0051CF41 /* MLNSampleDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNSampleDelegate.h; sourceTree = "<group>"; };
+		AE36D485186BB35E00070FC6 /* MLNSampleChannelIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNSampleChannelIterator.h; sourceTree = "<group>"; };
+		AE36D486186BB35E00070FC6 /* MLNSampleChannelIterator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNSampleChannelIterator.m; sourceTree = "<group>"; };
 		AE41C726185BD2A500E68819 /* MLNOperatorIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNOperatorIndicator.h; sourceTree = "<group>"; };
 		AE41C727185BD2A500E68819 /* MLNOperatorIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNOperatorIndicator.m; sourceTree = "<group>"; };
 		AE41C729185BEDE200E68819 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -362,6 +365,8 @@
 				AE6A0F3B16BD1F1900362CC4 /* MLNSampleBlock.m */,
 				AE05C60116C246DF00A7B9D9 /* MLNSampleChannel.h */,
 				AE05C60216C246DF00A7B9D9 /* MLNSampleChannel.m */,
+				AE36D485186BB35E00070FC6 /* MLNSampleChannelIterator.h */,
+				AE36D486186BB35E00070FC6 /* MLNSampleChannelIterator.m */,
 				AEDA843116C8D13E001B2DD1 /* MLNMMapRegion.h */,
 				AEDA843216C8D13E001B2DD1 /* MLNMMapRegion.m */,
 				AE6FB1D916B9C57900139735 /* MLNSampleView.h */,
@@ -592,6 +597,7 @@
 				AE298D7E16F7CC720031334A /* DDTTYLogger.m in Sources */,
 				AE298D7F16F7CC720031334A /* ContextFilterLogFormatter.m in Sources */,
 				AE298D8016F7CC720031334A /* DispatchQueueLogFormatter.m in Sources */,
+				AE36D487186BB35E00070FC6 /* MLNSampleChannelIterator.m in Sources */,
 				AED56DCF16FD1D73005E2573 /* pa_ringbuffer.c in Sources */,
 				AED56DD5170A5406005E2573 /* MLNOverviewBar.m in Sources */,
 				AE57CA4B170F73250043E690 /* MLNSelectionButton.m in Sources */,

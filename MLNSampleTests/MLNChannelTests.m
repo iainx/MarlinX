@@ -8,6 +8,7 @@
 
 #import "MLNChannelTests.h"
 #import "MLNSampleChannel.h"
+#import "MLNSampleChannelIterator.h"
 
 @implementation MLNChannelTests {
     MLNSampleChannel *_channel;
@@ -41,6 +42,22 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
 - (void)tearDown
 {
     _channel = nil;
+}
+
+- (void)testIterator
+{
+    MLNSampleChannelIterator *iter = [[MLNSampleChannelIterator alloc] initWithChannel:_channel atFrame:0];
+    
+    float d = 0;
+    NSUInteger i = 0;
+    BOOL moreData = [iter nextFrameData:&d];
+    while (moreData) {
+        STAssertEquals(d, (float)i, @"");
+        moreData = [iter nextFrameData:&d];
+        i++;
+    }
+    
+    STAssertEquals(i, [_channel numberOfFrames], @"");
 }
 
 - (void)testAddBlocks
