@@ -33,6 +33,11 @@ MLNSampleChannelCIterator *MLNSampleChannelIteratorNew(MLNSampleChannel *channel
     return cIter;
 }
 
+void MLNSampleChannelIteratorFree(MLNSampleChannelCIterator *cIter)
+{
+    free (cIter);
+}
+
 - (id)initWithChannel:(MLNSampleChannel *)channel
               atFrame:(NSUInteger)frame
 {
@@ -60,7 +65,7 @@ MLNSampleChannelCIterator *MLNSampleChannelIteratorNew(MLNSampleChannel *channel
 
 - (void)dealloc
 {
-    free(_cIter);
+    MLNSampleChannelIteratorFree(_cIter);
 }
 
 BOOL MLNSampleChannelIteratorHasMoreData(MLNSampleChannelCIterator *iter)

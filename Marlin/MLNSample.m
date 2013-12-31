@@ -431,6 +431,10 @@ MyAQOutputCallback (void *userData,
     
     // Free the playback data
     free (_playbackData->RTToMainBuffer);
+    
+    for (int i = 0; i < _format.mChannelsPerFrame; i++) {
+        MLNSampleChannelIteratorFree(_playbackData->blocks[i].cIter);
+    }
     free (_playbackData->blocks);
     free (_playbackData);
     _playbackData = NULL;

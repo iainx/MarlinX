@@ -26,6 +26,7 @@ typedef struct MLNSampleChannelCIterator MLNSampleChannelCIterator;
 MLNSampleChannelCIterator *MLNSampleChannelIteratorNew(MLNSampleChannel *channel,
                                                        NSUInteger frame,
                                                        BOOL isRaw);
+void MLNSampleChannelIteratorFree(MLNSampleChannelCIterator *cIter);
 BOOL MLNSampleChannelIteratorHasMoreData(MLNSampleChannelCIterator *iter);
 BOOL MLNSampleChannelIteratorNextCachePointData(MLNSampleChannelCIterator *iter,
                                                 MLNSampleCachePoint *cachePoint);
