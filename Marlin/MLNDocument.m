@@ -632,6 +632,9 @@ completionHandler:(void (^)(NSError *))completionHandler
 {
     NSAlert *alert = [NSAlert alertWithError:error];
     [alert runModal];
+    
+    [_progressView setHidden:YES];
+    [_sampleView setHidden:NO];
 }
 
 #pragma mark - Sample View delegate
