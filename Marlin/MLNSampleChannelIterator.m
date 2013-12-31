@@ -58,6 +58,11 @@ MLNSampleChannelCIterator *MLNSampleChannelIteratorNew(MLNSampleChannel *channel
     return self;
 }
 
+- (void)dealloc
+{
+    free(_cIter);
+}
+
 BOOL MLNSampleChannelIteratorHasMoreData(MLNSampleChannelCIterator *iter)
 {
     return (iter->currentBlock != NULL);
