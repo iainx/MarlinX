@@ -207,6 +207,7 @@ typedef struct PlaybackData {
     
     [_delegate sample:self operationDidEnd:operation];
 }
+
 #pragma mark - MLNLoadOperationDelegate functions
 
 - (void)sampleDidLoadData:(NSMutableArray *)channelData
@@ -241,15 +242,17 @@ typedef struct PlaybackData {
 - (void)didFailLoadWithError:(NSError *)error
 {
     NSDictionary *userInfo = [error userInfo];
-    NSLog(@"Error loading %@", [_url filePathURL]);
-    NSLog(@"   Domain: %@", [error domain]);
-    NSLog(@"   Code: %ld", [error code]);
-    NSLog(@"   Method: %@", userInfo[@"method"]);
+    DDLogError(@"Error loading %@", [_url filePathURL]);
+    DDLogError(@"   Domain: %@", [error domain]);
+    DDLogError(@"   Code: %ld", [error code]);
+    DDLogError(@"   Method: %@", userInfo[@"method"]);
     
     NSNumber *statusCode = userInfo[@"statusCode"];
     UInt32 status = [statusCode intValue];
     
     print_coreaudio_error(status, "OSSStatus");
+    
+    [_delegate sample:self operationError:error];
 }
 
 // This should be a category but you can't have any ivars in a category

@@ -628,6 +628,12 @@ completionHandler:(void (^)(NSError *))completionHandler
     [_sampleView setHidden:NO];
 }
 
+- (void)sample:(MLNSample *)sample operationError:(NSError *)error
+{
+    NSAlert *alert = [NSAlert alertWithError:error];
+    [alert runModal];
+}
+
 #pragma mark - Sample View delegate
 - (void)sampleView:(MLNSampleView *)sampleView
 selectionDidChange:(NSRange)selection
