@@ -42,12 +42,12 @@
 
 - (void)doRealInit
 {
-    _startButton = [self createButtonWithImageNamed:@"goto-start" action:@selector(requestMoveToStart:)];
-    _rewindButton = [self createButtonWithImageNamed:@"rewind-icon" action:@selector(requestPreviousFrame:)];
-    _playButton = [self createButtonWithImageNamed:@"play-icon" action:@selector(requestPlay:)];
-    _stopButton = [self createButtonWithImageNamed:@"stop-icon" action:@selector(requestStop:)];
-    _ffwdButton = [self createButtonWithImageNamed:@"ffwd-icon" action:@selector(requestNextFrame:)];
-    _endButton = [self createButtonWithImageNamed:@"goto-end" action:@selector(requestMoveToEnd:)];
+    _startButton = [self createButtonWithImageNamed:@"start16x16" action:@selector(requestMoveToStart:)];
+    _rewindButton = [self createButtonWithImageNamed:@"rewind16x16" action:@selector(requestPreviousFrame:)];
+    _playButton = [self createButtonWithImageNamed:@"play16x16" action:@selector(requestPlay:)];
+    _stopButton = [self createButtonWithImageNamed:@"stop16x16" action:@selector(requestStop:)];
+    _ffwdButton = [self createButtonWithImageNamed:@"ffwd16x16" action:@selector(requestNextFrame:)];
+    _endButton = [self createButtonWithImageNamed:@"end16x16" action:@selector(requestMoveToEnd:)];
     
     NSArray *constraints;
     NSDictionary *viewsDict = NSDictionaryOfVariableBindings(_startButton,_rewindButton,_playButton,_stopButton,_ffwdButton,_endButton);
