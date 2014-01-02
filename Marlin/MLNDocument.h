@@ -11,13 +11,16 @@
 #import "MLNSampleDelegate.h"
 #import "MLNSampleViewDelegate.h"
 #import "MLNOverviewBarDelegate.h"
+#import "MLNTransportControlsViewDelegate.h"
 
 @class MLNSampleView;
 @class MLNOverviewBar;
+@class MLNTransportControlsView;
 
-@interface MLNDocument : NSDocument <MLNExportPanelControllerDelegate, MLNSampleViewDelegate, MLNOverviewBarDelegate, MLNSampleDelegate, NSWindowDelegate>
+@interface MLNDocument : NSDocument <MLNExportPanelControllerDelegate, MLNSampleViewDelegate, MLNOverviewBarDelegate, MLNSampleDelegate, MLNTransportControlsViewDelegate, NSWindowDelegate>
 
 @property (readwrite, weak) IBOutlet NSToolbar *toolbar;
+@property (readwrite, weak) IBOutlet MLNTransportControlsView *transportControlsView;
 @property (readwrite, strong) NSScrollView *scrollView;
 @property (readwrite, strong) MLNSampleView *sampleView;
 @property (readwrite, strong) MLNOverviewBar *overviewBarView;
@@ -30,9 +33,6 @@
 - (IBAction)zoomOut:(id)sender;
 - (IBAction)zoomToFit:(id)sender;
 - (IBAction)zoomToNormal:(id)sender;
-
-- (IBAction)playSample:(id)sender;
-- (IBAction)stopSample:(id)sender;
 
 - (IBAction)crop:(id)sender;
 - (IBAction)clearSelection:(id)sender;

@@ -8,6 +8,7 @@
         <customObject id="-2" userLabel="File's Owner" customClass="MLNDocument">
             <connections>
                 <outlet property="toolbar" destination="100063" id="100088"/>
+                <outlet property="transportControlsView" destination="jrx-Z2-jJ6" id="AW6-eQ-qq4"/>
                 <outlet property="window" destination="5" id="18"/>
             </connections>
         </customObject>
@@ -23,35 +24,11 @@
                 <rect key="frame" x="0.0" y="0.0" width="719" height="358"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="100077" userLabel="Play Button">
-                        <rect key="frame" x="14" y="1" width="65" height="32"/>
+                    <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jrx-Z2-jJ6" customClass="MLNTransportControlsView">
+                        <rect key="frame" x="7" y="9" width="204" height="27"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <buttonCell key="cell" type="push" title="Play" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="100078">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                        </buttonCell>
-                        <connections>
-                            <action selector="playSample:" target="-2" id="100085"/>
-                        </connections>
-                    </button>
-                    <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="100081" userLabel="Stop Button">
-                        <rect key="frame" x="79" y="1" width="68" height="32"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <buttonCell key="cell" type="push" title="Stop" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="100082">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                        </buttonCell>
-                        <connections>
-                            <action selector="stopSample:" target="-2" id="100086"/>
-                        </connections>
-                    </button>
+                    </customView>
                 </subviews>
-                <constraints>
-                    <constraint firstAttribute="bottom" secondItem="100077" secondAttribute="bottom" constant="8" id="100079"/>
-                    <constraint firstItem="100077" firstAttribute="leading" secondItem="6" secondAttribute="leading" constant="20" symbolic="YES" id="100080"/>
-                    <constraint firstItem="100081" firstAttribute="leading" secondItem="100077" secondAttribute="trailing" constant="12" symbolic="YES" id="100083"/>
-                    <constraint firstItem="100081" firstAttribute="baseline" secondItem="100077" secondAttribute="baseline" id="100084"/>
-                </constraints>
             </view>
             <toolbar key="toolbar" implicitIdentifier="FC47AB36-F5F5-4D14-B2E7-D05626977E91" explicitIdentifier="main" autosavesConfiguration="NO" allowsUserCustomization="NO" showsBaselineSeparator="NO" displayMode="iconAndLabel" sizeMode="regular" id="100063">
                 <allowedToolbarItems>

@@ -20,6 +20,7 @@
 #import "MLNProgressViewController.h"
 #import "MLNExportPanelController.h"
 #import "MLNOperatorIndicator.h"
+#import "MLNTransportControlsView.h"
 #import "MLNMarker.h"
 #import "Constants.h"
 
@@ -138,6 +139,7 @@ static void *sampleViewContext = &sampleViewContext;
 {
     [super windowControllerDidLoadNib:aController];
     
+    [_transportControlsView setDelegate:self];
     _overviewBarView = [[MLNOverviewBar alloc] initWithFrame:NSZeroRect];
     [_overviewBarView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [_overviewBarView setDelegate:self];
@@ -330,16 +332,6 @@ completionHandler:(void (^)(NSError *))completionHandler
           contextInfo:NULL];
 }
 #pragma mark - Menu & Toolbar actions
-
-- (void)playSample:(id)sender
-{
-    [_sample play];
-}
-
-- (void)stopSample:(id)sender
-{
-    [_sample stop];
-}
 
 - (void)delete:(id)sender
 {
@@ -698,5 +690,41 @@ requestVisibleRange:(NSRange)newVisibleRange
     } else {
         [_sampleView stopTimers];
     }
+}
+
+#pragma mark - Transport View delegate
+- (void)transportControlsViewDidRequestBackFrame
+{
+    
+}
+
+- (void)transportControlsViewDidRequestForwardFrame
+{
+    
+}
+
+- (void)transportControlsViewDidRequestMoveToStart
+{
+    
+}
+
+- (void)transportControlsViewDidRequestMoveToEnd
+{
+    
+}
+
+- (void)transportControlsViewDidRequestPlay
+{
+    [_sample play];
+}
+
+- (void)transportControlsViewDidRequestPause
+{
+    
+}
+
+- (void)transportControlsViewDidRequestStop
+{
+    [_sample stop];
 }
 @end
