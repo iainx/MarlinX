@@ -64,6 +64,7 @@ typedef enum {
 }
 
 @synthesize framesPerPixel = _framesPerPixel;
+@synthesize cursorFramePosition = _cursorFramePosition;
 
 #define CURSOR_FADE_TIME 0.5
 #define CURSOR_PAUSE_TIME 0.3
@@ -1014,6 +1015,20 @@ static void *markerContext = &markerContext;
     NSUInteger newFramesPerPixel = (NSUInteger)((CGFloat)newVisibleRange.length / scaledRect.size.width);
     
     [self updateScrollPositionForNewZoom:newFramesPerPixel offset:newVisibleRange.location];
+}
+
+- (NSUInteger)cursorFramePosition
+{
+    return _cursorFramePosition;
+}
+
+- (void)setCursorFramePosition:(NSUInteger)cursorFramePosition
+{
+    if (cursorFramePosition == _cursorFramePosition) {
+        return;
+    }
+    
+    [self moveCursorTo:cursorFramePosition];
 }
 
 #pragma mark - Notifications
@@ -1971,6 +1986,11 @@ static const CGFloat Y_DISTANCE_FROM_FRAME = 5.0;
     NSRect cursorRect = NSMakeRect(cursorPoint.x + 0.5, 0.0, 1.0, [self bounds].size.height);
     [self setNeedsDisplayInRect:cursorRect];
     
+    if ((NSInteger)cursorFrame < 0) {
+        cursorFrame = 0;
+    } else if (cursorFrame > [_sample numberOfFrames]) {
+        cursorFrame = [_sample numberOfFrames];
+    }
     _cursorFramePosition = cursorFrame;
 
     // Now invalidate the new cursor

@@ -695,22 +695,29 @@ requestVisibleRange:(NSRange)newVisibleRange
 #pragma mark - Transport View delegate
 - (void)transportControlsViewDidRequestBackFrame
 {
+    NSUInteger cursorPosition = [_sampleView cursorFramePosition];
     
+    [_sampleView setCursorFramePosition:cursorPosition - [_sampleView framesPerPixel]];
 }
 
 - (void)transportControlsViewDidRequestForwardFrame
 {
+    NSUInteger cursorPosition = [_sampleView cursorFramePosition];
     
+    [_sampleView setCursorFramePosition:cursorPosition + [_sampleView framesPerPixel]];
 }
 
 - (void)transportControlsViewDidRequestMoveToStart
 {
-    
+    [_sampleView setCursorFramePosition:0];
+    [_sampleView centreOnCursor];
 }
 
 - (void)transportControlsViewDidRequestMoveToEnd
 {
-    
+    // FIXME: This magic number seems wrong...
+    [_sampleView setCursorFramePosition:[_sample numberOfFrames] - [_sampleView framesPerPixel] * 2];
+    [_sampleView centreOnCursor];
 }
 
 - (void)transportControlsViewDidRequestPlay
