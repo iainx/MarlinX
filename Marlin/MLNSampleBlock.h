@@ -19,37 +19,47 @@ typedef struct _MLNSampleCachePoint {
     float avgMaxValue;
 } MLNSampleCachePoint;
 
+typedef struct _MLNSampleBlockMethods MLNSampleBlockMethods;
+
 typedef struct _MLNSampleBlock {
     struct _MLNSampleBlock *nextBlock;
     struct _MLNSampleBlock *previousBlock;
 
-    size_t sampleByteLength;
-    size_t cacheByteLength;
+    MLNSampleBlockMethods *methods;
     
     NSUInteger numberOfFrames;
     NSUInteger startFrame;
-    
-    MLNMapRegion *region;
-    off_t byteOffset; // Byte offset into [_region dataRegion]
-    
-    MLNMapRegion *cacheRegion;
-    off_t cacheByteOffset;
-    
+
     BOOL reversed;
 } MLNSampleBlock;
 
+typedef void (*MLNSampleBlockFreeFunction)(MLNSampleBlock *block);
+typedef MLNSampleBlock *(*MLNSampleBlockCopyFunction)(MLNSampleBlock *block,
+                                                      NSUInteger startFrame,
+                                                      NSUInteger endFrame);
+typedef MLNSampleBlock *(*MLNSampleBlockSplitBlockAtFrameFunction)(MLNSampleBlock *block,
+                                                                   NSUInteger splitFrame);
+typedef float (*MLNSampleBlockDataAtFrameFunction)(MLNSampleBlock *block, NSUInteger frame);
+typedef void (*MLNSampleBlockCachePointAtFrameFunction)(MLNSampleBlock *block, MLNSampleCachePoint *cachePoint, NSUInteger frame);
+
+struct _MLNSampleBlockMethods {
+    MLNSampleBlockFreeFunction freeBlock;
+    MLNSampleBlockCopyFunction copyBlock;
+    MLNSampleBlockSplitBlockAtFrameFunction splitAtFrame;
+    
+    MLNSampleBlockDataAtFrameFunction dataAtFrame;
+    MLNSampleBlockCachePointAtFrameFunction cachePointAtFrame;
+};
+
 #define FRAME_IN_BLOCK(b, f) (((f) >= (b)->startFrame) && ((f) < (b)->startFrame + (b)->numberOfFrames))
 
-MLNSampleBlock *MLNSampleBlockCreateBlock(MLNMapRegion *region,
-                                          size_t byteLength,
-                                          off_t offset,
-                                          MLNMapRegion *cacheRegion,
-                                          size_t cacheByteLength,
-                                          off_t cacheByteOffset);
 void MLNSampleBlockFree (MLNSampleBlock *block);
 
-const float *MLNSampleBlockSampleData (MLNSampleBlock *block);
-const MLNSampleCachePoint *MLNSampleBlockSampleCacheData (MLNSampleBlock *block);
+float MLNSampleBlockDataAtFrame(MLNSampleBlock *block,
+                                NSUInteger frame);
+void MLNSampleBlockCachePointAtFrame(MLNSampleBlock *block,
+                                     MLNSampleCachePoint *cachePoint,
+                                     NSUInteger frame);
 
 MLNSampleBlock *MLNSampleBlockSplitBlockAtFrame(MLNSampleBlock *block,
                                                 NSUInteger splitFrame);

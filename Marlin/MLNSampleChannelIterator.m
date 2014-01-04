@@ -76,7 +76,7 @@ BOOL MLNSampleChannelIteratorHasMoreData(MLNSampleChannelCIterator *iter)
 BOOL MLNSampleChannelIteratorNextFrameData(MLNSampleChannelCIterator *iter,
                                            float *value)
 {
-    const float *data;
+    //const float *data;
     
     if (iter->currentBlock == NULL) {
         DDLogCError(@"Requesting frame from dead iterator");
@@ -84,13 +84,15 @@ BOOL MLNSampleChannelIteratorNextFrameData(MLNSampleChannelCIterator *iter,
         return NO;
     }
     
-    data = MLNSampleBlockSampleData(iter->currentBlock);
+    //data = MLNSampleBlockSampleData(iter->currentBlock);
     
     if (iter->currentBlock->reversed && iter->isRaw == NO) {
         NSUInteger realFramePosition = iter->currentBlock->numberOfFrames - iter->framePosition;
-        *value = data[realFramePosition];
+        *value = MLNSampleBlockDataAtFrame(iter->currentBlock, realFramePosition);
+        //data[realFramePosition];
     } else {
-        *value = data[iter->framePosition];
+        *value = MLNSampleBlockDataAtFrame(iter->currentBlock, iter->framePosition);
+        //data[iter->framePosition];
     }
     
     iter->framePosition++;
@@ -117,7 +119,7 @@ BOOL MLNSampleChannelIteratorNextFrameData(MLNSampleChannelCIterator *iter,
 BOOL MLNSampleChannelIteratorNextCachePointData(MLNSampleChannelCIterator *iter,
                                                 MLNSampleCachePoint *cachePoint)
 {
-    const MLNSampleCachePoint *cacheData;
+    //const MLNSampleCachePoint *cacheData;
     
     if (iter->currentBlock == NULL) {
         DDLogCError(@"Requesting cachepoint from dead iterator");
@@ -129,16 +131,18 @@ BOOL MLNSampleChannelIteratorNextCachePointData(MLNSampleChannelCIterator *iter,
         return NO;
     }
     
-    cacheData = MLNSampleBlockSampleCacheData(iter->currentBlock);
+    //cacheData = MLNSampleBlockSampleCacheData(iter->currentBlock);
     
     MLNSampleCachePoint cp;
     
     if (iter->currentBlock->reversed && iter->isRaw == NO) {
         // FIXME: I feel like this needs to be tested as whether it is correct
         NSUInteger realCachePointPosition = (iter->currentBlock->numberOfFrames / MLNSampleChannelFramesPerCachePoint()) - iter->cachePointPosition;
-        cp = cacheData[realCachePointPosition];
+        //cp = cacheData[realCachePointPosition];
+        MLNSampleBlockCachePointAtFrame(iter->currentBlock, &cp, realCachePointPosition);
     } else {
-        cp = cacheData[iter->cachePointPosition];
+        //cp = cacheData[iter->cachePointPosition];
+        MLNSampleBlockCachePointAtFrame(iter->currentBlock, &cp, iter->cachePointPosition);
     }
     cachePoint->minValue = cp.minValue;
     cachePoint->maxValue = cp.maxValue;

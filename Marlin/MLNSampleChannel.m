@@ -8,7 +8,7 @@
 
 #import "MLNApplicationDelegate.h"
 #import "MLNSampleChannel.h"
-#import "MLNSampleBlock.h"
+#import "MLNSampleBlockFile.h"
 #import "MLNMMapRegion.h"
 
 @implementation MLNSampleChannel { 
@@ -164,8 +164,8 @@ int MLNSampleChannelFramesPerCachePoint(void)
     free(cacheData);
     
     // Our new block is the whole of the new region we've created
-    MLNSampleBlock *block = MLNSampleBlockCreateBlock(region, byteLength, 0,
-                                                      cacheRegion, cacheByteLength, 0);
+    MLNSampleBlock *block = MLNSampleBlockFileCreateBlock(region, byteLength, 0,
+                                                          cacheRegion, cacheByteLength, 0);
     return block;
 }
 
@@ -182,6 +182,7 @@ int MLNSampleChannelFramesPerCachePoint(void)
        withLength:(size_t)byteLength
         fromFrame:(NSUInteger)frame
 {
+    /*
     MLNSampleBlock *block;
     NSUInteger framesWanted;
     NSUInteger framesAdded = 0;
@@ -224,6 +225,8 @@ int MLNSampleChannelFramesPerCachePoint(void)
     }
     
     return framesAdded * sizeof(float);
+     */
+    return 0;
 }
 
 #pragma mark - Block list manipulation
@@ -578,6 +581,7 @@ int MLNSampleChannelFramesPerCachePoint(void)
 
 - (NSData *)dumpChannelRange:(NSRange)range
 {
+    /*
     MLNSampleBlock *firstBlock;
     NSMutableData *dumpData = [NSMutableData data];
     const float *data;
@@ -652,5 +656,7 @@ int MLNSampleChannelFramesPerCachePoint(void)
     }
     
     return dumpData;
+     */
+    return nil;
 }
 @end

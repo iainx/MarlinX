@@ -25,6 +25,7 @@
 		AE27FD8A18761B6000EBA414 /* start16x16@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = AE27FD7E18761B6000EBA414 /* start16x16@2x.png */; };
 		AE27FD8B18761B6000EBA414 /* stop16x16.png in Resources */ = {isa = PBXBuildFile; fileRef = AE27FD7F18761B6000EBA414 /* stop16x16.png */; };
 		AE27FD8C18761B6000EBA414 /* stop16x16@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = AE27FD8018761B6000EBA414 /* stop16x16@2x.png */; };
+		AE27FD8F187646E700EBA414 /* MLNSampleBlockFile.m in Sources */ = {isa = PBXBuildFile; fileRef = AE27FD8E187646E700EBA414 /* MLNSampleBlockFile.m */; };
 		AE298D7A16F7CC720031334A /* DDAbstractDatabaseLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = AE298D6B16F7CC720031334A /* DDAbstractDatabaseLogger.m */; };
 		AE298D7B16F7CC720031334A /* DDASLLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = AE298D6D16F7CC720031334A /* DDASLLogger.m */; };
 		AE298D7C16F7CC720031334A /* DDFileLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = AE298D6F16F7CC720031334A /* DDFileLogger.m */; };
@@ -111,6 +112,8 @@
 		AE27FD7E18761B6000EBA414 /* start16x16@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "start16x16@2x.png"; sourceTree = "<group>"; };
 		AE27FD7F18761B6000EBA414 /* stop16x16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = stop16x16.png; sourceTree = "<group>"; };
 		AE27FD8018761B6000EBA414 /* stop16x16@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "stop16x16@2x.png"; sourceTree = "<group>"; };
+		AE27FD8D187646E700EBA414 /* MLNSampleBlockFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNSampleBlockFile.h; sourceTree = "<group>"; };
+		AE27FD8E187646E700EBA414 /* MLNSampleBlockFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNSampleBlockFile.m; sourceTree = "<group>"; };
 		AE298D6A16F7CC720031334A /* DDAbstractDatabaseLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDAbstractDatabaseLogger.h; sourceTree = "<group>"; };
 		AE298D6B16F7CC720031334A /* DDAbstractDatabaseLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDAbstractDatabaseLogger.m; sourceTree = "<group>"; };
 		AE298D6C16F7CC720031334A /* DDASLLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDASLLogger.h; sourceTree = "<group>"; };
@@ -406,6 +409,8 @@
 				AE31A9C816F146ED0051CF41 /* MLNSample+Operations.m */,
 				AE6A0F3A16BD1F1900362CC4 /* MLNSampleBlock.h */,
 				AE6A0F3B16BD1F1900362CC4 /* MLNSampleBlock.m */,
+				AE27FD8D187646E700EBA414 /* MLNSampleBlockFile.h */,
+				AE27FD8E187646E700EBA414 /* MLNSampleBlockFile.m */,
 				AE05C60116C246DF00A7B9D9 /* MLNSampleChannel.h */,
 				AE05C60216C246DF00A7B9D9 /* MLNSampleChannel.m */,
 				AE36D485186BB35E00070FC6 /* MLNSampleChannelIterator.h */,
@@ -640,6 +645,7 @@
 				AE05C60316C246DF00A7B9D9 /* MLNSampleChannel.m in Sources */,
 				AEDA842B16C88B7F001B2DD1 /* MLNApplicationDelegate.m in Sources */,
 				AEDA843316C8D13E001B2DD1 /* MLNMMapRegion.m in Sources */,
+				AE27FD8F187646E700EBA414 /* MLNSampleBlockFile.m in Sources */,
 				AE5AB6CD16EA2DE0008D0AE4 /* MLNSample+Drawing.m in Sources */,
 				AE31A9C916F146ED0051CF41 /* MLNSample+Operations.m in Sources */,
 				AE48B5B0184554C800F5642E /* MLNMarkerHandler.m in Sources */,
