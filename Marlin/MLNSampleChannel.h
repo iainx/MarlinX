@@ -32,12 +32,12 @@ int MLNSampleChannelFramesPerCachePoint(void);
      withByteLength:(size_t)byteLength;
 - (BOOL)insertSilenceAtFrame:(NSUInteger)frame frameDuration:(NSUInteger)duration;
 
-- (size_t)fillBuffer:(float *)data
-       withLength:(size_t)byteLength
-        fromFrame:(NSUInteger)frame;
-
 - (void)addBlock:(MLNSampleBlock *)block;
 - (void)removeBlock:(MLNSampleBlock *)block;
+
+- (void)splitAtFrame:(NSUInteger)frame
+          firstBlock:(MLNSampleBlock **)firstBlock
+         secondBlock:(MLNSampleBlock **)secondBlock;
 
 - (MLNSampleBlock *)deleteRange:(NSRange)range;
 

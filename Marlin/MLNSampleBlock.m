@@ -73,25 +73,17 @@ MLNSampleBlockLastFrame(MLNSampleBlock *block)
     return (block->startFrame + block->numberOfFrames) - 1;
 }
 
-/**
- * MLNSampleBlockSplitBlockAtFrame:
- *
- * Splits @block into block_a and block_b.
- * block_a: [block->startFrame --> splitFrame - 1]
- * block_b: [splitFrame --> block->startFrame + block->numberOfFrames]
- *
- * block is turned into block_a, and block_b is returned
- * Returns: NULL on invalid @splitframe, or @block if @splitframe == block->startFrame
- */
-MLNSampleBlock *
+void
 MLNSampleBlockSplitBlockAtFrame (MLNSampleBlock *block,
-                                 NSUInteger splitFrame)
+                                 NSUInteger splitFrame,
+                                 MLNSampleBlock **firstBlock,
+                                 MLNSampleBlock **secondBlock)
 {
     if (block == NULL) {
-        return NULL;
+        return;
     }
     
-    return block->methods->splitAtFrame (block, splitFrame);
+    block->methods->splitAtFrame (block, splitFrame, firstBlock, secondBlock);
 }
 
 MLNSampleBlock *

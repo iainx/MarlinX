@@ -13,8 +13,10 @@ static void MLNSampleBlockFileFree (MLNSampleBlock *block);
 static MLNSampleBlock *MLNSampleBlockFileCopy (MLNSampleBlock *block,
                                                NSUInteger startFrame,
                                                NSUInteger endFrame);
-static MLNSampleBlock *MLNSampleBlockFileSplitBlockAtFrame (MLNSampleBlock *block,
-                                                            NSUInteger splitFrame);
+static void MLNSampleBlockFileSplitBlockAtFrame (MLNSampleBlock *block,
+                                                 NSUInteger splitFrame,
+                                                 MLNSampleBlock **firstBlock,
+                                                 MLNSampleBlock **secondBlock);
 static float MLNSampleBlockFileDataAtFrame(MLNSampleBlock *block,
                                            NSUInteger frame);
 static void MLNSampleBlockFileCachePointAtFrame(MLNSampleBlock *block,
@@ -134,9 +136,11 @@ MLNSampleBlockFileCopy (MLNSampleBlock *block,
     return (MLNSampleBlock *)copyBlock;
 }
 
-static MLNSampleBlock *
+static void
 MLNSampleBlockFileSplitBlockAtFrame (MLNSampleBlock *block,
-                                     NSUInteger splitFrame)
+                                     NSUInteger splitFrame,
+                                     MLNSampleBlock **firstBlock,
+                                     MLNSampleBlock **secondBlock)
 {
     MLNSampleBlockFile *newBlock, *fileBlock;
     NSUInteger realSplitFrame;
@@ -148,11 +152,26 @@ MLNSampleBlockFileSplitBlockAtFrame (MLNSampleBlock *block,
     NSUInteger numberOfCachePointsInOther;
   
     if (block == NULL) {
-        return NULL;
+        if (firstBlock) {
+            *firstBlock = NULL;
+        }
+        
+        if (secondBlock) {
+            *secondBlock = NULL;
+        }
+        return;
     }
   
     if (!FRAME_IN_BLOCK(block, splitFrame)) {
-        return NULL;
+        if (firstBlock) {
+            *firstBlock = NULL;
+        }
+        
+        if (secondBlock) {
+            *secondBlock = NULL;
+        }
+
+        return;
     }
   
     fileBlock = (MLNSampleBlockFile *)block;
@@ -189,9 +208,14 @@ MLNSampleBlockFileSplitBlockAtFrame (MLNSampleBlock *block,
     DDLogCVerbose(@"number cache points in other: %lu", numberOfCachePointsInOther);
     if (realSplitFrame == block->startFrame) {
         DDLogCVerbose(@"Split frame == _startFrame, returning self");
-  
-        // FIXME: Do blocks need to be ref-counted?
-        return block;
+        if (firstBlock) {
+            *firstBlock = block->previousBlock;
+        }
+        
+        if (secondBlock) {
+            *secondBlock = block;
+        }
+        return;
     }
   
     newBlock = (MLNSampleBlockFile *)MLNSampleBlockFileCreateBlock(fileBlock->region,
@@ -209,13 +233,26 @@ MLNSampleBlockFileSplitBlockAtFrame (MLNSampleBlock *block,
   
     if (block->reversed) {
         MLNSampleBlockPrependBlock(block, (MLNSampleBlock *)newBlock);
+        
+        if (firstBlock) {
+            *firstBlock = (MLNSampleBlock *)newBlock;
+        }
+        
+        if (secondBlock) {
+            *secondBlock = block;
+        }
     } else {
         MLNSampleBlockAppendBlock(block, (MLNSampleBlock *)newBlock);
+        if (firstBlock) {
+            *firstBlock = block;
+        }
+        
+        if (secondBlock) {
+            *secondBlock = (MLNSampleBlock *)newBlock;
+        }
     }
   
     MLNSampleBlockDumpBlock((MLNSampleBlock *)newBlock);
-  
-    return (MLNSampleBlock *)newBlock;
 }
 
 static float

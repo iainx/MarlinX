@@ -80,14 +80,10 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     STAssertEquals(numberOfFrames, BUFFER_FRAME_SIZE, @"Number of frames are different: Expected %d, got %d", BUFFER_FRAME_SIZE, numberOfFrames);
     
-    const float *data = MLNSampleBlockSampleData(block);
-    
-    STAssertFalse(data == NULL, @"Sample data is NULL");
-    
     for (int i = 0; i < BUFFER_FRAME_SIZE; i++) {
-        float d = data[i];
+        float value = MLNSampleBlockDataAtFrame(block, i);
         
-        STAssertEquals(d, (float)i, @"Frame %d is %f: Expected %f", i, d, (float)i);
+        STAssertEquals(value, (float)i, @"Frame %d is %f: Expected %f", i, value, (float)i);
     }
 }
 
@@ -119,11 +115,10 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     NSUInteger j = 0;
     
     while (block) {
-        const float *data = MLNSampleBlockSampleData(block);
         for (int i = 0; i < block->numberOfFrames; i++, j++) {
-            float d = data[i];
+            float value = MLNSampleBlockDataAtFrame(block, i);
     
-            STAssertEquals(d, (float)j, @"Frame %d is %f: Expected %f", i, d, (float)i);
+            STAssertEquals(value, (float)j, @"Frame %d is %f: Expected %f", i, value, (float)j);
         }
         
         block = block->nextBlock;
@@ -144,7 +139,6 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     [_testSample cropRange:range withUndoManager:nil];
     
-    // Crop is just 2 channel deletes, so if the channel tests passed then we just need to check the number of frames
     STAssertEquals([_testSample numberOfFrames], length, @"Range is %@", NSStringFromRange(range));
 }
 
@@ -158,28 +152,56 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     [_testSample cropRange:range withUndoManager:undo];
     
-    [undo undo];
-    
     MLNSampleChannel *channel = [_testSample channelData][0];
     MLNSampleBlock *block = [channel firstBlock];
     
-    NSUInteger j = 0;
-    NSUInteger numberOfBlocks = 0;
+    STAssertFalse(block == NULL, @"");
+    [undo undo];
     
+    NSUInteger numberOfBlocks = 0;
+    block = [channel firstBlock];
     while (block) {
-        const float *data = MLNSampleBlockSampleData(block);
-        for (int i = 0; i < block->numberOfFrames; i++, j++) {
-            float d = data[i];
-            
-            STAssertEquals(d, (float)j, @"Frame %d is %f: Expected %f", i, d, (float)i);
-        }
-        
         block = block->nextBlock;
         numberOfBlocks++;
     }
-    
     STAssertEquals(numberOfBlocks, (NSUInteger)3, @"");
     STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+
+    block = [channel firstBlock];
+    STAssertEquals(block->startFrame, (NSUInteger)0, @"");
+    STAssertEquals(block->numberOfFrames, (NSUInteger)start, @"");
+    
+    for (int i = 0; i < block->numberOfFrames; i++) {
+        float value = MLNSampleBlockDataAtFrame(block, i);
+        STAssertEquals(value, (float)i, @"");
+    }
+    
+    MLNSampleBlock *block2 = block->nextBlock;
+    STAssertFalse(block2 == NULL, @"");
+    
+    STAssertEquals(block2->previousBlock, block, @"");
+    STAssertEquals(block2->startFrame, start, @"");
+    STAssertEquals(block2->numberOfFrames, length, @"");
+    
+    for (int i = 0; i < block->numberOfFrames; i++) {
+        float value = MLNSampleBlockDataAtFrame(block2, i);
+        STAssertEquals(value, (float)i + block2->startFrame, @"");
+    }
+    
+    MLNSampleBlock *block3 = block2->nextBlock;
+    
+    STAssertFalse(block3 == NULL, @"");
+    
+    STAssertEquals(block3->previousBlock, block2, @"");
+    STAssertEquals(block3->startFrame, start + length, @"");
+    STAssertEquals(block3->numberOfFrames, 44100 - block3->startFrame, @"");
+    
+    STAssertEquals([channel lastBlock], block3, @"");
+    
+    for (int i = 0; i < block3->numberOfFrames; i++) {
+        float value = MLNSampleBlockDataAtFrame(block3, i);
+        STAssertEquals(value, (float)i + block3->startFrame, @"");
+    }
 }
 
 - (void)testInsertSilence

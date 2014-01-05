@@ -76,29 +76,24 @@ BOOL MLNSampleChannelIteratorHasMoreData(MLNSampleChannelCIterator *iter)
 BOOL MLNSampleChannelIteratorNextFrameData(MLNSampleChannelCIterator *iter,
                                            float *value)
 {
-    //const float *data;
-    
     if (iter->currentBlock == NULL) {
         DDLogCError(@"Requesting frame from dead iterator");
         *value = 0.0;
         return NO;
     }
     
-    //data = MLNSampleBlockSampleData(iter->currentBlock);
-    
     if (iter->currentBlock->reversed && iter->isRaw == NO) {
         NSUInteger realFramePosition = iter->currentBlock->numberOfFrames - iter->framePosition;
         *value = MLNSampleBlockDataAtFrame(iter->currentBlock, realFramePosition);
-        //data[realFramePosition];
     } else {
         *value = MLNSampleBlockDataAtFrame(iter->currentBlock, iter->framePosition);
-        //data[iter->framePosition];
     }
     
     iter->framePosition++;
     iter->cachePointPosition = iter->framePosition / MLNSampleChannelFramesPerCachePoint();
     
     if (iter->framePosition >= iter->currentBlock->numberOfFrames) {
+        fprintf(stderr, "iter->framePosition: %lu -- numberOfFrames: %lu\n", iter->framePosition, iter->currentBlock->numberOfFrames);
         iter->currentBlock = iter->currentBlock->nextBlock;
         iter->framePosition = 0;
         iter->cachePointPosition = 0;

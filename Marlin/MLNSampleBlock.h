@@ -37,8 +37,10 @@ typedef void (*MLNSampleBlockFreeFunction)(MLNSampleBlock *block);
 typedef MLNSampleBlock *(*MLNSampleBlockCopyFunction)(MLNSampleBlock *block,
                                                       NSUInteger startFrame,
                                                       NSUInteger endFrame);
-typedef MLNSampleBlock *(*MLNSampleBlockSplitBlockAtFrameFunction)(MLNSampleBlock *block,
-                                                                   NSUInteger splitFrame);
+typedef void (*MLNSampleBlockSplitBlockAtFrameFunction)(MLNSampleBlock *block,
+                                                        NSUInteger splitFrame,
+                                                        MLNSampleBlock **firstBlock,
+                                                        MLNSampleBlock **secondBlock);
 typedef float (*MLNSampleBlockDataAtFrameFunction)(MLNSampleBlock *block, NSUInteger frame);
 typedef void (*MLNSampleBlockCachePointAtFrameFunction)(MLNSampleBlock *block, MLNSampleCachePoint *cachePoint, NSUInteger frame);
 
@@ -61,8 +63,10 @@ void MLNSampleBlockCachePointAtFrame(MLNSampleBlock *block,
                                      MLNSampleCachePoint *cachePoint,
                                      NSUInteger frame);
 
-MLNSampleBlock *MLNSampleBlockSplitBlockAtFrame(MLNSampleBlock *block,
-                                                NSUInteger splitFrame);
+void MLNSampleBlockSplitBlockAtFrame(MLNSampleBlock *block,
+                                     NSUInteger splitFrame,
+                                     MLNSampleBlock **firstBlock,
+                                     MLNSampleBlock **secondBlock);
 MLNSampleBlock *MLNSampleBlockCopy (MLNSampleBlock *block,
                                     NSUInteger startFrame,
                                     NSUInteger endFrame);

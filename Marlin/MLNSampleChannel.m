@@ -178,57 +178,6 @@ int MLNSampleChannelFramesPerCachePoint(void)
     return YES;
 }
 
-- (size_t)fillBuffer:(float *)data
-       withLength:(size_t)byteLength
-        fromFrame:(NSUInteger)frame
-{
-    /*
-    MLNSampleBlock *block;
-    NSUInteger framesWanted;
-    NSUInteger framesAdded = 0;
-    NSUInteger frameInBlock;
-    const float *blockData;
-    
-    if (frame > _numberOfFrames) {
-        return 0;
-    }
-    
-    block = [self sampleBlockForFrame:frame];
-    if (block == nil) {
-        return 0;
-    }
-    
-    frameInBlock = (frame - block->startFrame);
-    
-    framesWanted = byteLength / sizeof(float);
-    
-    blockData = MLNSampleBlockSampleData(block);
-    while (framesWanted > 0) {
-        NSUInteger framesToCopy = MIN(framesWanted, block->numberOfFrames - frameInBlock);
-        
-        memcpy(data + framesAdded, blockData + frameInBlock, framesToCopy * sizeof(float));
-        
-        framesWanted -= framesToCopy;
-        framesAdded += framesToCopy;
-        
-        if (framesWanted == 0) {
-            break;
-        }
-        
-        block = block->nextBlock;
-        if (block == NULL) {
-            break;
-        }
-        
-        blockData = MLNSampleBlockSampleData(block);
-        frameInBlock = 0;
-    }
-    
-    return framesAdded * sizeof(float);
-     */
-    return 0;
-}
-
 #pragma mark - Block list manipulation
 
 - (void)updateBlockCount
@@ -373,6 +322,7 @@ int MLNSampleChannelFramesPerCachePoint(void)
 {
     NSUInteger lastFrame = NSMaxRange(range) - 1;
     MLNSampleBlock *firstBlock, *lastBlock;
+    MLNSampleBlock *previousBlock, *nextBlock;
     
     // Find first block
     firstBlock = [self sampleBlockForFrame:range.location];
@@ -383,8 +333,9 @@ int MLNSampleChannelFramesPerCachePoint(void)
     
     // Split first & last blocks
     if (range.location != firstBlock->startFrame) {
-        MLNSampleBlock *newBlock = MLNSampleBlockSplitBlockAtFrame(firstBlock, range.location);
-        firstBlock = newBlock;
+        MLNSampleBlockSplitBlockAtFrame(firstBlock, range.location, &previousBlock, &firstBlock);
+    } else {
+        previousBlock = firstBlock->previousBlock;
     }
     
     // Find last block
@@ -397,15 +348,27 @@ int MLNSampleChannelFramesPerCachePoint(void)
     if (lastFrame != MLNSampleBlockLastFrame(lastBlock)) {
         // Split the last block on the next frame
         // Don't need to care about the next
-        MLNSampleBlockSplitBlockAtFrame(lastBlock, NSMaxRange(range));
+        MLNSampleBlockSplitBlockAtFrame(lastBlock, NSMaxRange(range), &lastBlock, &nextBlock);
+    } else {
+        nextBlock = lastBlock->nextBlock;
     }
     
-    if (_firstBlock == firstBlock) {
-        _firstBlock = lastBlock->nextBlock;
+    // Are we chopping off the start?
+    if (previousBlock == NULL) {
+        _firstBlock = nextBlock;
     }
     
-    if (_lastBlock == lastBlock) {
+    // Are we chopping off the end?
+    if (nextBlock == NULL) {
         _lastBlock = firstBlock->previousBlock;
+    }
+    
+    if (lastBlock == _lastBlock) {
+        _lastBlock = lastBlock->nextBlock;
+    }
+    
+    if (firstBlock == _firstBlock) {
+        _firstBlock = lastBlock->nextBlock;
     }
     
     MLNSampleBlockRemoveBlocksFromList(firstBlock, lastBlock);
@@ -421,23 +384,33 @@ int MLNSampleChannelFramesPerCachePoint(void)
           firstBlock:(MLNSampleBlock **)firstBlock
          secondBlock:(MLNSampleBlock **)secondBlock
 {
-    MLNSampleBlock *insertBlock, *followBlock;
+    MLNSampleBlock *insertBlock;
     
-    if (frame != 0) {
+    fprintf(stderr, "****\nsplit at: %lu\n", frame);
+    if (frame == _numberOfFrames) {
+        *firstBlock = _lastBlock;
+        *secondBlock = NULL;
+        
+        return;
+    } else if (frame != 0) {
         insertBlock = [self sampleBlockForFrame:frame];
+        fprintf(stderr, "*****: For frame: %lu - %p\n", frame, insertBlock);
     } else {
-        insertBlock = _firstBlock;
+        // splitting at the start:
+        *firstBlock = NULL;
+        *secondBlock = _firstBlock;
+        
+        fprintf(stderr, "*****: secondBlock = %p\n", *secondBlock);
+        return;
     }
     
     if (insertBlock == NULL) {
-        if (insertBlock == NULL) {
-            [NSException raise:@"MLNSampleChannel" format:@"insertChannel:atFrame: has no insertBlock"];
-            
-            *firstBlock = NULL;
-            *secondBlock = NULL;
-            
-            return;
-        }
+        [NSException raise:@"MLNSampleChannel" format:@"insertChannel:atFrame: has no insertBlock"];
+        
+        *firstBlock = NULL;
+        *secondBlock = NULL;
+        
+        return;
     }
     
     if (insertBlock->startFrame == frame) {
@@ -447,12 +420,13 @@ int MLNSampleChannelFramesPerCachePoint(void)
         return;
     }
     
-    followBlock = MLNSampleBlockSplitBlockAtFrame(insertBlock, frame);
+    MLNSampleBlockSplitBlockAtFrame(insertBlock, frame, firstBlock, secondBlock);
     
     if (insertBlock == _lastBlock) {
-        _lastBlock = followBlock;
+        _lastBlock = *secondBlock;
     }
     
+    /*
     // FIXME: MLNSampleBlockSplitBlockAtFrame should take firstBlock&secondBlock as pointers so we don't
     // need to know/care whether insertBlock was reversed or not.
     if (insertBlock->reversed) {
@@ -462,6 +436,7 @@ int MLNSampleChannelFramesPerCachePoint(void)
         *firstBlock = insertBlock;
         *secondBlock = followBlock;
     }
+     */
 }
 
 - (void)insertBlockList:(MLNSampleBlock *)blockList
@@ -524,6 +499,9 @@ int MLNSampleChannelFramesPerCachePoint(void)
     float *data = calloc(MAX_BUFFER_FRAME_SIZE, sizeof(float));
     
     [self splitAtFrame:frame firstBlock:&firstBlock secondBlock:&secondBlock];
+    
+    MLNSampleBlockDumpBlock(firstBlock);
+    MLNSampleBlockDumpBlock(secondBlock);
     
     while (duration) {
         MLNSampleBlock *newBlock;
