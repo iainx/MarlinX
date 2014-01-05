@@ -529,11 +529,15 @@ int MLNSampleChannelFramesPerCachePoint(void)
     MLNSampleBlockListReverse(firstBlock, lastBlock);
     
     // Hook the list back in
-    previousBlock->nextBlock = lastBlock;
+    if (previousBlock) {
+        previousBlock->nextBlock = lastBlock;
+    }
     lastBlock->previousBlock = previousBlock;
     
     firstBlock->nextBlock = nextBlock;
-    nextBlock->previousBlock = firstBlock;
+    if (nextBlock) {
+        nextBlock->previousBlock = firstBlock;
+    }
     
     [self updateBlockCount];
 }
