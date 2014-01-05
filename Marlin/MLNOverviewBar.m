@@ -224,6 +224,17 @@ static void *sampleContext = &sampleContext;
         return;
     }
     
+    if ([keyPath isEqualToString:@"numberOfFrames"]) {
+        NSSize scaledSize = [self convertSizeToBacking:[self bounds].size];
+        _framesPerPixel = [_sample numberOfFrames] / scaledSize.width;
+        
+        _visiblePixelRect = [self visibleRangeToRect:_visibleFrameRange];
+        [self createChannelMasks];
+        [self invalidateIntrinsicContentSize];
+        [self setNeedsDisplay:YES];
+        return;        
+    }
+    
     if ([keyPath isEqualToString:@"loaded"]) {
         NSSize scaledSize = [self convertSizeToBacking:[self bounds].size];
         _framesPerPixel = [_sample numberOfFrames] / scaledSize.width;
@@ -390,6 +401,10 @@ static void *sampleContext = &sampleContext;
     _sample = sample;
     [_sample addObserver:self
               forKeyPath:@"numberOfChannels"
+                 options:NSKeyValueObservingOptionNew
+                 context:sampleContext];
+    [_sample addObserver:self
+              forKeyPath:@"numberOfFrames"
                  options:NSKeyValueObservingOptionNew
                  context:sampleContext];
     [_sample addObserver:self
