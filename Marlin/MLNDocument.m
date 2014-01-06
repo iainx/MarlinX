@@ -636,30 +636,41 @@ selectionDidChange:(NSRange)selection
     [_overviewBarView setSelection:selection];
 }
 
-- (void)testAction:(id)action
-{
-    DDLogVerbose(@"Invoked test action");
-}
+typedef struct {
+    char *actionName;
+    char *actionImage;
+    char *actionSelectorName;
+} _SelectionAction;
+
+static _SelectionAction selectionActions[] = {
+    { "Delete Selection", "delete-selection16x16", "delete:" },
+    { "Crop Selection", "crop-selection16x16", "crop:" },
+    { "Clear Selection", "clear-selection16x16", "clearSelection:" },
+    { "Reverse Selection", "reverse-selection16x16", "reverseSelection:" },
+    { NULL, NULL, NULL },
+};
 
 - (NSArray *)sampleViewWillShowSelectionToolbar
 {
-    NSMutableArray *toolbarItems = [NSMutableArray arrayWithCapacity:3];
+    NSMutableArray *toolbarItems = [NSMutableArray array];
     
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; selectionActions[i].actionName; i++) {
         MLNSelectionAction *action = [[MLNSelectionAction alloc] init];
-        SEL actionMethod = @selector(testAction:);
+        SEL actionMethod = NSSelectorFromString([NSString stringWithUTF8String:selectionActions[i].actionSelectorName]);
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[self methodSignatureForSelector:actionMethod]];
-
+        
         [invocation setTarget:self];
         [invocation setSelector:actionMethod];
         
-        [action setName:@"Test"];
-        [action setIcon:[NSImage imageNamed:NSImageNameRefreshTemplate]];
+        [action setName:[NSString stringWithUTF8String:selectionActions[i].actionName]];
+        if (selectionActions[i].actionImage) {
+            [action setIcon:[NSImage imageNamed:[NSString stringWithUTF8String:selectionActions[i].actionImage]]];
+        }
         [action setInvocation:invocation];
         
         [toolbarItems addObject:action];
     }
-    
+
     return toolbarItems;
 }
 

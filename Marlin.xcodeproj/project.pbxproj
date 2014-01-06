@@ -7,6 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AE020EEC187A31EA00F82337 /* delete-selection16x16.png in Resources */ = {isa = PBXBuildFile; fileRef = AE020EEA187A31EA00F82337 /* delete-selection16x16.png */; };
+		AE020EED187A31EA00F82337 /* delete-selection16x16@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = AE020EEB187A31EA00F82337 /* delete-selection16x16@2x.png */; };
+		AE020EF0187A34D800F82337 /* crop-selection16x16.png in Resources */ = {isa = PBXBuildFile; fileRef = AE020EEE187A34D800F82337 /* crop-selection16x16.png */; };
+		AE020EF1187A34D800F82337 /* crop-selection16x16@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = AE020EEF187A34D800F82337 /* crop-selection16x16@2x.png */; };
+		AE020EF4187A362400F82337 /* clear-selection16x16.png in Resources */ = {isa = PBXBuildFile; fileRef = AE020EF2187A362400F82337 /* clear-selection16x16.png */; };
+		AE020EF5187A362400F82337 /* clear-selection16x16@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = AE020EF3187A362400F82337 /* clear-selection16x16@2x.png */; };
+		AE020EF8187A377700F82337 /* reverse-selection16x16.png in Resources */ = {isa = PBXBuildFile; fileRef = AE020EF6187A377700F82337 /* reverse-selection16x16.png */; };
+		AE020EF9187A377700F82337 /* reverse-selection16x16@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = AE020EF7187A377700F82337 /* reverse-selection16x16@2x.png */; };
 		AE05C60316C246DF00A7B9D9 /* MLNSampleChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = AE05C60216C246DF00A7B9D9 /* MLNSampleChannel.m */; };
 		AE071B89172B542A0089278E /* MLNPasteboardSampleData.m in Sources */ = {isa = PBXBuildFile; fileRef = AE071B88172B542A0089278E /* MLNPasteboardSampleData.m */; };
 		AE1A2F671833CDC10012E510 /* MLNMarker.m in Sources */ = {isa = PBXBuildFile; fileRef = AE1A2F661833CDC10012E510 /* MLNMarker.m */; };
@@ -90,6 +98,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		AE020EEA187A31EA00F82337 /* delete-selection16x16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "delete-selection16x16.png"; sourceTree = "<group>"; };
+		AE020EEB187A31EA00F82337 /* delete-selection16x16@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "delete-selection16x16@2x.png"; sourceTree = "<group>"; };
+		AE020EEE187A34D800F82337 /* crop-selection16x16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "crop-selection16x16.png"; sourceTree = "<group>"; };
+		AE020EEF187A34D800F82337 /* crop-selection16x16@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "crop-selection16x16@2x.png"; sourceTree = "<group>"; };
+		AE020EF2187A362400F82337 /* clear-selection16x16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "clear-selection16x16.png"; sourceTree = "<group>"; };
+		AE020EF3187A362400F82337 /* clear-selection16x16@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "clear-selection16x16@2x.png"; sourceTree = "<group>"; };
+		AE020EF6187A377700F82337 /* reverse-selection16x16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "reverse-selection16x16.png"; sourceTree = "<group>"; };
+		AE020EF7187A377700F82337 /* reverse-selection16x16@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "reverse-selection16x16@2x.png"; sourceTree = "<group>"; };
 		AE05C60116C246DF00A7B9D9 /* MLNSampleChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNSampleChannel.h; sourceTree = "<group>"; };
 		AE05C60216C246DF00A7B9D9 /* MLNSampleChannel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNSampleChannel.m; sourceTree = "<group>"; };
 		AE071B87172B542A0089278E /* MLNPasteboardSampleData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNPasteboardSampleData.h; sourceTree = "<group>"; };
@@ -333,6 +349,14 @@
 				AE27FD7E18761B6000EBA414 /* start16x16@2x.png */,
 				AE27FD7F18761B6000EBA414 /* stop16x16.png */,
 				AE27FD8018761B6000EBA414 /* stop16x16@2x.png */,
+				AE020EEA187A31EA00F82337 /* delete-selection16x16.png */,
+				AE020EEB187A31EA00F82337 /* delete-selection16x16@2x.png */,
+				AE020EEE187A34D800F82337 /* crop-selection16x16.png */,
+				AE020EEF187A34D800F82337 /* crop-selection16x16@2x.png */,
+				AE020EF2187A362400F82337 /* clear-selection16x16.png */,
+				AE020EF3187A362400F82337 /* clear-selection16x16@2x.png */,
+				AE020EF6187A377700F82337 /* reverse-selection16x16.png */,
+				AE020EF7187A377700F82337 /* reverse-selection16x16@2x.png */,
 				AEC19ACA17E141A700226CD9 /* Marlin.iconset */,
 			);
 			name = Images;
@@ -565,6 +589,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AE27FD8118761B6000EBA414 /* end16x16.png in Resources */,
+				AE020EF1187A34D800F82337 /* crop-selection16x16@2x.png in Resources */,
 				AE27FD8718761B6000EBA414 /* rewind16x16.png in Resources */,
 				AE27FD8A18761B6000EBA414 /* start16x16@2x.png in Resources */,
 				AECDE7CC16B7C0C300DE94D5 /* InfoPlist.strings in Resources */,
@@ -572,19 +597,26 @@
 				AECDE7D216B7C0C300DE94D5 /* Credits.rtf in Resources */,
 				AE27FD8518761B6000EBA414 /* play16x16.png in Resources */,
 				AECDE7D816B7C0C300DE94D5 /* MLNDocument.xib in Resources */,
+				AE020EF4187A362400F82337 /* clear-selection16x16.png in Resources */,
 				AE27FD8618761B6000EBA414 /* play16x16@2x.png in Resources */,
 				AE27FD8318761B6000EBA414 /* ffwd16x16.png in Resources */,
 				AECDE7DB16B7C0C300DE94D5 /* MainMenu.xib in Resources */,
+				AE020EF9187A377700F82337 /* reverse-selection16x16@2x.png in Resources */,
 				AE298D8116F7CC720031334A /* README.txt in Resources */,
 				AE27FD8C18761B6000EBA414 /* stop16x16@2x.png in Resources */,
 				AE27FD8918761B6000EBA414 /* start16x16.png in Resources */,
 				AEC19ACB17E141A700226CD9 /* Marlin.iconset in Resources */,
+				AE020EF0187A34D800F82337 /* crop-selection16x16.png in Resources */,
 				AE24E45C17E1D14F00B67469 /* MLNProgressViewController.xib in Resources */,
 				AE24E45F17E221C400B67469 /* auto-version.pl in Resources */,
 				AE27FD8B18761B6000EBA414 /* stop16x16.png in Resources */,
 				AE27FD8818761B6000EBA414 /* rewind16x16@2x.png in Resources */,
 				AE27FD8418761B6000EBA414 /* ffwd16x16@2x.png in Resources */,
+				AE020EEC187A31EA00F82337 /* delete-selection16x16.png in Resources */,
+				AE020EED187A31EA00F82337 /* delete-selection16x16@2x.png in Resources */,
 				AEEE7E9F17E71B8700ECA24B /* MLNExportPanelController.xib in Resources */,
+				AE020EF8187A377700F82337 /* reverse-selection16x16.png in Resources */,
+				AE020EF5187A362400F82337 /* clear-selection16x16@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
