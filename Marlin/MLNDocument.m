@@ -710,6 +710,16 @@ completionHandler:(void (^)(NSError *))completionHandler
     [_sampleView setHidden:NO];
 }
 
+- (void)samplePlaybackDidEnd:(MLNSample *)sample
+{
+    DDLogVerbose(@"Playback EOS");
+}
+
+- (void)sample:(MLNSample *)sample playbackPositionChanged:(NSUInteger)frame
+{
+    DDLogVerbose(@"Playback %lu", frame);
+}
+
 #pragma mark - Sample View delegate
 - (void)sampleView:(MLNSampleView *)sampleView
 selectionDidChange:(NSRange)selection

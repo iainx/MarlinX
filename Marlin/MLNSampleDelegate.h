@@ -17,4 +17,6 @@
 - (void)sample:(MLNSample *)sample operationDidEnd:(MLNOperation *)operation;
 - (void)sample:(MLNSample *)sample operationError:(NSError *)error;
 
+- (void)sample:(MLNSample *)sample playbackPositionChanged:(NSUInteger)frame;
+- (void)samplePlaybackDidEnd:(MLNSample *)sample;
 @end

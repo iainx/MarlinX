@@ -406,12 +406,12 @@ MyAQOutputCallback (void *userData,
         // Parse message
         switch (dataPtr1->type) {
             case MessageTypeEOS:
-                DDLogInfo(@"Got EOS");
+                [_delegate samplePlaybackDidEnd:self];
                 [self disposePlayer];
                 return;
                 
             case MessageTypePosition:
-                DDLogInfo(@"Got Position: %lu", dataPtr1->data.position.position);
+                [_delegate sample:self playbackPositionChanged:dataPtr1->data.position.position];
                 break;
                 
             default:
