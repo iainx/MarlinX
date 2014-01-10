@@ -416,10 +416,10 @@ completionHandler:(void (^)(NSError *))completionHandler
                                                                     toItem:nil
                                                                  attribute:NSLayoutAttributeNotAnAttribute
                                                                 multiplier:0
-                                                                  constant:240];
+                                                                  constant:0];
         [contentView addConstraint:_infoPanelWidthConstraint];
+        [[_infoPanelWidthConstraint animator] setConstant:240.0];
     } else {
-        /*
         [NSAnimationContext beginGrouping];
         NSAnimationContext *ctxt = [NSAnimationContext currentContext];
         
@@ -435,14 +435,15 @@ completionHandler:(void (^)(NSError *))completionHandler
         }];
         [[_infoPanelWidthConstraint animator] setConstant:0.0];
         [NSAnimationContext endGrouping];
-         */
+
+        /*
         [_infoPane removeFromSuperview];
         _infoPane = nil;
         _infoPanelWidthConstraint = nil;
         _infoPaneVC = nil;
         
         [[[self documentWindow] contentView] addConstraint:_scrollviewRightConstraint];
-
+*/
     }
 }
 
