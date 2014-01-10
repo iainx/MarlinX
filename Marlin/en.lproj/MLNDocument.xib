@@ -24,11 +24,19 @@
                 <rect key="frame" x="0.0" y="0.0" width="719" height="358"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jrx-Z2-jJ6" customClass="MLNTransportControlsView">
-                        <rect key="frame" x="7" y="9" width="204" height="27"/>
+                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="jrx-Z2-jJ6" customClass="MLNTransportControlsView">
+                        <rect key="frame" x="8" y="8" width="204" height="28"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="204" id="9aw-zI-92A"/>
+                            <constraint firstAttribute="height" constant="28" id="PxZ-2X-pmJ"/>
+                        </constraints>
                     </customView>
                 </subviews>
+                <constraints>
+                    <constraint firstItem="jrx-Z2-jJ6" firstAttribute="leading" secondItem="6" secondAttribute="leading" constant="8" id="PXp-WN-yO9"/>
+                    <constraint firstAttribute="bottom" secondItem="jrx-Z2-jJ6" secondAttribute="bottom" constant="8" id="tpq-d2-aoh"/>
+                </constraints>
             </view>
             <toolbar key="toolbar" implicitIdentifier="FC47AB36-F5F5-4D14-B2E7-D05626977E91" explicitIdentifier="main" autosavesConfiguration="NO" allowsUserCustomization="NO" showsBaselineSeparator="NO" displayMode="iconAndLabel" sizeMode="regular" id="100063">
                 <allowedToolbarItems>

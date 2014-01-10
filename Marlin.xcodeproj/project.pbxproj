@@ -53,6 +53,8 @@
 		AE57CA4E171040AE0043E690 /* MLNSelectionToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = AE57CA4D171040AE0043E690 /* MLNSelectionToolbar.m */; };
 		AE57CA511710EB0A0043E690 /* MLNSelectionAction.m in Sources */ = {isa = PBXBuildFile; fileRef = AE57CA501710EB0A0043E690 /* MLNSelectionAction.m */; };
 		AE5AB6CD16EA2DE0008D0AE4 /* MLNSample+Drawing.m in Sources */ = {isa = PBXBuildFile; fileRef = AE5AB6CC16EA2DE0008D0AE4 /* MLNSample+Drawing.m */; };
+		AE5F5DB6187E22F40095D113 /* MLNInfoPaneViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AE5F5DB4187E22F40095D113 /* MLNInfoPaneViewController.m */; };
+		AE5F5DB7187E22F40095D113 /* MLNInfoPaneViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = AE5F5DB5187E22F40095D113 /* MLNInfoPaneViewController.xib */; };
 		AE6A0F3C16BD1F1900362CC4 /* MLNSampleBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = AE6A0F3B16BD1F1900362CC4 /* MLNSampleBlock.m */; };
 		AE6FB1D816B8FF6E00139735 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = AE6FB1D716B8FF6E00139735 /* Constants.m */; };
 		AE6FB1DB16B9C57900139735 /* MLNSampleView.m in Sources */ = {isa = PBXBuildFile; fileRef = AE6FB1DA16B9C57900139735 /* MLNSampleView.m */; };
@@ -170,6 +172,9 @@
 		AE5AB6CB16EA2DE0008D0AE4 /* MLNSample+Drawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MLNSample+Drawing.h"; sourceTree = "<group>"; };
 		AE5AB6CC16EA2DE0008D0AE4 /* MLNSample+Drawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MLNSample+Drawing.m"; sourceTree = "<group>"; };
 		AE5C09431875E52B00004E0D /* MLNTransportControlsViewDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNTransportControlsViewDelegate.h; sourceTree = "<group>"; };
+		AE5F5DB3187E22F40095D113 /* MLNInfoPaneViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNInfoPaneViewController.h; sourceTree = "<group>"; };
+		AE5F5DB4187E22F40095D113 /* MLNInfoPaneViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNInfoPaneViewController.m; sourceTree = "<group>"; };
+		AE5F5DB5187E22F40095D113 /* MLNInfoPaneViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MLNInfoPaneViewController.xib; sourceTree = "<group>"; };
 		AE6A0F3A16BD1F1900362CC4 /* MLNSampleBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNSampleBlock.h; sourceTree = "<group>"; };
 		AE6A0F3B16BD1F1900362CC4 /* MLNSampleBlock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNSampleBlock.m; sourceTree = "<group>"; };
 		AE6FB1D416B8FC9200139735 /* MLNLoadOperationDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNLoadOperationDelegate.h; sourceTree = "<group>"; };
@@ -326,6 +331,7 @@
 		AEC19AC617E0B69500226CD9 /* XIB */ = {
 			isa = PBXGroup;
 			children = (
+				AE5F5DB5187E22F40095D113 /* MLNInfoPaneViewController.xib */,
 				AEEE7E9D17E71B8700ECA24B /* MLNExportPanelController.xib */,
 				AE24E45A17E1D14F00B67469 /* MLNProgressViewController.xib */,
 				AECDE7D616B7C0C300DE94D5 /* MLNDocument.xib */,
@@ -470,6 +476,8 @@
 				AEEE7EA517E7607F00ECA24B /* MLNExportOperation.m */,
 				AE41C726185BD2A500E68819 /* MLNOperatorIndicator.h */,
 				AE41C727185BD2A500E68819 /* MLNOperatorIndicator.m */,
+				AE5F5DB3187E22F40095D113 /* MLNInfoPaneViewController.h */,
+				AE5F5DB4187E22F40095D113 /* MLNInfoPaneViewController.m */,
 				AE1A2F651833CDC10012E510 /* MLNMarker.h */,
 				AE1A2F661833CDC10012E510 /* MLNMarker.m */,
 				AE6FB1D616B8FF6E00139735 /* Constants.h */,
@@ -610,6 +618,7 @@
 				AE24E45C17E1D14F00B67469 /* MLNProgressViewController.xib in Resources */,
 				AE24E45F17E221C400B67469 /* auto-version.pl in Resources */,
 				AE27FD8B18761B6000EBA414 /* stop16x16.png in Resources */,
+				AE5F5DB7187E22F40095D113 /* MLNInfoPaneViewController.xib in Resources */,
 				AE27FD8818761B6000EBA414 /* rewind16x16@2x.png in Resources */,
 				AE27FD8418761B6000EBA414 /* ffwd16x16@2x.png in Resources */,
 				AE020EEC187A31EA00F82337 /* delete-selection16x16.png in Resources */,
@@ -679,6 +688,7 @@
 				AEDA843316C8D13E001B2DD1 /* MLNMMapRegion.m in Sources */,
 				AE27FD8F187646E700EBA414 /* MLNSampleBlockFile.m in Sources */,
 				AE5AB6CD16EA2DE0008D0AE4 /* MLNSample+Drawing.m in Sources */,
+				AE5F5DB6187E22F40095D113 /* MLNInfoPaneViewController.m in Sources */,
 				AE31A9C916F146ED0051CF41 /* MLNSample+Operations.m in Sources */,
 				AE48B5B0184554C800F5642E /* MLNMarkerHandler.m in Sources */,
 				AEEE3AAA17EB38BB00578740 /* MLNExportableTypeView.m in Sources */,

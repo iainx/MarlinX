@@ -230,6 +230,10 @@ typedef struct PlaybackData {
     _numberOfChannels = _format.mChannelsPerFrame;
     [self didChangeValueForKey:@"numberOfChannels"];
     
+    [self willChangeValueForKey:@"bitrate"];
+    _bitrate = _format.mBitsPerChannel;
+    [self didChangeValueForKey:@"bitrate"];
+    
     dump_asbd(&_format);
     
     // Because this is readonly we don't have a setter, so we need to announce changes

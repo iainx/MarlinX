@@ -21,6 +21,7 @@
 #import "MLNExportPanelController.h"
 #import "MLNOperatorIndicator.h"
 #import "MLNTransportControlsView.h"
+#import "MLNInfoPaneViewController.h"
 #import "MLNMarker.h"
 #import "Constants.h"
 
@@ -34,6 +35,14 @@
     
     MLNOperatorIndicator *_indicator;
     NSTimer *_indicatorTimer;
+    
+    BOOL _infoPaneOpen;
+    MLNInfoPaneViewController *_infoPaneVC;
+    NSView *_infoPane;
+    NSLayoutConstraint *_infoPanelWidthConstraint;
+    NSArray *_infoPaneHConstraints;
+    NSArray *_infoPaneVConstraints;
+    NSLayoutConstraint *_scrollviewRightConstraint;
 }
 
 + (NSArray *)readableTypes
@@ -156,9 +165,10 @@ static void *sampleViewContext = &sampleViewContext;
     NSWindow *window = [aController window];
     [window setDelegate:self];
     
-    [[window contentView] addSubview:_overviewBarView];
-    [[window contentView] addSubview:_scrollView];
-    [[window contentView] addSubview:_progressView];
+    NSView *contentView = [window contentView];
+    [contentView addSubview:_overviewBarView];
+    [contentView addSubview:_scrollView];
+    [contentView addSubview:_progressView];
     
     NSDictionary *viewsDict = @{@"overviewBarView": _overviewBarView,
                                 @"scrollView": _scrollView,
@@ -168,31 +178,40 @@ static void *sampleViewContext = &sampleViewContext;
                                                                    options:0
                                                                    metrics:nil
                                                                      views:viewsDict];
-    [[window contentView] addConstraints:constraints];
+    [contentView addConstraints:constraints];
     
     constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"|[overviewBarView]|"
                                                           options:0
                                                           metrics:nil
                                                             views:viewsDict];
-    [[window contentView] addConstraints:constraints];
+    [contentView addConstraints:constraints];
 
     constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"|[progressView]|"
                                                           options:0
                                                           metrics:nil
                                                             views:viewsDict];
-    [[window contentView] addConstraints:constraints];
+    [contentView addConstraints:constraints];
     
     constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[progressView]-40-|"
                                                           options:0
                                                           metrics:nil
                                                             views:viewsDict];
-    [[window contentView] addConstraints:constraints];
+    [contentView addConstraints:constraints];
     
-    constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"|[scrollView]|"
+    constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"|[scrollView]"
                                                           options:0
                                                           metrics:nil
                                                             views:viewsDict];
-    [[window contentView] addConstraints:constraints];
+    [contentView addConstraints:constraints];
+    
+    _scrollviewRightConstraint = [NSLayoutConstraint constraintWithItem:_scrollView
+                                                              attribute:NSLayoutAttributeRight
+                                                              relatedBy:NSLayoutRelationEqual
+                                                                 toItem:contentView
+                                                              attribute:NSLayoutAttributeRight
+                                                             multiplier:1.0
+                                                               constant:0.0];
+    [contentView addConstraint:_scrollviewRightConstraint];
     
     [_sampleView setTranslatesAutoresizingMaskIntoConstraints:NO];
     
@@ -363,7 +382,68 @@ completionHandler:(void (^)(NSError *))completionHandler
 
 - (IBAction)showInformation:(id)sender
 {
-    
+    if (_infoPaneVC == nil) {
+        _infoPaneVC = [[MLNInfoPaneViewController alloc] initWithSample:_sample];
+        
+        _infoPane = [_infoPaneVC view];
+        [_infoPane setTranslatesAutoresizingMaskIntoConstraints:NO];
+        
+        NSView *contentView = [[self documentWindow] contentView];
+        [contentView addSubview:_infoPane];
+        
+        [contentView removeConstraint:_scrollviewRightConstraint];
+        
+        NSDictionary *viewsDict = @{@"infoPane":_infoPane,
+                                    @"overviewBarView":_overviewBarView,
+                                    @"scrollView":_scrollView};
+        NSArray *constraints;
+        
+        constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[overviewBarView][infoPane]-40-|"
+                                                              options:0
+                                                              metrics:nil
+                                                                views:viewsDict];
+        [contentView addConstraints:constraints];
+        
+        constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"|[scrollView][infoPane]|"
+                                                              options:0
+                                                              metrics:nil
+                                                                views:viewsDict];
+        [contentView addConstraints:constraints];
+        
+        _infoPanelWidthConstraint = [NSLayoutConstraint constraintWithItem:_infoPane
+                                                                 attribute:NSLayoutAttributeWidth
+                                                                 relatedBy:NSLayoutRelationEqual
+                                                                    toItem:nil
+                                                                 attribute:NSLayoutAttributeNotAnAttribute
+                                                                multiplier:0
+                                                                  constant:240];
+        [contentView addConstraint:_infoPanelWidthConstraint];
+    } else {
+        /*
+        [NSAnimationContext beginGrouping];
+        NSAnimationContext *ctxt = [NSAnimationContext currentContext];
+        
+        MLNDocument * __weak weakSelf = self;
+
+        [ctxt setCompletionHandler:^{
+            [_infoPane removeFromSuperview];
+            _infoPane = nil;
+            _infoPanelWidthConstraint = nil;
+            _infoPaneVC = nil;
+            
+            [[[weakSelf documentWindow] contentView] addConstraint:_scrollviewRightConstraint];
+        }];
+        [[_infoPanelWidthConstraint animator] setConstant:0.0];
+        [NSAnimationContext endGrouping];
+         */
+        [_infoPane removeFromSuperview];
+        _infoPane = nil;
+        _infoPanelWidthConstraint = nil;
+        _infoPaneVC = nil;
+        
+        [[[self documentWindow] contentView] addConstraint:_scrollviewRightConstraint];
+
+    }
 }
 
 - (void)copy:(id)sender
@@ -745,4 +825,5 @@ requestVisibleRange:(NSRange)newVisibleRange
 {
     [_sample stop];
 }
+
 @end

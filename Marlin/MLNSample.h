@@ -27,6 +27,7 @@ enum {
 @property (readonly) NSUInteger numberOfChannels;
 @property (readwrite) NSUInteger numberOfFrames;
 @property (readwrite) NSUInteger sampleRate;
+@property (readwrite) NSUInteger bitrate;
 
 @property (readonly) NSInteger duration;
 @property (readonly) NSURL *url;

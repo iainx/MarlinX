@@ -93,7 +93,6 @@ BOOL MLNSampleChannelIteratorNextFrameData(MLNSampleChannelCIterator *iter,
     iter->cachePointPosition = iter->framePosition / MLNSampleChannelFramesPerCachePoint();
     
     if (iter->framePosition >= iter->currentBlock->numberOfFrames) {
-        fprintf(stderr, "iter->framePosition: %lu -- numberOfFrames: %lu\n", iter->framePosition, iter->currentBlock->numberOfFrames);
         iter->currentBlock = iter->currentBlock->nextBlock;
         iter->framePosition = 0;
         iter->cachePointPosition = 0;
