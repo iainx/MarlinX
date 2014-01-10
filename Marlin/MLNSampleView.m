@@ -856,8 +856,6 @@ static void *markerContext = &markerContext;
 
     [self repositionTrackingAreasForMarkers];
     
-    DDLogVerbose(@"Sample loaded handler: numberOfFrames: %lu", [_sample numberOfFrames]);
-    DDLogVerbose(@"%lu %@ -> %@", _framesPerPixel, NSStringFromSize(size), NSStringFromSize(scaledSize));
     [self setNeedsDisplay:YES];
     
     [self invalidateIntrinsicContentSize];
