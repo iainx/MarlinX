@@ -27,7 +27,7 @@
 - (void)loadView
 {
     [super loadView];
-    DDLogVerbose(@"View did load");
+
     [self updateForSample];
 }
 
