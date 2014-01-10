@@ -422,28 +422,19 @@ completionHandler:(void (^)(NSError *))completionHandler
     } else {
         [NSAnimationContext beginGrouping];
         NSAnimationContext *ctxt = [NSAnimationContext currentContext];
-        
-        MLNDocument * __weak weakSelf = self;
 
         [ctxt setCompletionHandler:^{
+            // Technically this is a reference loop and we should use a weak pointer
+            // but the block will be executed too quickly to actually matter... I think?
             [_infoPane removeFromSuperview];
             _infoPane = nil;
             _infoPanelWidthConstraint = nil;
             _infoPaneVC = nil;
             
-            [[[weakSelf documentWindow] contentView] addConstraint:_scrollviewRightConstraint];
+            [[[self documentWindow] contentView] addConstraint:_scrollviewRightConstraint];
         }];
         [[_infoPanelWidthConstraint animator] setConstant:0.0];
         [NSAnimationContext endGrouping];
-
-        /*
-        [_infoPane removeFromSuperview];
-        _infoPane = nil;
-        _infoPanelWidthConstraint = nil;
-        _infoPaneVC = nil;
-        
-        [[[self documentWindow] contentView] addConstraint:_scrollviewRightConstraint];
-*/
     }
 }
 
