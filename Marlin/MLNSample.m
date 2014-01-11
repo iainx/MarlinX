@@ -318,7 +318,11 @@ MyAQOutputCallback (void *userData,
     
     UInt32 bytesWritten = framesWritten * sizeof(float);
 
-    data->position += (framesWritten / data->numberOfChannels);
+    AudioTimeStamp timestamp;
+    Boolean discontinuity;
+    AudioQueueGetCurrentTime(queue, NULL, &timestamp, &discontinuity);
+    
+    data->position = (NSUInteger)timestamp.mSampleTime;
     
     MessageData *dataPtr1, *dataPtr2;
     ring_buffer_size_t sizePtr1, sizePtr2;
