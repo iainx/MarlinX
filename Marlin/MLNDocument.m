@@ -704,11 +704,13 @@ completionHandler:(void (^)(NSError *))completionHandler
 - (void)samplePlaybackDidEnd:(MLNSample *)sample
 {
     DDLogVerbose(@"Playback EOS");
+    [_sampleView setShowPlaybackCursor:NO];
 }
 
 - (void)sample:(MLNSample *)sample playbackPositionChanged:(NSUInteger)frame
 {
     DDLogVerbose(@"Playback %lu", frame);
+    [_sampleView setPlaybackCursorFramePosition:frame];
 }
 
 #pragma mark - Sample View delegate
@@ -815,6 +817,7 @@ requestVisibleRange:(NSRange)newVisibleRange
 
 - (void)transportControlsViewDidRequestPlay
 {
+    [_sampleView setShowPlaybackCursor:YES];
     [_sample play];
 }
 
@@ -825,6 +828,7 @@ requestVisibleRange:(NSRange)newVisibleRange
 
 - (void)transportControlsViewDidRequestStop
 {
+    [_sampleView setShowPlaybackCursor:NO];
     [_sample stop];
 }
 

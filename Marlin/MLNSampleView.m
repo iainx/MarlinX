@@ -65,6 +65,8 @@ typedef enum {
 
 @synthesize framesPerPixel = _framesPerPixel;
 @synthesize cursorFramePosition = _cursorFramePosition;
+@synthesize showPlaybackCursor = _showPlaybackCursor;
+@synthesize playbackCursorFramePosition = _playbackCursorFramePosition;
 
 #define CURSOR_FADE_TIME 0.5
 #define CURSOR_PAUSE_TIME 0.3
@@ -425,6 +427,16 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
         if (NSIntersectsRect(cursorRect, dirtyRect)) {
             NSColor *cursorColour = [NSColor colorWithCalibratedWhite:1.0 alpha:1.0];
             [cursorColour set];
+            
+            NSRectFillUsingOperation(cursorRect, NSCompositeSourceOver);
+        }
+    }
+    
+    if (_showPlaybackCursor) {
+        NSPoint cursorPoint = [self convertFrameToPoint:_playbackCursorFramePosition];
+        NSRect cursorRect = NSMakeRect(cursorPoint.x + 0.5, 0, 1, [self bounds].size.height);
+        if (NSIntersectsRect(cursorRect, dirtyRect)) {
+            [[NSColor blueColor] set];
             
             NSRectFillUsingOperation(cursorRect, NSCompositeSourceOver);
         }
@@ -844,7 +856,7 @@ getIncrementForFramesPerPixel (NSUInteger framesPerPixel)
 static void *sampleContext = &sampleContext;
 static void *markerContext = &markerContext;
 
-- (void)sampledLoadedHandler
+- (void)sampleLoadedHandler
 {
     CGFloat iw = [_sample numberOfFrames] / (_framesPerPixel);
     NSSize size = NSMakeSize(iw, 10);
@@ -873,12 +885,12 @@ static void *markerContext = &markerContext;
     
     if (context == sampleContext) {
         if ([keyPath isEqualToString:@"loaded"]) {
-            [self sampledLoadedHandler];
+            [self sampleLoadedHandler];
             return;
         }
     
         if ([keyPath isEqualToString:@"numberOfFrames"]) {
-            [self sampledLoadedHandler];
+            [self sampleLoadedHandler];
             return;
         }
         
@@ -903,7 +915,7 @@ static void *markerContext = &markerContext;
              object:sample];
     
     if ([_sample isLoaded]) {
-        [self sampledLoadedHandler];
+        [self sampleLoadedHandler];
     } else {
         [_sample addObserver:self
                   forKeyPath:@"loaded"
@@ -1027,6 +1039,38 @@ static void *markerContext = &markerContext;
     }
     
     [self moveCursorTo:cursorFramePosition];
+}
+
+- (BOOL)showPlaybackCursor
+{
+    return _showPlaybackCursor;
+}
+
+- (void)setShowPlaybackCursor:(BOOL)showPlaybackCursor
+{
+    _showPlaybackCursor = showPlaybackCursor;
+    if (_showPlaybackCursor == NO) {
+        [self centreOnCursor];
+    }
+    
+    [self setNeedsDisplay:YES];
+}
+
+- (NSUInteger)playbackCursorFramePosition
+{
+    return _playbackCursorFramePosition;
+}
+
+- (void)setPlaybackCursorFramePosition:(NSUInteger)playbackCursorFramePosition
+{
+    if (_playbackCursorFramePosition == playbackCursorFramePosition) {
+        return;
+    }
+    
+    _playbackCursorFramePosition = playbackCursorFramePosition;
+
+    [self setNeedsDisplay:YES];
+    [self centreOnFrame:_playbackCursorFramePosition];
 }
 
 #pragma mark - Notifications
@@ -2003,9 +2047,9 @@ static const CGFloat Y_DISTANCE_FROM_FRAME = 5.0;
     }
 }
 
-- (void)centreOnCursor
+- (void)centreOnFrame:(NSUInteger)frame
 {
-    NSPoint cursorPoint = [self convertFrameToPoint:_cursorFramePosition];
+    NSPoint cursorPoint = [self convertFrameToPoint:frame];
     NSScrollView *scrollView = [self enclosingScrollView];
     NSClipView *clipView = (NSClipView *)[scrollView contentView];
     
@@ -2013,6 +2057,11 @@ static const CGFloat Y_DISTANCE_FROM_FRAME = 5.0;
     float halfWidth = NSWidth(cvBounds) / 2;
     
     [self scrollPoint:NSMakePoint(MAX(0, cursorPoint.x - halfWidth), 0.0)];
+}
+
+- (void)centreOnCursor
+{
+    [self centreOnFrame:_cursorFramePosition];
 }
 
 #pragma mark - Markers

@@ -21,6 +21,8 @@
 @property (readwrite) NSRange selection;
 @property (readwrite, strong) NSArray *selectionActions;
 @property (readwrite) NSUInteger cursorFramePosition;
+
+@property (readwrite) BOOL showPlaybackCursor;
 @property (readwrite) NSUInteger playbackCursorFramePosition;
 
 - (void)zoomIn;
@@ -32,6 +34,7 @@
 - (void)selectAll;
 
 - (void)moveCursorTo:(NSUInteger)cursorFrame;
+- (void)centreOnFrame:(NSUInteger)frame;
 - (void)centreOnCursor;
 
 - (void)requestNewVisibleRange:(NSRange)newVisibleRange;
