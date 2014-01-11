@@ -1052,8 +1052,10 @@ static void *markerContext = &markerContext;
     if (_showPlaybackCursor == NO) {
         [self centreOnCursor];
     }
-    
-    [self setNeedsDisplay:YES];
+
+    NSPoint cursorPoint = [self convertFrameToPoint:_playbackCursorFramePosition];
+    NSRect cursorRect = NSMakeRect(cursorPoint.x + 0.5, 0, 1, [self bounds].size.height);
+    [self setNeedsDisplayInRect:cursorRect];
 }
 
 - (NSUInteger)playbackCursorFramePosition
@@ -1066,11 +1068,23 @@ static void *markerContext = &markerContext;
     if (_playbackCursorFramePosition == playbackCursorFramePosition) {
         return;
     }
+
+    CGFloat height = [self bounds].size.height;
     
+    NSPoint oldPoint = [self convertFrameToPoint:_playbackCursorFramePosition];
+    NSRect oldRect = NSMakeRect(oldPoint.x + 0.5, 0, 1, height);
+
     _playbackCursorFramePosition = playbackCursorFramePosition;
 
-    [self setNeedsDisplay:YES];
-    [self centreOnFrame:_playbackCursorFramePosition];
+    NSPoint newPoint = [self convertFrameToPoint:_playbackCursorFramePosition];
+    NSRect newRect = NSMakeRect(newPoint.x + 0.5, 0, 1, height);
+    
+    // Only redraw if the actual scaled position has changed
+    if (oldPoint.x != newPoint.x) {
+        [self setNeedsDisplayInRect:oldRect];
+        [self setNeedsDisplayInRect:newRect];
+        [self centreOnFrame:_playbackCursorFramePosition];
+    }
 }
 
 #pragma mark - Notifications
