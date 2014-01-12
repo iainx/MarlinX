@@ -363,11 +363,11 @@ int MLNSampleChannelFramesPerCachePoint(void)
         _lastBlock = firstBlock->previousBlock;
     }
     
-    if (lastBlock == _lastBlock) {
+    if (lastBlock == _lastBlock && lastBlock) {
         _lastBlock = lastBlock->nextBlock;
     }
     
-    if (firstBlock == _firstBlock) {
+    if (firstBlock == _firstBlock && lastBlock) {
         _firstBlock = lastBlock->nextBlock;
     }
     
@@ -375,7 +375,7 @@ int MLNSampleChannelFramesPerCachePoint(void)
     
     [self updateBlockCount];
     
-    [self dumpChannel:YES];
+    //[self dumpChannel:YES];
     
     return firstBlock;
 }
@@ -514,6 +514,8 @@ int MLNSampleChannelFramesPerCachePoint(void)
         duration -= framesToWrite;
     }
     
+    free(data);
+    
     return YES;
 }
 
@@ -526,6 +528,10 @@ int MLNSampleChannelFramesPerCachePoint(void)
     [self splitAtFrame:range.location firstBlock:&previousBlock secondBlock:&firstBlock];
     [self splitAtFrame:lastFrame firstBlock:&lastBlock secondBlock:&nextBlock];
     
+    if (firstBlock == NULL || lastBlock == NULL) {
+        [NSException raise:@"MLNSampleChannel" format:@"splitAtFrame returned NULL - (%p, %p)", firstBlock, lastBlock];
+        return;
+    }
     MLNSampleBlockListReverse(firstBlock, lastBlock);
     
     // Hook the list back in

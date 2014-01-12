@@ -343,7 +343,7 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
     }
     
     NSBezierPath *selectionPath = nil;
-    NSRect selectionRect;
+    NSRect selectionRect = NSZeroRect;
     
     // Draw the background of the selection before we draw the waveform so it is behind.
     if (_hasSelection) {

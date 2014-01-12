@@ -286,13 +286,9 @@ MLNSampleBlockListReverse(MLNSampleBlock *first,
 {
     MLNSampleBlock *block, *nextBlock;
     
-    DDLogCVerbose(@"Reversing %p -> %p", first, last);
     block = first;
 
     while (block != last && block) {
-        DDLogCVerbose(@"***Before***");
-        MLNSampleBlockDumpBlock(block);
-        
         nextBlock = block->nextBlock;
         
         block->nextBlock = block->previousBlock;
@@ -300,23 +296,16 @@ MLNSampleBlockListReverse(MLNSampleBlock *first,
 
         block->reversed = !block->reversed;
         
-        DDLogCVerbose(@"***After***");
-        MLNSampleBlockDumpBlock(block);
-        
         block = nextBlock;
     }
     
-    DDLogCVerbose(@"***Before (final) ***");
-    MLNSampleBlockDumpBlock(block);
+    NSCAssert(block != NULL, @"");
     
     nextBlock = block->nextBlock;
     block->nextBlock = block->previousBlock;
     block->previousBlock = nextBlock;
     
     block->reversed = !block->reversed;
-    
-    DDLogCVerbose(@"***After (final) ***");
-    MLNSampleBlockDumpBlock(block);
 }
 
 #pragma mark - Debugging
