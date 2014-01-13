@@ -494,6 +494,7 @@ completionHandler:(void (^)(NSError *))completionHandler
     [_sample clearRange:[_sampleView selection] withUndoManager:undoManager];
     
     [self displayIndicatorForOperationName:@"Clear Selection"];
+    [_sampleView clearSelection];
 }
 
 - (IBAction)selectAll:(id)sender
