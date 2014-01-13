@@ -704,13 +704,11 @@ completionHandler:(void (^)(NSError *))completionHandler
 
 - (void)samplePlaybackDidEnd:(MLNSample *)sample
 {
-    DDLogVerbose(@"Playback EOS");
     [_sampleView setShowPlaybackCursor:NO];
 }
 
 - (void)sample:(MLNSample *)sample playbackPositionChanged:(NSUInteger)frame
 {
-    DDLogVerbose(@"Playback %lu", frame);
     [_sampleView setPlaybackCursorFramePosition:frame];
 }
 

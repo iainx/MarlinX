@@ -372,7 +372,6 @@ MyAQOutputCallback (void *userData,
     _playbackData->blocks = malloc(sizeof (PlaybackBlock) * _format.mChannelsPerFrame);
     for (i = 0; i < _format.mChannelsPerFrame; i++) {
         MLNSampleChannel *channel = [self channelData][i];
-        //MLNSampleChannelIterator *iter = [[MLNSampleChannelIterator alloc] initWithChannel:channel atFrame:0];
         
         _playbackData->blocks[i].cIter = MLNSampleChannelIteratorNew(channel, 0, NO);
     }
