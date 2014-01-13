@@ -144,7 +144,6 @@
             break;
         }
         
-        //fprintf(stdout, "Requested %d bytes: got %d\n", NUMBER_OF_FRAMES_PER_READ, numberOfFrames);
         if (frameCount == 0) {
             break;
         }

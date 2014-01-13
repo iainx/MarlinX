@@ -425,18 +425,6 @@ int MLNSampleChannelFramesPerCachePoint(void)
     if (insertBlock == _lastBlock) {
         _lastBlock = *secondBlock;
     }
-    
-    /*
-    // FIXME: MLNSampleBlockSplitBlockAtFrame should take firstBlock&secondBlock as pointers so we don't
-    // need to know/care whether insertBlock was reversed or not.
-    if (insertBlock->reversed) {
-        *firstBlock = followBlock;
-        *secondBlock = insertBlock;
-    } else {
-        *firstBlock = insertBlock;
-        *secondBlock = followBlock;
-    }
-     */
 }
 
 - (void)insertBlockList:(MLNSampleBlock *)blockList

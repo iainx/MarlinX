@@ -41,20 +41,6 @@
     return self;
 }
 
-- (void)drawRect:(NSRect)dirtyRect
-{
-    /*
-    [[NSColor orangeColor] setFill];
-    NSRectFill(dirtyRect);
-     */
-    /*
-    NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:[self bounds]
-                                                         xRadius:2.0 yRadius:2.0];
-    [path stroke];
-     */
-    [super drawRect:dirtyRect];
-}
-
 - (NSSize)intrinsicContentSize
 {
     return NSMakeSize(20, 20);
@@ -64,8 +50,6 @@
 {
     NSInvocation *invocation = [_selectionAction invocation];
     [invocation invoke];
-    
-    DDLogVerbose(@"Button clicked");
 }
 
 @end

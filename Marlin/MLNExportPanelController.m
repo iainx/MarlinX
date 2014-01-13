@@ -89,7 +89,6 @@ struct _exportableTypeDetails {
     item = [_collectionView itemAtIndex:idx];
     view = (MLNExportableTypeView *)[item view];
     
-    DDLogVerbose(@"%@ -> %@", item, view);
     [view setSelected:selected];
 }
 

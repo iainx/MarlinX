@@ -23,12 +23,6 @@
 
 
 typedef struct PlaybackBlock {
-    /*
-    MLNSampleBlock *block;
-    const float *data;
-    NSUInteger framesInBlocks;
-    UInt32 positionInBlock;
-     */
     MLNSampleChannelCIterator *cIter;
 } PlaybackBlock;
 
@@ -260,6 +254,7 @@ typedef struct PlaybackData {
 }
 
 // This should be a category but you can't have any ivars in a category
+// FIXME: Really?
 #pragma mark Playback
 
 // Put an EOS message on the message queue and stop the queue.

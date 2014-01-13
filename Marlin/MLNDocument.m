@@ -238,9 +238,6 @@ static void *sampleViewContext = &sampleViewContext;
     // FIXME: Only on 10.8
     [_scrollView setBackgroundColor:[NSColor underPageBackgroundColor]];
     
-    //[_scrollView setHasHorizontalRuler:YES];
-    //[_scrollView setRulersVisible:YES];
-    
     [_scrollView setDocumentView:_sampleView];
     
     NSClipView *clipView = [_scrollView contentView];
@@ -653,13 +650,6 @@ completionHandler:(void (^)(NSError *))completionHandler
         return YES;
     }
     
-    // These are not implemented yet
-    /*
-    if (action == @selector(revertDocumentToSaved:)
-        || action == @selector(saveDocument:)) {
-        return NO;
-    }
-    */
     return YES;
 }
 

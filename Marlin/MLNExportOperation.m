@@ -133,7 +133,6 @@
         channelLocations[i] = 0;
     }
     
-    //NSArray *channelArray = [_sample channelData];
     NSMutableArray *channelIters = [NSMutableArray array];
     for (MLNSampleChannel *channel in [_sample channelData]) {
         MLNSampleChannelIterator *iter = [[MLNSampleChannelIterator alloc] initWithChannel:channel atFrame:0];
@@ -196,5 +195,4 @@
     free(bufferList);
 }
 
-// FIXME: This should be a shared function
 @end

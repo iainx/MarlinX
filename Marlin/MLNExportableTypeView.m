@@ -24,9 +24,7 @@
 
 - (void)drawRect:(NSRect)dirtyRect
 {
-    DDLogVerbose(@"Draw rect %@", NSStringFromRect([self bounds]));
     if (_selected) {
-        DDLogVerbose(@"Draw selection %@", NSStringFromRect([self bounds]));
         [[NSColor selectedControlColor] set];
         NSRectFill(dirtyRect);
     }
@@ -39,13 +37,10 @@
 
 - (void)setSelected:(BOOL)selected
 {
-    DDLogVerbose(@"Selected: %@", selected ? @"YES" : @"NO");
-    
     if (_selected == selected) {
         return;
     }
     
-    DDLogVerbose(@"Redrawing");
     _selected = selected;
     [self setNeedsDisplay:YES];
 }

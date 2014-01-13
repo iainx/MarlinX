@@ -44,7 +44,6 @@ static void *markerContext = &markerContext;
 
 - (void)dealloc
 {
-    DDLogVerbose(@"Destroying handler");
     
     [self removeTrackingAreas];
     [_marker removeObserver:self forKeyPath:@"frame" context:markerContext];
@@ -79,8 +78,6 @@ static void *markerContext = &markerContext;
         
         gutterRect.origin.x = markerPoint.x - 4;
         gutterRect.size.width = 9;
-        
-        //DDLogVerbose(@"Marker gutter: %@", NSStringFromRect(gutterRect));
         
         NSTrackingArea *area = [self trackingAreaForRect:gutterRect];
         [_sampleView addTrackingArea:area];

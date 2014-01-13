@@ -21,7 +21,6 @@
 
 - (void)drawRect:(NSRect)dirtyRect
 {
-	//[super drawRect:dirtyRect];
     [[NSColor underPageBackgroundColor] setFill];
     NSRectFill(dirtyRect);
 }

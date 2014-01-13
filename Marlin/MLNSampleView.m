@@ -175,7 +175,6 @@ typedef enum {
     CGContextRef maskContext;
     CGColorSpaceRef colorspace = CGColorSpaceCreateDeviceGray();
     
-    //NSRect scaledRect = [self convertRectToBacking:bounds];
     maskContext = CGBitmapContextCreate(NULL,
                                          scaledRect.size.width,
                                          scaledRect.size.height,
@@ -255,14 +254,6 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
     NSUInteger numberOfChannels = [_sample numberOfChannels];
     NSRect channelRect = realDrawRect;
     
-    // If there is only 1 channel, we need extra room for the marker gutter
-    // We also make the bottom gutter smaller because we don't need the second row of ticks
-/* 
-    CGFloat channelHeight = (realDrawRect.size.height - ((numberOfChannels - 1) * GUTTER_SIZE)) / numberOfChannels;
-    if (numberOfChannels == 1) {
-        channelHeight -= SMALL_GUTTER_SIZE;
-    }
- */
     CGFloat channelHeight = _channelHeight;
     // 55 56 58
     NSColor *darkBG = [NSColor colorWithCalibratedRed:0.214 green:0.218 blue:0.226 alpha:1.0];
@@ -576,10 +567,7 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
     
     [outerPath setWindingRule:NSEvenOddWindingRule];
     NSRect innerSelectionRect = NSInsetRect(rect, 0.0, 5.0);
-    /*
-    innerPath = [NSBezierPath bezierPathWithRoundedRect:innerSelectionRect
-                                                xRadius:4.0 yRadius:4.0];
-    */
+
     NSAttributedString *startString = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%lu", _selectionStartFrame]];
     NSAttributedString *endString = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%lu", _selectionEndFrame]];
     NSSize startSize = [startString size];
@@ -1419,13 +1407,11 @@ static void *markerContext = &markerContext;
 
 - (void)mouseEntered:(NSEvent *)event
 {
-    DDLogVerbose(@"Entered");
     [self setDragHandleForEvent:event];
 }
 
 - (void)mouseExited:(NSEvent *)event
 {
-    DDLogVerbose(@"Exited");
     _dragHandle = DragHandleNone;
 }
 
@@ -1596,7 +1582,6 @@ static void *markerContext = &markerContext;
     
     NSRect newSelectionRect = [self selectionToRect];
     
-    //DDLogWarn(@"Selection: %lu, %lu (%@)", _selectionStartFrame, _selectionEndFrame, NSStringFromRect(newSelectionRect));
     [self updateSelection:newSelectionRect oldSelectionRect:oldSelectionRect];
 }
 
@@ -1825,14 +1810,11 @@ subtractSelectionRects (NSRect a, NSRect b)
     [self selectionChanged];
     
     [self removeTrackingArea:_startTrackingArea];
-    //[self removeTrackingArea:_endTrackingArea];
     _startTrackingArea = nil;
     _dragHandle = DragHandleNone;
-    //_endTrackingArea = nil;
     
     selectionRect.size.width += 0.5;
     [self setNeedsDisplayInRect:[self selectionRectToDirtyRect:selectionRect]];
-    DDLogVerbose(@"Mouse up: No drag %@", NSStringFromRect(selectionRect));
 }
 
 - (void)removeSelectionToolbar
@@ -2128,14 +2110,12 @@ static const CGFloat Y_DISTANCE_FROM_FRAME = 5.0;
 - (void)handler:(MLNMarkerHandler *)handler
  didEnterMarker:(MLNMarker *)marker
 {
-    DDLogVerbose(@"In marker");
     _inMarker = marker;
 }
 
 - (void)handler:(MLNMarkerHandler *)handler
  didLeaveMarker:(MLNMarker *)marker
 {
-    DDLogVerbose(@"Out of marker");
     _inMarker = nil;
 }
 

@@ -132,10 +132,8 @@ BOOL MLNSampleChannelIteratorNextCachePointData(MLNSampleChannelCIterator *iter,
     if (iter->currentBlock->reversed && iter->isRaw == NO) {
         // FIXME: I feel like this needs to be tested as whether it is correct
         NSUInteger realCachePointPosition = (iter->currentBlock->numberOfFrames / MLNSampleChannelFramesPerCachePoint()) - iter->cachePointPosition;
-        //cp = cacheData[realCachePointPosition];
         MLNSampleBlockCachePointAtFrame(iter->currentBlock, &cp, realCachePointPosition);
     } else {
-        //cp = cacheData[iter->cachePointPosition];
         MLNSampleBlockCachePointAtFrame(iter->currentBlock, &cp, iter->cachePointPosition);
     }
     cachePoint->minValue = cp.minValue;

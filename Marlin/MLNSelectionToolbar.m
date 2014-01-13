@@ -28,25 +28,6 @@
     return self;
 }
 
-/*
-- (void)drawRect:(NSRect)dirtyRect
-{
-    NSColor *bgColor = [NSColor colorWithCalibratedRed:0.687 green:0.687 blue:1.0 alpha:1.0];
-    [bgColor set];
-    [_borderPath fill];
-    [[NSColor blackColor] set];
-    [_borderPath stroke];
-}
-
-- (void)setFrameSize:(NSSize)newSize
-{
-    [super setFrameSize:newSize];
-    
-    NSRect borderRect = NSInsetRect([self bounds], 0.5, 0.5);
-    _borderPath = [NSBezierPath bezierPathWithRoundedRect:borderRect
-                                                  xRadius:5.0 yRadius:5.0];
-}
- */
 #pragma mark - Constraints
 
 + (BOOL)requiresConstraintBasedLayout
