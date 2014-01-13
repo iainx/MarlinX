@@ -308,6 +308,20 @@ MLNSampleBlockListReverse(MLNSampleBlock *first,
     block->reversed = !block->reversed;
 }
 
+void
+MLNSampleBlockListFree(MLNSampleBlock *blockList)
+{
+    MLNSampleBlock *block;
+
+    block = blockList;
+    
+    while (block) {
+        MLNSampleBlock *nextBlock = block->nextBlock;
+        MLNSampleBlockFree(block);
+        block = nextBlock;
+    }
+}
+
 #pragma mark - Debugging
 void
 MLNSampleBlockDumpBlock (MLNSampleBlock *block)

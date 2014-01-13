@@ -89,6 +89,7 @@ void MLNSampleBlockInsertList(MLNSampleBlock *block,
                               MLNSampleBlock *blockList);
 
 void MLNSampleBlockListReverse(MLNSampleBlock *start, MLNSampleBlock *last);
+void MLNSampleBlockListFree(MLNSampleBlock *blockList);
 
 void MLNSampleBlockDumpBlock (MLNSampleBlock *block);
 void MLNSampleBlockListDump (MLNSampleBlock *block);

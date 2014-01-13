@@ -7,6 +7,7 @@
 //
 
 #import "MLNPasteboardSampleData.h"
+#import "MLNSampleBlockList.h"
 #import "MLNSampleChannel.h"
 #import "MLNSample+Operations.h"
 #import "MLNMarker.h"
@@ -111,8 +112,9 @@
     NSMutableArray *deletedBlocks = [NSMutableArray arrayWithCapacity:[self numberOfChannels]];
     
     for (MLNSampleChannel *channel in [self channelData]) {
-        MLNSampleBlock *blockList = [channel deleteRange:range];
-        [deletedBlocks addObject:[NSValue valueWithPointer:blockList]];
+        MLNSampleBlock *cBlockList = [channel deleteRange:range];
+        MLNSampleBlockList *blockList = [[MLNSampleBlockList alloc] initWithBlocks:cBlockList];
+        [deletedBlocks addObject:blockList];
     }
     
     [self setNumberOfFrames:[self numberOfFrames] - range.length];
@@ -132,8 +134,8 @@
 {
     NSUInteger channelNumber = 0;
     
-    NSValue *value = blockArray[0];
-    NSUInteger extraFrames = MLNSampleBlockListNumberOfFrames([value pointerValue]);
+    MLNSampleBlockList *blockList = blockArray[0];
+    NSUInteger extraFrames = MLNSampleBlockListNumberOfFrames([blockList cBlockList]);
 
     NSRange changedRange = NSMakeRange(frame, extraFrames);
     if (![undoManager isUndoing] && ![undoManager isRedoing]) {
@@ -141,10 +143,13 @@
     }
     
     for (MLNSampleChannel *channel in [self channelData]) {
-        NSValue *blockListValue = blockArray[channelNumber];
-        MLNSampleBlock *blockList = [blockListValue pointerValue];
-        [channel insertBlockList:blockList atFrame:frame];
+        blockList = blockArray[channelNumber];
+        MLNSampleBlock *cBlockList = [blockList cBlockList];
+        [channel insertBlockList:cBlockList atFrame:frame];
         channelNumber++;
+        
+        // The blocklist no longer owns the blocks as they've been added back into the main list.
+        [blockList disownBlockList];
     }
 
     [[undoManager prepareWithInvocationTarget:self] deleteRange:changedRange
@@ -196,7 +201,7 @@
     for (NSUInteger i = 0; i < [self numberOfChannels]; i++) {
         MLNSampleChannel *srcChannel = channels[i];
         
-        channelBlocks[i] = [NSValue valueWithPointer:[srcChannel firstBlock]];
+        channelBlocks[i] = [[MLNSampleBlockList alloc] initWithBlocks:[srcChannel firstBlock]];
     }
 
     [self insertBlocks:channelBlocks atFrame:frame withUndoManager:undoManager];
