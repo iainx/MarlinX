@@ -479,6 +479,17 @@ int MLNSampleChannelFramesPerCachePoint(void)
     [self updateBlockCount];
 }
 
+- (void)insertBlock:(MLNSampleBlock *)block
+        beforeBlock:(MLNSampleBlock *)nextBlock
+{
+    MLNSampleBlockPrependBlock(nextBlock, block);
+    if (nextBlock == _firstBlock) {
+        _firstBlock = block;
+    }
+    
+    [self updateBlockCount];
+}
+
 #define MAX_BUFFER_FRAME_SIZE 262144
 - (BOOL)insertSilenceAtFrame:(NSUInteger)frame
                frameDuration:(NSUInteger)duration
@@ -496,7 +507,11 @@ int MLNSampleChannelFramesPerCachePoint(void)
         size_t framesToWrite = MIN(duration, MAX_BUFFER_FRAME_SIZE);
         
         newBlock = [self writeData:data withByteLength:framesToWrite * sizeof(float)];
-        [self insertBlock:newBlock afterBlock:firstBlock];
+        if (firstBlock) {
+            [self insertBlock:newBlock afterBlock:firstBlock];
+        } else {
+            [self insertBlock:newBlock beforeBlock:secondBlock];
+        }
         
         firstBlock = newBlock;
         duration -= framesToWrite;
