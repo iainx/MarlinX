@@ -10,6 +10,7 @@
 
 #import "MLNSampleBlock.h"
 #import "MLNSampleChannel.h"
+#import "MLNSampleChannelIterator.h"
 #import "MLNSample.h"
 #import "MLNSample+Operations.h"
 
@@ -204,10 +205,144 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     }
 }
 
+- (void)checkSilenceInRange:(NSRange)range
+{
+    MLNSampleChannelIterator *iter;
+    MLNSampleChannel *channel = [_testSample channelData][0];
+    
+    NSLog(@"number of frames in channel: %lu", [channel numberOfFrames]);
+    NSUInteger i;
+    
+    iter = [[MLNSampleChannelIterator alloc] initWithChannel:channel atFrame:0];
+    BOOL moreData = YES;
+    
+    i = 0;
+    while (moreData) {
+        float value;
+        moreData = [iter nextFrameData:&value];
+        
+        if (NSLocationInRange(i, range)) {
+            STAssertEquals(value, (float)0, @"at %lu (%@)", i, NSStringFromRange(range));
+        } else if (i < range.location) {
+            STAssertEquals(value, (float)i, @"at %lu (%@)", i, NSStringFromRange(range));
+        } else {
+            STAssertEquals(value, (float)i - range.length, @"at %lu (%@)", i, NSStringFromRange(range));
+        }
+        
+        i++;
+    }
+}
+
 - (void)testInsertSilence
 {
-    [_testSample insertSilenceAtFrame:100 numberOfFrames:100 undoManager:nil];
+    NSUInteger frame = rand() % [_testSample numberOfFrames];
+    NSUInteger numberOfFrames = rand() % 44100;
+    NSUInteger expectedNumberOfFrames = [_testSample numberOfFrames] + numberOfFrames;
     
-    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44200, @"");
+    [_testSample insertSilenceAtFrame:frame numberOfFrames:numberOfFrames undoManager:nil];
+    
+    STAssertEquals([_testSample numberOfFrames], (NSUInteger)expectedNumberOfFrames, @"");
+    
+    [self checkSilenceInRange:NSMakeRange(frame, numberOfFrames)];
+}
+
+- (void)testInsertSilenceStart
+{
+    NSUInteger numberOfFrames = rand() % 44100;
+    NSUInteger expectedNumberOfFrames = [_testSample numberOfFrames] + numberOfFrames;
+    
+    [_testSample insertSilenceAtFrame:0 numberOfFrames:numberOfFrames undoManager:nil];
+    
+    STAssertEquals([_testSample numberOfFrames], expectedNumberOfFrames, @"");
+    
+    [self checkSilenceInRange:NSMakeRange(0, numberOfFrames)];
+}
+
+- (void)testInsertSilenceEnd
+{
+    NSUInteger numberOfFrames = rand() % 44100;
+    NSUInteger expectedNumberOfFrames = [_testSample numberOfFrames] + numberOfFrames;
+    
+    [_testSample insertSilenceAtFrame:[_testSample numberOfFrames] numberOfFrames:numberOfFrames undoManager:nil];
+    
+    STAssertEquals([_testSample numberOfFrames], expectedNumberOfFrames, @"");
+
+    [self checkSilenceInRange:NSMakeRange(44100, numberOfFrames)];
+}
+
+- (void)testInsertSilenceUndo
+{
+    NSUndoManager *undo = [[NSUndoManager alloc] init];
+
+    NSUInteger frame = rand() % [_testSample numberOfFrames];
+    NSUInteger numberOfFrames = rand() % 44100;
+    NSUInteger expectedNumberOfFrames = [_testSample numberOfFrames] + numberOfFrames;
+    
+    [_testSample insertSilenceAtFrame:frame numberOfFrames:numberOfFrames undoManager:undo];
+    
+    STAssertEquals([_testSample numberOfFrames], (NSUInteger)expectedNumberOfFrames, @"");
+    
+    [undo undo];
+    
+    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+}
+
+- (void)testClearRange
+{
+    NSUInteger start = rand() % [_testSample numberOfFrames];
+    NSUInteger length = rand() % ([_testSample numberOfFrames] - start);
+    NSRange range = NSMakeRange(start, length);
+    
+    [_testSample clearRange:range withUndoManager:nil];
+    
+    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+}
+
+- (void)testClearRangeStart
+{
+    NSUInteger length = rand() % [_testSample numberOfFrames];
+    NSUInteger start = 0;
+    NSRange range = NSMakeRange(start, length);
+    
+    [_testSample clearRange:range withUndoManager:nil];
+    
+    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+}
+
+- (void)testClearRangeEnd
+{
+    NSUInteger length = rand() % [_testSample numberOfFrames];
+    NSUInteger start = [_testSample numberOfFrames] - length;
+    NSRange range = NSMakeRange(start, length);
+    
+    [_testSample clearRange:range withUndoManager:nil];
+    
+    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+}
+
+- (void)testClearAll
+{
+    NSRange range = NSMakeRange(0, [_testSample numberOfFrames]);
+    
+    [_testSample clearRange:range withUndoManager:nil];
+    
+    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+}
+
+- (void)testClearRangeUndo
+{
+    NSUndoManager *undo = [[NSUndoManager alloc] init];
+
+    NSUInteger start = rand() % [_testSample numberOfFrames];
+    NSUInteger length = rand() % ([_testSample numberOfFrames] - start);
+    NSRange range = NSMakeRange(start, length);
+    
+    [_testSample clearRange:range withUndoManager:undo];
+    
+    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+    
+    [undo undo];
+    
+    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
 }
 @end
