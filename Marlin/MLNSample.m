@@ -113,6 +113,7 @@ typedef struct PlaybackData {
     // Not a deep copy
     _channelData = [channelData mutableCopy];
     _numberOfFrames = [channelData[0] numberOfFrames];
+    _numberOfChannels = [channelData count];
     
     _markers = [[NSMutableArray alloc] init];
 

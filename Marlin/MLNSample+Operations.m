@@ -144,7 +144,8 @@
     
     for (MLNSampleChannel *channel in [self channelData]) {
         blockList = blockArray[channelNumber];
-        MLNSampleBlock *cBlockList = [blockList cBlockList];
+        MLNSampleBlock *cBlockList = MLNSampleBlockListCopy([blockList cBlockList]);
+        
         [channel insertBlockList:cBlockList atFrame:frame];
         channelNumber++;
         
