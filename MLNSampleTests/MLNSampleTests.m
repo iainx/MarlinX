@@ -88,6 +88,23 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     }
 }
 
+- (void)checkData
+{
+    MLNSampleChannel *channel = [_testSample channelData][0];
+    MLNSampleChannelIterator *iter = [[MLNSampleChannelIterator alloc] initWithChannel:channel
+                                                                               atFrame:0];
+    BOOL moreData = YES;
+    int i = 0;
+    
+    while (moreData) {
+        float value;
+        moreData = [iter nextFrameData:&value];
+        
+        STAssertEquals(value, (float)i, @"");
+        i++;
+    }
+}
+
 - (void)testDeleteRange
 {
     [_testSample deleteRange:NSMakeRange(100, 100) undoManager:nil];
@@ -110,20 +127,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
     
-    MLNSampleChannel *channel = [_testSample channelData][0];
-    MLNSampleBlock *block = [channel firstBlock];
-    
-    NSUInteger j = 0;
-    
-    while (block) {
-        for (int i = 0; i < block->numberOfFrames; i++, j++) {
-            float value = MLNSampleBlockDataAtFrame(block, i);
-    
-            STAssertEquals(value, (float)j, @"Frame %d is %f: Expected %f", i, value, (float)j);
-        }
-        
-        block = block->nextBlock;
-    }
+    [self checkData];
 }
 
 - (void)testInsert
@@ -184,6 +188,8 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     [undo undo];
     
     STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"%lu", insertFrame);
+    
+    [self checkData];
 }
 
 - (void)testCropRange
@@ -215,19 +221,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     [undo undo];
     
     STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
-
-    BOOL moreData = YES;
-    MLNSampleChannelIterator *iter = [[MLNSampleChannelIterator alloc] initWithChannel:channel
-                                                                               atFrame:0];
-    
-    int i = 0;
-    while (moreData) {
-        float value;
-        moreData = [iter nextFrameData:&value];
-        
-        STAssertEquals(value, (float)i, @"");
-        i++;
-    }
+    [self checkData];
 }
 
 - (void)checkSilenceInRange:(NSRange)range
@@ -310,39 +304,69 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     [undo undo];
     
     STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+    
+    [self checkData];
+}
+
+- (void)checkClearInRange:(NSRange)range
+{
+    MLNSampleChannel *channel = [_testSample channelData][0];
+    MLNSampleChannelIterator *iter = [[MLNSampleChannelIterator alloc] initWithChannel:channel atFrame:0];
+    BOOL moreData = YES;
+    int i = 0;
+    
+    while (moreData) {
+        float value;
+        
+        moreData = [iter nextFrameData:&value];
+        
+        if (NSLocationInRange(i, range)) {
+            STAssertEquals(value, (float)0.0, @"");
+        } else {
+            STAssertEquals(value, (float)i, @"");
+        }
+        
+        i++;
+    }
 }
 
 - (void)testClearRange
 {
     NSUInteger start = rand() % [_testSample numberOfFrames];
-    NSUInteger length = rand() % ([_testSample numberOfFrames] - start);
+    NSUInteger length = (rand() % ([_testSample numberOfFrames] - start) + 1);
     NSRange range = NSMakeRange(start, length);
     
     [_testSample clearRange:range withUndoManager:nil];
     
     STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+    
+    [self checkClearInRange:range];
 }
 
 - (void)testClearRangeStart
 {
-    NSUInteger length = rand() % [_testSample numberOfFrames];
+    NSUInteger length = (rand() % [_testSample numberOfFrames] + 1);
     NSUInteger start = 0;
     NSRange range = NSMakeRange(start, length);
     
     [_testSample clearRange:range withUndoManager:nil];
     
     STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+    
+    [self checkClearInRange:range];
 }
 
 - (void)testClearRangeEnd
 {
-    NSUInteger length = rand() % [_testSample numberOfFrames];
+    NSUInteger length = (rand() % [_testSample numberOfFrames] + 1);
     NSUInteger start = [_testSample numberOfFrames] - length;
     NSRange range = NSMakeRange(start, length);
     
     [_testSample clearRange:range withUndoManager:nil];
     
     STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+    
+    [self checkClearInRange:range];
 }
 
 - (void)testClearAll
@@ -352,6 +376,8 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     [_testSample clearRange:range withUndoManager:nil];
     
     STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+    
+    [self checkClearInRange:range];
 }
 
 - (void)testClearRangeUndo
@@ -359,7 +385,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     NSUndoManager *undo = [[NSUndoManager alloc] init];
 
     NSUInteger start = rand() % [_testSample numberOfFrames];
-    NSUInteger length = rand() % ([_testSample numberOfFrames] - start);
+    NSUInteger length = (rand() % ([_testSample numberOfFrames] - start) + 1);
     NSRange range = NSMakeRange(start, length);
     
     [_testSample clearRange:range withUndoManager:undo];
@@ -369,5 +395,92 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     [undo undo];
     
     STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+    
+    [self checkData];
+}
+
+- (void)checkReverseInRange:(NSRange)range
+{
+    MLNSampleChannel *channel = [_testSample channelData][0];
+    MLNSampleChannelIterator *iter = [[MLNSampleChannelIterator alloc] initWithChannel:channel
+                                                                               atFrame:0];
+    BOOL moreData = YES;
+    NSUInteger i = 0;
+    
+    while (moreData) {
+        float value = 0;
+        moreData = [iter nextFrameData:&value];
+        
+        if (NSLocationInRange(i, range)) {
+            NSUInteger offset = i - range.location;
+            STAssertEquals(value, (float)((NSMaxRange(range) - 1) - offset), @"%@ - %lu - %lu - %lu", NSStringFromRange(range), offset, NSMaxRange(range), i);
+        } else {
+            STAssertEquals(value, (float)i, @"");
+        }
+        
+        i++;
+    }
+}
+
+- (void)testReverseRange
+{
+    NSUInteger start = rand() % [_testSample numberOfFrames];
+    NSUInteger length = (rand() % ([_testSample numberOfFrames] - start) + 1);
+    NSRange range = NSMakeRange(start, length);
+    
+    [_testSample reverseRange:range withUndoManager:nil];
+    
+    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+    [self checkReverseInRange:range];
+}
+
+- (void)testReverseStart
+{
+    NSUInteger length = (rand() % [_testSample numberOfFrames] + 1);
+    NSRange range = NSMakeRange(0, length);
+    
+    [_testSample reverseRange:range withUndoManager:nil];
+    
+    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+    [self checkReverseInRange:range];
+}
+
+- (void)testReverseEnd
+{
+    NSUInteger length = (rand() % [_testSample numberOfFrames] + 1);
+    NSUInteger start = [_testSample numberOfFrames] - length;
+    NSRange range = NSMakeRange(start, length);
+    
+    [_testSample reverseRange:range withUndoManager:nil];
+    
+    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+    [self checkReverseInRange:range];
+}
+
+- (void)testReverseAll
+{
+    NSRange range = NSMakeRange(0, [_testSample numberOfFrames]);
+    
+    [_testSample reverseRange:range withUndoManager:nil];
+    
+    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+    [self checkReverseInRange:range];
+}
+
+- (void)testReverseUndo
+{
+    NSUndoManager *undo = [[NSUndoManager alloc] init];
+    NSUInteger start = rand() % [_testSample numberOfFrames];
+    NSUInteger length = (rand() % ([_testSample numberOfFrames] - start) + 1);
+    NSRange range = NSMakeRange(start, length);
+    
+    [_testSample reverseRange:range withUndoManager:undo];
+    
+    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+    
+    [undo undo];
+    
+    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+    [self checkData];
 }
 @end

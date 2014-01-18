@@ -83,7 +83,7 @@ BOOL MLNSampleChannelIteratorNextFrameData(MLNSampleChannelCIterator *iter,
     }
     
     if (iter->currentBlock->reversed && iter->isRaw == NO) {
-        NSUInteger realFramePosition = iter->currentBlock->numberOfFrames - iter->framePosition;
+        NSUInteger realFramePosition = (iter->currentBlock->numberOfFrames - 1) - iter->framePosition;
         *value = MLNSampleBlockDataAtFrame(iter->currentBlock, realFramePosition);
     } else {
         *value = MLNSampleBlockDataAtFrame(iter->currentBlock, iter->framePosition);
