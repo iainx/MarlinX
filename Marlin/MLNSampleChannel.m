@@ -14,7 +14,6 @@
 @implementation MLNSampleChannel { 
     MLNCacheFile *_dataFile;
     MLNCacheFile *_cacheFile;
-    BOOL _debugFinding;
 }
 
 - (id)init
@@ -260,12 +259,8 @@ int MLNSampleChannelFramesPerCachePoint(void)
     NSUInteger lastFrame = 0;
     while (block) {
         lastFrame += block->numberOfFrames;
-        if (_debugFinding)
-            DDLogVerbose(@"Checking %p: %lu for %lu", block, lastFrame, frame);
 
         if (frame <= lastFrame - 1) {
-            if (_debugFinding)
-                DDLogVerbose(@"Found in %p", block);
             return block;
         }
         
@@ -312,8 +307,6 @@ int MLNSampleChannelFramesPerCachePoint(void)
     }
     
     [channelCopy updateBlockCount];
-    
-    [channelCopy dumpChannel:YES];
     
     return channelCopy;
 }
@@ -386,7 +379,6 @@ int MLNSampleChannelFramesPerCachePoint(void)
 {
     MLNSampleBlock *insertBlock;
     
-    fprintf(stderr, "****\nsplit at: %lu\n", frame);
     if (frame == _numberOfFrames) {
         *firstBlock = _lastBlock;
         *secondBlock = NULL;
@@ -394,13 +386,11 @@ int MLNSampleChannelFramesPerCachePoint(void)
         return;
     } else if (frame != 0) {
         insertBlock = [self sampleBlockForFrame:frame];
-        fprintf(stderr, "*****: For frame: %lu - %p\n", frame, insertBlock);
     } else {
         // splitting at the start:
         *firstBlock = NULL;
         *secondBlock = _firstBlock;
         
-        fprintf(stderr, "*****: secondBlock = %p\n", *secondBlock);
         return;
     }
     
