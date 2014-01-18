@@ -68,27 +68,28 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
 {
     MLNSampleChannel *channel = [self createChannel];
     MLNSampleBlock *block1, *block2;
+    NSUInteger splitFrame = rand() % [channel numberOfFrames];
 
-    [channel splitAtFrame:100 firstBlock:&block1 secondBlock:&block2];
+    [channel splitAtFrame:splitFrame firstBlock:&block1 secondBlock:&block2];
     STAssertFalse(block1 == NULL, @"");
     STAssertFalse(block2 == NULL, @"");
     
     STAssertEquals(block1->startFrame, (NSUInteger)0, @"");
-    STAssertEquals(block1->numberOfFrames, (NSUInteger)100, @"");
+    STAssertEquals(block1->numberOfFrames, (NSUInteger)splitFrame, @"");
     STAssertEquals(block1->nextBlock, block2, @"");
     
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < splitFrame; i++) {
         float value = MLNSampleBlockDataAtFrame(block1, i);
         STAssertEquals(value, (float)i, @"");
     }
     
-    STAssertEquals(block2->startFrame, (NSUInteger)100, @"");
-    STAssertEquals(block2->numberOfFrames, (NSUInteger)44000, @"");
+    STAssertEquals(block2->startFrame, (NSUInteger)splitFrame, @"");
+    STAssertEquals(block2->numberOfFrames, (NSUInteger)[channel numberOfFrames] - splitFrame, @"");
     STAssertEquals(block2->previousBlock, block1, @"");
     
-    for (int i = 0; i < 44000; i++) {
-        float value = MLNSampleBlockDataAtFrame(block2, i);
-        STAssertEquals(value, (float)i + 100, @"");
+    for (NSUInteger i = splitFrame; i < splitFrame + block2->numberOfFrames; i++) {
+        float value = MLNSampleBlockDataAtFrame(block2, i - splitFrame);
+        STAssertEquals(value, (float)i, @"");
     }
 }
 
