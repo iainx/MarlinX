@@ -115,9 +115,7 @@ MLNSampleBlockFileCopy (MLNSampleBlock *block,
     framesToCopy = (endFrame - startFrame) + 1;
     
     frameOffset = (startFrame - block->startFrame);
-    copyOffset = fileBlock->byteOffset + (frameOffset * sizeof(float));
-    //copyNumberOfFrames = (block->numberOfFrames - frameOffset);
-    
+    copyOffset = fileBlock->byteOffset + (frameOffset * sizeof(float));    
     copyByteLength = framesToCopy * sizeof(float);
     
     copyNumberOfCachePoints = framesToCopy / 256;
@@ -176,26 +174,17 @@ MLNSampleBlockFileSplitBlockAtFrame (MLNSampleBlock *block,
   
     fileBlock = (MLNSampleBlockFile *)block;
     
-    DDLogCVerbose(@"Splitting block at %lu", splitFrame);
     if (block->reversed) {
         realSplitFrame = ((MLNSampleBlockLastFrame(block) + 1) - splitFrame) + block->startFrame;
     } else {
         realSplitFrame = splitFrame;
     }
-    DDLogCVerbose(@"Real split frame: %lu", realSplitFrame);
-    MLNSampleBlockDumpBlock(block);
   
     numberFramesInSelf = realSplitFrame - block->startFrame;
     numberFramesInOther = block->numberOfFrames - numberFramesInSelf;
     otherStart = block->startFrame + numberFramesInSelf;
   
-    DDLogCVerbose(@"Number frames in self: %lu", numberFramesInSelf);
-    DDLogCVerbose(@"Number frames in new block: %lu", numberFramesInOther);
-    DDLogCVerbose(@"Other start: %lu", otherStart);
-  
     numberOfCachePoints = fileBlock->cacheByteLength / sizeof(MLNSampleCachePoint);
-  
-    DDLogCVerbose(@"Total cache points: %lu", numberOfCachePoints);
   
     numberOfCachePointsInSelf = numberFramesInSelf / MLNSampleChannelFramesPerCachePoint();
     if (numberFramesInSelf % MLNSampleChannelFramesPerCachePoint() != 0) {
@@ -204,10 +193,7 @@ MLNSampleBlockFileSplitBlockAtFrame (MLNSampleBlock *block,
   
     numberOfCachePointsInOther = numberOfCachePoints - numberOfCachePointsInSelf;
   
-    DDLogCVerbose(@"number cache points in self: %lu", numberOfCachePointsInSelf);
-    DDLogCVerbose(@"number cache points in other: %lu", numberOfCachePointsInOther);
     if (realSplitFrame == block->startFrame) {
-        DDLogCVerbose(@"Split frame == _startFrame, returning self");
         if (firstBlock) {
             *firstBlock = block->previousBlock;
         }
