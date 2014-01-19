@@ -611,7 +611,8 @@ completionHandler:(void (^)(NSError *))completionHandler
     if (action == @selector(delete:)
         || action == @selector(crop:)
         || action == @selector(copy:)
-        || action == @selector(cut:)) {
+        || action == @selector(cut:)
+        || action == @selector(reverseSelection:)) {
         return [_sampleView hasSelection];
     }
     
