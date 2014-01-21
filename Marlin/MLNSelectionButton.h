@@ -12,6 +12,8 @@
 
 @interface MLNSelectionButton : NSButton
 
+@property (readonly, strong) MLNSelectionAction *selectionAction;
+
 - (id)initWithAction:(MLNSelectionAction *)action;
 
 @end

@@ -54,7 +54,7 @@ typedef enum {
     NSLayoutConstraint *_toolbarXConstraint;
     NSLayoutConstraint *_leftXConstraint;
     ToolbarPosition _toolbarPosition;
-    //BOOL _toolbarIsOnRight;
+    NSMutableArray *_toolbarButtons;
     
     NSArrayController *_markersController;
     NSColor *_markerFillColour;
@@ -881,7 +881,26 @@ static void *markerContext = &markerContext;
             [self sampleLoadedHandler];
             return;
         }
-        
+     
+        if ([keyPath isEqualToString:@"playing"]) {
+            if (_hasSelection == NO) {
+                return;
+            }
+            
+            if ([_delegate respondsToSelector:@selector(sampleViewValidateSelectionToolbarItem:)] == NO) {
+                return;
+            }
+            
+            for (MLNSelectionButton *button in _toolbarButtons) {
+                MLNSelectionAction *selectionAction = [button selectionAction];
+                SEL action = [[selectionAction invocation] selector];
+                BOOL active;
+                
+                active = [_delegate sampleViewValidateSelectionToolbarItem:action];
+                [button setEnabled:active];
+            }
+            return;
+        }
         return;
     }
 }
@@ -914,6 +933,11 @@ static void *markerContext = &markerContext;
                      options:0
                      context:sampleContext];
     }
+    
+    [_sample addObserver:self
+              forKeyPath:@"playing"
+                 options:0
+                 context:sampleContext];
     
     [nc addObserver:self
            selector:@selector(sampleDidAddMarker:)
@@ -1823,6 +1847,7 @@ subtractSelectionRects (NSRect a, NSRect b)
     _selectionToolbar = nil;
     _toolbarConstraints = nil;
     _toolbarXConstraint = nil;
+    _toolbarButtons = nil;
 }
 
 static const CGFloat X_DISTANCE_FROM_OUTER_FRAME = 5.0;
@@ -1841,10 +1866,12 @@ static const CGFloat Y_DISTANCE_FROM_FRAME = 5.0;
             return;
         }
         
+        _toolbarButtons = [[NSMutableArray alloc] init];
         _selectionToolbar = [[MLNSelectionToolbar alloc] initWithFrame:NSZeroRect];
         for (MLNSelectionAction *action in toolbarItems) {
             MLNSelectionButton *button = [[MLNSelectionButton alloc] initWithAction:action];
             
+            [_toolbarButtons addObject:button];
             [_selectionToolbar addSubview:button];
         }
         

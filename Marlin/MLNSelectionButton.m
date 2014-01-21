@@ -9,9 +9,7 @@
 #import "MLNSelectionButton.h"
 #import "MLNSelectionAction.h"
 
-@implementation MLNSelectionButton {
-    MLNSelectionAction *_selectionAction;
-}
+@implementation MLNSelectionButton
 
 - (id)initWithAction:(MLNSelectionAction *)selectionAction
 {

@@ -17,4 +17,6 @@
 
 - (NSArray *)sampleViewWillShowSelectionToolbar;
 - (NSArray *)sampleViewWillShowSelectionMenu;
+- (BOOL)sampleViewValidateSelectionToolbarItem:(SEL)action;
+
 @end

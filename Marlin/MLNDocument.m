@@ -747,6 +747,20 @@ static _SelectionAction selectionActions[] = {
     return toolbarItems;
 }
 
+- (BOOL)sampleViewValidateSelectionToolbarItem:(SEL)action
+{
+    BOOL isPlaying = [_sample isPlaying];
+    
+    if (action == @selector(delete:)
+        || action == @selector(crop:)
+        || action == @selector(clearSelection:)
+        || action == @selector(reverseSelection:)) {
+        return !isPlaying;
+    }
+    
+    return NO;
+}
+
 - (NSArray *)sampleViewWillShowSelectionMenu
 {
     return nil;
