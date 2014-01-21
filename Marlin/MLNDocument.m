@@ -607,13 +607,16 @@ completionHandler:(void (^)(NSError *))completionHandler
 
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem
 {
+    BOOL isPlaying = [_sample isPlaying];
+    
     SEL action = [menuItem action];
     if (action == @selector(delete:)
         || action == @selector(crop:)
         || action == @selector(copy:)
         || action == @selector(cut:)
+        || action == @selector(clearSelection:)
         || action == @selector(reverseSelection:)) {
-        return [_sampleView hasSelection];
+        return (!isPlaying && [_sampleView hasSelection]);
     }
     
     if (action == @selector(paste:)) {
@@ -622,15 +625,11 @@ completionHandler:(void (^)(NSError *))completionHandler
         
         if (content) {
             if ([_sample canInsertChannels:[content channels] sampleRate:[content sampleRate]]) {
-                return YES;
+                return !isPlaying;
             }
         }
         
         return NO;
-    }
-    
-    if (action == @selector(clearSelection:)) {
-        return [_sampleView hasSelection];
     }
     
     if (action == @selector(selectAll:)) {
