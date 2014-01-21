@@ -21,6 +21,11 @@
 #import "pa_ringbuffer.h"
 #import "utils.h"
 
+@interface MLNSample ()
+
+@property (readwrite) BOOL playing;
+
+@end
 
 typedef struct PlaybackBlock {
     MLNSampleChannelCIterator *cIter;
@@ -387,6 +392,8 @@ MyAQOutputCallback (void *userData,
     _playbackTimer = [NSTimer scheduledTimerWithTimeInterval:0.05 target:self
                                                     selector:@selector(readFromRingBuffer:)
                                                     userInfo:self repeats:YES];
+    
+    [self setPlaying:YES];
 }
 
 - (void)readFromRingBuffer:(NSTimer *)timer
@@ -445,6 +452,7 @@ MyAQOutputCallback (void *userData,
 
 - (void)stop
 {
+    [self setPlaying:NO];
     AudioQueueStop(_playbackQueue, TRUE);
     [self disposePlayer];
 }

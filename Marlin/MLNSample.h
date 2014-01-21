@@ -36,6 +36,8 @@ enum {
 @property (readwrite) NSMutableArray *markers;
 @property (readonly) MLNArrayController *markerController;
 
+@property (readonly, getter = isPlaying) BOOL playing;
+
 - (id)initWithChannels:(NSArray *)channelData;
 
 - (void)startLoadFromURL:(NSURL *)url;
