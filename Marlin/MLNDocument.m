@@ -8,6 +8,7 @@
 
 #import <QuartzCore/QuartzCore.h>
 
+#import "NSColor+Extra.h"
 #import "MLNDocument.h"
 #import "MLNApplicationDelegate.h"
 #import "MLNOverviewBar.h"
@@ -235,8 +236,7 @@ static void *sampleViewContext = &sampleViewContext;
     [_scrollView setScrollerKnobStyle:NSScrollerKnobStyleLight];
     //[_scrollView setVerticalScrollElasticity:NSScrollElasticityAllowed];
     
-    // FIXME: Only on 10.8
-    [_scrollView setBackgroundColor:[NSColor underPageBackgroundColor]];
+    [_scrollView setBackgroundColor:[NSColor marlinBackgroundColor]];
     
     [_scrollView setDocumentView:_sampleView];
     

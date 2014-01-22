@@ -7,6 +7,7 @@
 //
 
 #import "MLNInfoPane.h"
+#import "NSColor+Extra.h"
 
 @implementation MLNInfoPane
 
@@ -21,7 +22,7 @@
 
 - (void)drawRect:(NSRect)dirtyRect
 {
-    [[NSColor underPageBackgroundColor] setFill];
+    [[NSColor marlinBackgroundColor] setFill];
     NSRectFill(dirtyRect);
 }
 

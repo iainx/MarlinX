@@ -9,6 +9,7 @@
 #import "MLNOverviewBar.h"
 #import "MLNSample.h"
 #import "MLNSample+Drawing.h"
+#import "NSColor+Extra.h"
 #import "Constants.h"
 
 typedef enum {
@@ -99,7 +100,7 @@ static void *sampleContext = &sampleContext;
         _darkBG = [NSColor colorWithCalibratedRed:0.214 green:0.218 blue:0.226 alpha:1.0];
     }
     
-    [[NSColor underPageBackgroundColor] setFill];
+    [[NSColor marlinBackgroundColor] setFill];
     NSRectFill(dirtyRect);
     
     NSRect borderRect = NSZeroRect;
