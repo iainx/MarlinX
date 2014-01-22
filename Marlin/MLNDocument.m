@@ -520,7 +520,12 @@ completionHandler:(void (^)(NSError *))completionHandler
 
 - (IBAction)zoomToFit:(id)sender
 {
-    [_sampleView zoomToFit];
+    if ([_sampleView hasSelection]) {
+        [_sampleView zoomToSelection];
+    } else {
+        [_sampleView zoomToFit];
+    }
+    
     [self displayIndicatorForOperationName:@"Zoom To Fit"];
 }
 

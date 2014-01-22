@@ -1580,6 +1580,17 @@ static void *markerContext = &markerContext;
     [self updateScrollPositionForNewZoom:newFramesPerPixel offset:-1];
 }
 
+- (void)zoomToSelection
+{
+    NSScrollView *scrollView = [self enclosingScrollView];
+    NSClipView *clipView = [scrollView contentView];
+    
+    NSRect scaledWidth = [self convertRectToBacking:[clipView bounds]];
+    
+    NSUInteger newFramesPerPixel = (_selectionEndFrame - _selectionStartFrame) / scaledWidth.size.width;
+    [self updateScrollPositionForNewZoom:newFramesPerPixel offset:_selectionStartFrame];
+}
+
 - (void)zoomToNormal
 {
     [self updateScrollPositionForNewZoom:DEFAULT_FRAMES_PER_PIXEL offset:-1];

@@ -28,6 +28,7 @@
 - (void)zoomIn;
 - (void)zoomOut;
 - (void)zoomToFit;
+- (void)zoomToSelection;
 - (void)zoomToNormal;
 
 - (void)clearSelection;
