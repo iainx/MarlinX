@@ -181,4 +181,9 @@ BOOL MLNSampleChannelIteratorNextCachePointData(MLNSampleChannelCIterator *iter,
     
     return framesAdded;
 }
+
+NSUInteger MLNSampleChannelIteratorGetPosition(MLNSampleChannelCIterator *cIter)
+{
+    return cIter->framePosition + cIter->currentBlock->startFrame;
+}
 @end

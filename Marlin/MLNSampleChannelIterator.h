@@ -32,4 +32,5 @@ BOOL MLNSampleChannelIteratorNextCachePointData(MLNSampleChannelCIterator *iter,
                                                 MLNSampleCachePoint *cachePoint);
 BOOL MLNSampleChannelIteratorNextFrameData(MLNSampleChannelCIterator *iter,
                                            float *value);
+NSUInteger MLNSampleChannelIteratorGetPosition(MLNSampleChannelCIterator *cIter);
 @end

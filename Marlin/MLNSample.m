@@ -55,7 +55,9 @@ typedef struct PlaybackData {
     PlaybackBlock *blocks;
     
     NSUInteger startPosition;
+    NSUInteger endPosition;
     NSUInteger position;
+    UInt32 totalFramesWritten;
 } PlaybackData;
 
 @implementation MLNSample {
@@ -281,7 +283,46 @@ handleEos (PlaybackData *data,
         // Can probably handle an error here.
     }
     
-    AudioQueueStop(queue, TRUE);
+    AudioQueueStop(queue, false);
+}
+
+void freePlayer(AudioQueueRef queue,
+                PlaybackData *data)
+{
+    AudioQueueDispose(queue, TRUE);
+    
+    // Free the playback data
+    free (data->RTToMainBuffer);
+    
+    for (int i = 0; i < data->numberOfChannels; i++) {
+        MLNSampleChannelIteratorFree(data->blocks[i].cIter);
+    }
+    free (data->blocks);
+    free (data);
+}
+
+static void
+AQPropertyListenerCallback (void *userData,
+                            AudioQueueRef queue,
+                            AudioQueuePropertyID propertyID)
+{
+    if (propertyID !=  kAudioQueueProperty_IsRunning) {
+        return;
+    }
+    
+    UInt32 dataSize;
+    UInt32 isRunning = 0;
+    
+    AudioQueueGetPropertySize(queue, kAudioQueueProperty_IsRunning, &dataSize);
+    AudioQueueGetProperty(queue, kAudioQueueProperty_IsRunning, &isRunning, &dataSize);
+    
+    if (isRunning == 0) {
+        // Need to dispatch async so that the AQ property will have finished
+        // as AQ doesn't appear to like it if you call Dispose from inside the property listener.
+        dispatch_async(dispatch_get_main_queue(), ^{
+            freePlayer(queue, userData);
+        });
+    }
 }
 
 static void
@@ -293,6 +334,13 @@ MyAQOutputCallback (void *userData,
     size_t bufferSizePerChannel = 0x10000 / data->numberOfChannels;
     UInt32 bufferFramesPerChannel = (UInt32)bufferSizePerChannel / sizeof(float);
     UInt32 framesWritten = 0;
+    
+    if (data->startPosition + (data->totalFramesWritten / data->numberOfChannels) >= data->endPosition) {
+        fprintf(stderr, "Position: %lu - %lu final position: %lu\n", data->position, data->endPosition, (NSUInteger)(data->totalFramesWritten / 2));
+        handleEos(data, queue);
+        
+        return;
+    }
     
     for (ushort channel = 0; channel < data->numberOfChannels; channel++) {
         BOOL moreData = YES;
@@ -315,6 +363,12 @@ MyAQOutputCallback (void *userData,
             bufferData[(positionInBuffer * data->numberOfChannels) + channel] = value;
             positionInBuffer++;
             framesWritten++;
+            data->totalFramesWritten++;
+            
+            if (MLNSampleChannelIteratorGetPosition(data->blocks[channel].cIter) >= data->endPosition) {
+                fprintf(stderr, "Reached end\n");
+                break;
+            }
         }
     }
     
@@ -344,11 +398,12 @@ MyAQOutputCallback (void *userData,
     AudioQueueEnqueueBuffer(queue, buffer, 0, NULL);
 }
 
-- (void)playFromFrame:(NSUInteger)frame
+- (void)playFromFrame:(NSUInteger)startFrame
+              toFrame:(NSUInteger)endFrame
 {
     int i;
     
-    _playbackPosition = frame;
+    _playbackPosition = startFrame;
     
     AudioStreamBasicDescription newAsbd = _format;
     
@@ -365,6 +420,8 @@ MyAQOutputCallback (void *userData,
     _playbackData->numberOfChannels = _format.mChannelsPerFrame;
     _playbackData->position = _playbackPosition;
     _playbackData->startPosition = _playbackPosition;
+    _playbackData->endPosition = endFrame;
+    _playbackData->totalFramesWritten = 0;
     
     // FIXME: How much space do we need for the messages?
     _playbackData->RTToMainBuffer = malloc(sizeof(MessageData) * 32);
@@ -376,11 +433,13 @@ MyAQOutputCallback (void *userData,
     for (i = 0; i < _format.mChannelsPerFrame; i++) {
         MLNSampleChannel *channel = [self channelData][i];
         
-        _playbackData->blocks[i].cIter = MLNSampleChannelIteratorNew(channel, frame, NO);
+        _playbackData->blocks[i].cIter = MLNSampleChannelIteratorNew(channel, startFrame, NO);
     }
     
     AudioQueueNewOutput(&newAsbd, MyAQOutputCallback, _playbackData, NULL, NULL, 0, &_playbackQueue);
 
+    AudioQueueAddPropertyListener(_playbackQueue,  kAudioQueueProperty_IsRunning,
+                                  AQPropertyListenerCallback, _playbackData);
     AudioQueueBufferRef buffers[3];
     
     for (i = 0; i < 3; i++) {
@@ -396,6 +455,11 @@ MyAQOutputCallback (void *userData,
                                                     userInfo:self repeats:YES];
     
     [self setPlaying:YES];
+}
+
+- (void)playFromFrame:(NSUInteger)startFrame
+{
+    [self playFromFrame:startFrame toFrame:[self numberOfFrames] - 1];
 }
 
 - (void)readFromRingBuffer:(NSTimer *)timer
@@ -414,8 +478,10 @@ MyAQOutputCallback (void *userData,
         // Parse message
         switch (dataPtr1->type) {
             case MessageTypeEOS:
-                [_delegate samplePlaybackDidEnd:self];
                 [self disposePlayer];
+                
+                [self setPlaying:NO];
+                [_delegate samplePlaybackDidEnd:self];
                 return;
                 
             case MessageTypePosition:
@@ -438,25 +504,20 @@ MyAQOutputCallback (void *userData,
     [_playbackTimer invalidate];
     _playbackTimer = nil;
     
-    AudioQueueDispose(_playbackQueue, TRUE);
-    _playbackQueue = NULL;
+    // Queue will be disposed when the queue notifies us that it has stopped running
     
-    // Free the playback data
-    free (_playbackData->RTToMainBuffer);
-    
-    for (int i = 0; i < _format.mChannelsPerFrame; i++) {
-        MLNSampleChannelIteratorFree(_playbackData->blocks[i].cIter);
-    }
-    free (_playbackData->blocks);
-    free (_playbackData);
+    // _playbackData will be freed when the queue ends, we don't lose the reference
+    // as it was passed in as the userData
     _playbackData = NULL;
 }
 
 - (void)stop
 {
-    [self setPlaying:NO];
     AudioQueueStop(_playbackQueue, TRUE);
     [self disposePlayer];
+    
+    [self setPlaying:NO];
+    [_delegate samplePlaybackDidEnd:self];
 }
 
 - (BOOL)containsRange:(NSRange)range

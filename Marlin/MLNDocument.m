@@ -826,7 +826,13 @@ requestVisibleRange:(NSRange)newVisibleRange
 - (void)transportControlsViewDidRequestPlay
 {
     [_sampleView setShowPlaybackCursor:YES];
-    [_sample playFromFrame:[_sampleView cursorFramePosition]];
+    
+    if ([_sampleView hasSelection]) {
+        NSRange selection = [_sampleView selection];
+        [_sample playFromFrame:selection.location toFrame:NSMaxRange(selection) - 1];
+    } else {
+        [_sample playFromFrame:[_sampleView cursorFramePosition]];
+    }
 }
 
 - (void)transportControlsViewDidRequestPause

@@ -47,6 +47,7 @@ enum {
 - (void)startExportTo:(NSURL *)url asFormat:(NSDictionary *)format;
 
 - (void)playFromFrame:(NSUInteger)frame;
+- (void)playFromFrame:(NSUInteger)startFrame toFrame:(NSUInteger)endFrame;
 - (void)stop;
 
 - (BOOL)containsRange:(NSRange)range;
