@@ -826,7 +826,7 @@ requestVisibleRange:(NSRange)newVisibleRange
 - (void)transportControlsViewDidRequestPlay
 {
     [_sampleView setShowPlaybackCursor:YES];
-    [_sample play];
+    [_sample playFromFrame:[_sampleView cursorFramePosition]];
 }
 
 - (void)transportControlsViewDidRequestPause

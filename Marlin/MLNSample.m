@@ -53,6 +53,8 @@ typedef struct PlaybackData {
     
     ushort numberOfChannels;
     PlaybackBlock *blocks;
+    
+    NSUInteger startPosition;
     NSUInteger position;
 } PlaybackData;
 
@@ -260,7 +262,6 @@ typedef struct PlaybackData {
 }
 
 // This should be a category but you can't have any ivars in a category
-// FIXME: Really?
 #pragma mark Playback
 
 // Put an EOS message on the message queue and stop the queue.
@@ -323,7 +324,7 @@ MyAQOutputCallback (void *userData,
     Boolean discontinuity;
     AudioQueueGetCurrentTime(queue, NULL, &timestamp, &discontinuity);
     
-    data->position = (NSUInteger)timestamp.mSampleTime;
+    data->position = data->startPosition + (NSUInteger)timestamp.mSampleTime;
     
     MessageData *dataPtr1, *dataPtr2;
     ring_buffer_size_t sizePtr1, sizePtr2;
@@ -343,11 +344,11 @@ MyAQOutputCallback (void *userData,
     AudioQueueEnqueueBuffer(queue, buffer, 0, NULL);
 }
 
-- (void)play
+- (void)playFromFrame:(NSUInteger)frame
 {
     int i;
     
-    _playbackPosition = 0;
+    _playbackPosition = frame;
     
     AudioStreamBasicDescription newAsbd = _format;
     
@@ -363,6 +364,7 @@ MyAQOutputCallback (void *userData,
     _playbackData->sample = self;
     _playbackData->numberOfChannels = _format.mChannelsPerFrame;
     _playbackData->position = _playbackPosition;
+    _playbackData->startPosition = _playbackPosition;
     
     // FIXME: How much space do we need for the messages?
     _playbackData->RTToMainBuffer = malloc(sizeof(MessageData) * 32);
@@ -374,7 +376,7 @@ MyAQOutputCallback (void *userData,
     for (i = 0; i < _format.mChannelsPerFrame; i++) {
         MLNSampleChannel *channel = [self channelData][i];
         
-        _playbackData->blocks[i].cIter = MLNSampleChannelIteratorNew(channel, 0, NO);
+        _playbackData->blocks[i].cIter = MLNSampleChannelIteratorNew(channel, frame, NO);
     }
     
     AudioQueueNewOutput(&newAsbd, MyAQOutputCallback, _playbackData, NULL, NULL, 0, &_playbackQueue);

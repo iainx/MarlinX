@@ -46,7 +46,7 @@ enum {
 - (void)startWriteToURL:(NSURL *)url completionHandler:(void (^)(NSError *))completionHandler;
 - (void)startExportTo:(NSURL *)url asFormat:(NSDictionary *)format;
 
-- (void)play;
+- (void)playFromFrame:(NSUInteger)frame;
 - (void)stop;
 
 - (BOOL)containsRange:(NSRange)range;
