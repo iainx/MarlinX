@@ -699,12 +699,11 @@ completionHandler:(void (^)(NSError *))completionHandler
 
 - (void)samplePlaybackDidEnd:(MLNSample *)sample
 {
-    [_sampleView setShowPlaybackCursor:NO];
 }
 
 - (void)sample:(MLNSample *)sample playbackPositionChanged:(NSUInteger)frame
 {
-    [_sampleView setPlaybackCursorFramePosition:frame];
+    [_sampleView setCursorFramePosition:frame];
 }
 
 #pragma mark - Sample View delegate
@@ -835,13 +834,15 @@ requestVisibleRange:(NSRange)newVisibleRange
 
 - (void)transportControlsViewDidRequestPlay
 {
-    [_sampleView setShowPlaybackCursor:YES];
-    
-    if ([_sampleView hasSelection]) {
-        NSRange selection = [_sampleView selection];
-        [_sample playFromFrame:selection.location toFrame:NSMaxRange(selection) - 1];
+    if ([_sample isPlaying]) {
+        [_sample stop];
     } else {
-        [_sample playFromFrame:[_sampleView cursorFramePosition]];
+        if ([_sampleView hasSelection]) {
+            NSRange selection = [_sampleView selection];
+            [_sample playFromFrame:selection.location toFrame:NSMaxRange(selection) - 1];
+        } else {
+            [_sample playFromFrame:[_sampleView cursorFramePosition]];
+        }
     }
 }
 
@@ -852,7 +853,6 @@ requestVisibleRange:(NSRange)newVisibleRange
 
 - (void)transportControlsViewDidRequestStop
 {
-    [_sampleView setShowPlaybackCursor:NO];
     [_sample stop];
 }
 

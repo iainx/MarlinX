@@ -22,9 +22,6 @@
 @property (readwrite, strong) NSArray *selectionActions;
 @property (readwrite) NSUInteger cursorFramePosition;
 
-@property (readwrite) BOOL showPlaybackCursor;
-@property (readwrite) NSUInteger playbackCursorFramePosition;
-
 - (void)zoomIn;
 - (void)zoomOut;
 - (void)zoomToFit;

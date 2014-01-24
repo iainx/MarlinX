@@ -65,8 +65,6 @@ typedef enum {
 
 @synthesize framesPerPixel = _framesPerPixel;
 @synthesize cursorFramePosition = _cursorFramePosition;
-@synthesize showPlaybackCursor = _showPlaybackCursor;
-@synthesize playbackCursorFramePosition = _playbackCursorFramePosition;
 
 #define CURSOR_FADE_TIME 0.5
 #define CURSOR_PAUSE_TIME 0.3
@@ -418,16 +416,6 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
         if (NSIntersectsRect(cursorRect, dirtyRect)) {
             NSColor *cursorColour = [NSColor colorWithCalibratedWhite:1.0 alpha:1.0];
             [cursorColour set];
-            
-            NSRectFillUsingOperation(cursorRect, NSCompositeSourceOver);
-        }
-    }
-    
-    if (_showPlaybackCursor) {
-        NSPoint cursorPoint = [self convertFrameToPoint:_playbackCursorFramePosition];
-        NSRect cursorRect = NSMakeRect(cursorPoint.x + 0.5, 0, 1, [self bounds].size.height);
-        if (NSIntersectsRect(cursorRect, dirtyRect)) {
-            [[NSColor blueColor] set];
             
             NSRectFillUsingOperation(cursorRect, NSCompositeSourceOver);
         }
@@ -1051,52 +1039,7 @@ static void *markerContext = &markerContext;
     }
     
     [self moveCursorTo:cursorFramePosition];
-}
-
-- (BOOL)showPlaybackCursor
-{
-    return _showPlaybackCursor;
-}
-
-- (void)setShowPlaybackCursor:(BOOL)showPlaybackCursor
-{
-    _showPlaybackCursor = showPlaybackCursor;
-    if (_showPlaybackCursor == NO) {
-        [self centreOnCursor];
-    }
-
-    NSPoint cursorPoint = [self convertFrameToPoint:_playbackCursorFramePosition];
-    NSRect cursorRect = NSMakeRect(cursorPoint.x + 0.5, 0, 1, [self bounds].size.height);
-    [self setNeedsDisplayInRect:cursorRect];
-}
-
-- (NSUInteger)playbackCursorFramePosition
-{
-    return _playbackCursorFramePosition;
-}
-
-- (void)setPlaybackCursorFramePosition:(NSUInteger)playbackCursorFramePosition
-{
-    if (_playbackCursorFramePosition == playbackCursorFramePosition) {
-        return;
-    }
-
-    CGFloat height = [self bounds].size.height;
-    
-    NSPoint oldPoint = [self convertFrameToPoint:_playbackCursorFramePosition];
-    NSRect oldRect = NSMakeRect(oldPoint.x + 0.5, 0, 1, height);
-
-    _playbackCursorFramePosition = playbackCursorFramePosition;
-
-    NSPoint newPoint = [self convertFrameToPoint:_playbackCursorFramePosition];
-    NSRect newRect = NSMakeRect(newPoint.x + 0.5, 0, 1, height);
-    
-    // Only redraw if the actual scaled position has changed
-    if (oldPoint.x != newPoint.x) {
-        [self setNeedsDisplayInRect:oldRect];
-        [self setNeedsDisplayInRect:newRect];
-        [self centreOnFrame:_playbackCursorFramePosition];
-    }
+    [self centreOnCursor];
 }
 
 #pragma mark - Notifications
