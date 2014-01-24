@@ -795,6 +795,16 @@ requestVisibleRange:(NSRange)newVisibleRange
     }
 }
 
+- (void)windowDidRequestReturnToStart:(NSWindow *)window
+{
+    [self transportControlsViewDidRequestMoveToStart];
+}
+
+- (void)windowDidRequestTogglePlay:(NSWindow *)window
+{
+    [self transportControlsViewDidRequestPlay];
+}
+
 #pragma mark - Transport View delegate
 - (void)transportControlsViewDidRequestBackFrame
 {

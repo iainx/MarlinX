@@ -1516,6 +1516,49 @@ static void *markerContext = &markerContext;
     [self magnify:[event magnification] atFrame:zoomFrame offset:dx];
 }
 
+- (BOOL)canBecomeKeyView
+{
+    return YES;
+}
+
+- (BOOL)acceptsFirstResponder
+{
+    return YES;
+}
+
+- (void)keyDown:(NSEvent *)theEvent
+{
+    if ([theEvent modifierFlags] & NSNumericPadKeyMask) {
+        NSString *arrow = [theEvent charactersIgnoringModifiers];
+        unichar keycode = 0;
+        
+        if ([arrow length] == 0) {
+            return;
+        } else {
+            if ([arrow length] == 1) {
+                keycode = [arrow characterAtIndex:0];
+                if (keycode == NSLeftArrowFunctionKey) {
+                    [self setCursorFramePosition:_cursorFramePosition - _framesPerPixel];
+                    return;
+                }
+                
+                if (keycode == NSRightArrowFunctionKey) {
+                    [self setCursorFramePosition:_cursorFramePosition + _framesPerPixel];
+                    return;
+                }
+                
+                [super keyDown:theEvent];
+            }
+        }
+    }
+
+    [super keyDown:theEvent];
+}
+
+- (void)keyUp:(NSEvent *)theEvent
+{
+    
+}
 #pragma mark - Zoom handling
 
 - (void)updateScrollPositionForNewZoom:(NSUInteger)newFramesPerPixel

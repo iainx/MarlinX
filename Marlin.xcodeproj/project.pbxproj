@@ -18,6 +18,7 @@
 		AE05C60316C246DF00A7B9D9 /* MLNSampleChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = AE05C60216C246DF00A7B9D9 /* MLNSampleChannel.m */; };
 		AE071B89172B542A0089278E /* MLNPasteboardSampleData.m in Sources */ = {isa = PBXBuildFile; fileRef = AE071B88172B542A0089278E /* MLNPasteboardSampleData.m */; };
 		AE1A2F671833CDC10012E510 /* MLNMarker.m in Sources */ = {isa = PBXBuildFile; fileRef = AE1A2F661833CDC10012E510 /* MLNMarker.m */; };
+		AE1C448E18930EA50061DFD6 /* MLNWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = AE1C448D18930EA50061DFD6 /* MLNWindow.m */; };
 		AE24E45B17E1D14F00B67469 /* MLNProgressViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AE24E45917E1D14F00B67469 /* MLNProgressViewController.m */; };
 		AE24E45C17E1D14F00B67469 /* MLNProgressViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = AE24E45A17E1D14F00B67469 /* MLNProgressViewController.xib */; };
 		AE24E45F17E221C400B67469 /* auto-version.pl in Resources */ = {isa = PBXBuildFile; fileRef = AE24E45E17E221C400B67469 /* auto-version.pl */; };
@@ -117,6 +118,9 @@
 		AE071B88172B542A0089278E /* MLNPasteboardSampleData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNPasteboardSampleData.m; sourceTree = "<group>"; };
 		AE1A2F651833CDC10012E510 /* MLNMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNMarker.h; sourceTree = "<group>"; };
 		AE1A2F661833CDC10012E510 /* MLNMarker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNMarker.m; sourceTree = "<group>"; };
+		AE1C448C18930EA50061DFD6 /* MLNWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNWindow.h; sourceTree = "<group>"; };
+		AE1C448D18930EA50061DFD6 /* MLNWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNWindow.m; sourceTree = "<group>"; };
+		AE1C448F18930FCA0061DFD6 /* MLNWindowDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNWindowDelegate.h; sourceTree = "<group>"; };
 		AE24E45817E1D14F00B67469 /* MLNProgressViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNProgressViewController.h; sourceTree = "<group>"; };
 		AE24E45917E1D14F00B67469 /* MLNProgressViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNProgressViewController.m; sourceTree = "<group>"; };
 		AE24E45A17E1D14F00B67469 /* MLNProgressViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MLNProgressViewController.xib; sourceTree = "<group>"; };
@@ -423,6 +427,9 @@
 			children = (
 				AEDA842916C88B7F001B2DD1 /* MLNApplicationDelegate.h */,
 				AEDA842A16C88B7F001B2DD1 /* MLNApplicationDelegate.m */,
+				AE1C448C18930EA50061DFD6 /* MLNWindow.h */,
+				AE1C448D18930EA50061DFD6 /* MLNWindow.m */,
+				AE1C448F18930FCA0061DFD6 /* MLNWindowDelegate.h */,
 				AE071B87172B542A0089278E /* MLNPasteboardSampleData.h */,
 				AE071B88172B542A0089278E /* MLNPasteboardSampleData.m */,
 				AE760C09183910D700108327 /* MLNArrayController.h */,
@@ -698,6 +705,7 @@
 				AE6FB1DB16B9C57900139735 /* MLNSampleView.m in Sources */,
 				AEA99051187263BB0022E55C /* MLNTransportControlsView.m in Sources */,
 				AE6A0F3C16BD1F1900362CC4 /* MLNSampleBlock.m in Sources */,
+				AE1C448E18930EA50061DFD6 /* MLNWindow.m in Sources */,
 				AE05C60316C246DF00A7B9D9 /* MLNSampleChannel.m in Sources */,
 				AEDA842B16C88B7F001B2DD1 /* MLNApplicationDelegate.m in Sources */,
 				AEDA843316C8D13E001B2DD1 /* MLNMMapRegion.m in Sources */,

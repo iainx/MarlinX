@@ -12,12 +12,13 @@
 #import "MLNSampleViewDelegate.h"
 #import "MLNOverviewBarDelegate.h"
 #import "MLNTransportControlsViewDelegate.h"
+#import "MLNWindowDelegate.h"
 
 @class MLNSampleView;
 @class MLNOverviewBar;
 @class MLNTransportControlsView;
 
-@interface MLNDocument : NSDocument <MLNExportPanelControllerDelegate, MLNSampleViewDelegate, MLNOverviewBarDelegate, MLNSampleDelegate, MLNTransportControlsViewDelegate, NSWindowDelegate>
+@interface MLNDocument : NSDocument <MLNExportPanelControllerDelegate, MLNSampleViewDelegate, MLNOverviewBarDelegate, MLNSampleDelegate, MLNTransportControlsViewDelegate, MLNWindowDelegate>
 
 @property (readwrite, weak) IBOutlet NSToolbar *toolbar;
 @property (readwrite, weak) IBOutlet MLNTransportControlsView *transportControlsView;
