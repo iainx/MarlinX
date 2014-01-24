@@ -2015,22 +2015,27 @@ static const CGFloat Y_DISTANCE_FROM_FRAME = 5.0;
 #pragma mark - Cursor
 - (void)invalidateCursor:(NSTimer *)timer
 {
+    /*
     NSPoint cursorPoint = [self convertFrameToPoint:_cursorFramePosition];
     
     NSRect cursorRect = NSMakeRect(cursorPoint.x + 0.5, 0.0, 1.0, [self bounds].size.height);
     
     _drawCursor = !_drawCursor;
     [self setNeedsDisplayInRect:cursorRect];
+     */
 }
 
 - (void)stopTimers
 {
+    /*
     [_cursorTimer invalidate];
     _cursorTimer = nil;
+     */
 }
 
 - (void)resetTimers
 {
+    /*
     if (_cursorTimer) {
         return;
     }
@@ -2038,6 +2043,7 @@ static const CGFloat Y_DISTANCE_FROM_FRAME = 5.0;
     _drawCursor = NO;
     [self invalidateCursor:nil];
     _cursorTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(invalidateCursor:) userInfo:nil repeats:YES];
+     */
 }
 
 - (void)moveCursorTo:(NSUInteger)cursorFrame
