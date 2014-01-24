@@ -44,9 +44,15 @@
 {
     _startButton = [self createButtonWithImageNamed:@"start16x16" action:@selector(requestMoveToStart:)];
     _rewindButton = [self createButtonWithImageNamed:@"rewind16x16" action:@selector(requestPreviousFrame:)];
+    [_rewindButton setContinuous:YES];
+    [_rewindButton setPeriodicDelay:0.25 interval:0.01];
+    
     _playButton = [self createButtonWithImageNamed:@"play16x16" action:@selector(requestPlay:)];
     _stopButton = [self createButtonWithImageNamed:@"stop16x16" action:@selector(requestStop:)];
     _ffwdButton = [self createButtonWithImageNamed:@"ffwd16x16" action:@selector(requestNextFrame:)];
+    [_ffwdButton setContinuous:YES];
+    [_ffwdButton setPeriodicDelay:0.25 interval:0.01];
+    
     _endButton = [self createButtonWithImageNamed:@"end16x16" action:@selector(requestMoveToEnd:)];
     
     NSArray *constraints;
