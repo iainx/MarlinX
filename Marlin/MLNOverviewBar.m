@@ -65,17 +65,20 @@ static void *sampleContext = &sampleContext;
 
 #pragma mark - Layout
 
+#define CHANNEL_SIZE 20
+#define CHANNEL_PADDING 9
+
 - (NSSize)intrinsicContentSize
 {
     CGFloat height;
     
     if ([_sample numberOfChannels] < 3) {
-        height = 36;
+        height = CHANNEL_SIZE * 3;
     } else {
-        height = 12 * [_sample numberOfChannels];
+        height = CHANNEL_SIZE * [_sample numberOfChannels];
     }
     
-    return NSMakeSize(NSViewNoInstrinsicMetric, height + 9);
+    return NSMakeSize(NSViewNoInstrinsicMetric, height + CHANNEL_PADDING);
 }
 
 - (void)viewWillDraw
@@ -93,7 +96,7 @@ static void *sampleContext = &sampleContext;
     CGContextRef context = [[NSGraphicsContext currentContext] graphicsPort];
     NSRect bounds = [self bounds];
     NSRect channelRect = bounds;
-    CGFloat channelHeight = (bounds.size.height - 9) / [_sample numberOfChannels];
+    CGFloat channelHeight = (bounds.size.height - CHANNEL_PADDING) / [_sample numberOfChannels];
     
     channelRect.size.height = (channelHeight - 1);
     if (_darkBG == nil) {
