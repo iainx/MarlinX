@@ -293,6 +293,7 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
             CGColorSpaceRelease(colorspace);
         }
 
+        /*
         CGPoint startPoint = CGPointMake(channelBackgroundRect.origin.x, NSMaxY(channelBackgroundRect) - 10);
         CGPoint endPoint = CGPointMake(channelBackgroundRect.origin.x, NSMaxY(channelBackgroundRect) + 7);
         CGContextDrawLinearGradient(context, _shadowGradient, startPoint, endPoint, 0);
@@ -300,8 +301,11 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
         startPoint = CGPointMake(channelBackgroundRect.origin.x, channelBackgroundRect.origin.y + 10);
         endPoint = CGPointMake(channelBackgroundRect.origin.x, channelBackgroundRect.origin.y - 7);
         CGContextDrawLinearGradient(context, _shadowGradient, startPoint, endPoint, 0);
+*/
+        channelBackgroundRect = NSInsetRect(channelBackgroundRect, 1.0, 1.0);
 
-        NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:channelBackgroundRect xRadius:10.0 yRadius:10.0];
+        NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:channelBackgroundRect xRadius:15.0 yRadius:15.0];
+        
         [darkBG setFill];
         [path fill];
         
@@ -410,11 +414,12 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
         [self drawSelectionFrameInRect:selectionRect];
     }
 
-    if (_drawCursor && _hasSelection == NO) {
+    if (_drawCursor /*&& _hasSelection == NO*/) {
         NSPoint cursorPoint = [self convertFrameToPoint:_cursorFramePosition];
         NSRect cursorRect = NSMakeRect(cursorPoint.x + 0.5, 0, 1, [self bounds].size.height);
         if (NSIntersectsRect(cursorRect, dirtyRect)) {
-            NSColor *cursorColour = [NSColor colorWithCalibratedWhite:1.0 alpha:1.0];
+            //NSColor *cursorColour = [NSColor colorWithCalibratedWhite:1.0 alpha:1.0];
+            NSColor *cursorColour = [NSColor colorWithCalibratedRed:44.0/255.0 green:81.0/255.0 blue:167.0/255.0 alpha:1.0];
             [cursorColour set];
             
             NSRectFillUsingOperation(cursorRect, NSCompositeSourceOver);
@@ -755,12 +760,12 @@ getIncrementForFramesPerPixel (NSUInteger framesPerPixel)
     for (NSUInteger i = firstMarkFrame; i <= maxX; i += increment) {
         CGPoint markPoint = [self convertFrameToPoint:i];
         if (onlyDrawTop == NO) {
-            CGContextMoveToPoint(context, markPoint.x + 0.5, dirtyRect.origin.y);
-            CGContextAddLineToPoint(context, markPoint.x + 0.5, dirtyRect.origin.y + 5);
+            CGContextMoveToPoint(context, markPoint.x + 0.5, dirtyRect.origin.y - 1);
+            CGContextAddLineToPoint(context, markPoint.x + 0.5, dirtyRect.origin.y + 6);
         }
         
-        CGContextMoveToPoint(context, markPoint.x + 0.5, maxY);
-        CGContextAddLineToPoint(context, markPoint.x + 0.5, maxY - 5);
+        CGContextMoveToPoint(context, markPoint.x + 0.5, maxY + 1);
+        CGContextAddLineToPoint(context, markPoint.x + 0.5, maxY - 6);
 
         NSUInteger minorGap = increment / 10;
         NSUInteger j;
@@ -768,13 +773,13 @@ getIncrementForFramesPerPixel (NSUInteger framesPerPixel)
         
         for (j = i + minorGap, iter = 0; j < i + increment; j += minorGap, iter++) {
             CGPoint minorPoint = [self convertFrameToPoint:j];
-            CGFloat length = (iter == 4) ? 3.5 : 2;
+            CGFloat length = (iter == 4) ? 4.5 : 3;
             
             if (onlyDrawTop == NO) {
-                CGContextMoveToPoint(context, minorPoint.x + 0.5, dirtyRect.origin.y);
+                CGContextMoveToPoint(context, minorPoint.x + 0.5, dirtyRect.origin.y - 1);
                 CGContextAddLineToPoint(context, minorPoint.x + 0.5, dirtyRect.origin.y + length);
             }
-            CGContextMoveToPoint(context, minorPoint.x + 0.5, maxY);
+            CGContextMoveToPoint(context, minorPoint.x + 0.5, maxY + 1);
             CGContextAddLineToPoint(context, minorPoint.x + 0.5, maxY - length);
         }
 

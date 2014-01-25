@@ -103,8 +103,9 @@ static void *sampleContext = &sampleContext;
         _darkBG = [NSColor colorWithCalibratedRed:0.214 green:0.218 blue:0.226 alpha:1.0];
     }
     
-    [[NSColor marlinBackgroundColor] setFill];
-    NSRectFill(dirtyRect);
+    //[[NSColor marlinBackgroundColor] setFill];
+    [[NSColor clearColor] setFill];
+    NSRectFillUsingOperation(dirtyRect, NSCompositeSourceOver);// (dirtyRect);
     
     if ([_sample numberOfFrames] == 0) {
         return;
@@ -120,7 +121,7 @@ static void *sampleContext = &sampleContext;
         
         // Draw the background
         NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:channelRect
-                                                             xRadius:4 yRadius:4];
+                                                             xRadius:6 yRadius:6];
         [_darkBG set];
         [path fill];
     }

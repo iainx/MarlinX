@@ -164,6 +164,7 @@ static void *sampleViewContext = &sampleViewContext;
     [_sampleView setDelegate:self];
     
     NSWindow *window = [aController window];
+    //[window setBackgroundColor:[NSColor marlinBackgroundColor]];
     [window setDelegate:self];
     
     NSView *contentView = [window contentView];
@@ -181,7 +182,7 @@ static void *sampleViewContext = &sampleViewContext;
                                                                      views:viewsDict];
     [contentView addConstraints:constraints];
     
-    constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"|[overviewBarView]|"
+    constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"|-4-[overviewBarView]-4-|"
                                                           options:0
                                                           metrics:nil
                                                             views:viewsDict];
@@ -199,7 +200,7 @@ static void *sampleViewContext = &sampleViewContext;
                                                             views:viewsDict];
     [contentView addConstraints:constraints];
     
-    constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"|[scrollView]"
+    constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"|-4-[scrollView]"
                                                           options:0
                                                           metrics:nil
                                                             views:viewsDict];
@@ -211,7 +212,7 @@ static void *sampleViewContext = &sampleViewContext;
                                                                  toItem:contentView
                                                               attribute:NSLayoutAttributeRight
                                                              multiplier:1.0
-                                                               constant:0.0];
+                                                               constant:-4.0];
     [contentView addConstraint:_scrollviewRightConstraint];
     
     [_sampleView setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -236,8 +237,8 @@ static void *sampleViewContext = &sampleViewContext;
     [_scrollView setScrollerKnobStyle:NSScrollerKnobStyleLight];
     //[_scrollView setVerticalScrollElasticity:NSScrollElasticityAllowed];
     
-    [_scrollView setBackgroundColor:[NSColor marlinBackgroundColor]];
-    
+    //[_scrollView setBackgroundColor:[NSColor marlinBackgroundColor]];
+    [_scrollView setDrawsBackground:NO];
     [_scrollView setDocumentView:_sampleView];
     
     NSClipView *clipView = [_scrollView contentView];
@@ -401,7 +402,7 @@ completionHandler:(void (^)(NSError *))completionHandler
                                                                 views:viewsDict];
         [contentView addConstraints:constraints];
         
-        constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"|[scrollView][infoPane]|"
+        constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"|-4-[scrollView]-4-[infoPane]-4-|"
                                                               options:0
                                                               metrics:nil
                                                                 views:viewsDict];
