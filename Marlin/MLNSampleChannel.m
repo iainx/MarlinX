@@ -499,14 +499,22 @@ int MLNSampleChannelFramesPerCachePoint(void)
         newBlock = [self writeData:data withByteLength:framesToWrite * sizeof(float)];
         if (firstBlock) {
             [self insertBlock:newBlock afterBlock:firstBlock];
-        } else {
+        } else if (secondBlock) {
             [self insertBlock:newBlock beforeBlock:secondBlock];
         }
         
         firstBlock = newBlock;
+        
+        if (_firstBlock == NULL) {
+            _firstBlock = firstBlock;
+        }
+        
         duration -= framesToWrite;
     }
     
+    if (_lastBlock == NULL) {
+        _lastBlock = firstBlock;
+    }
     free(data);
     
     return YES;

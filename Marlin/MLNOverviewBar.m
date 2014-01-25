@@ -103,6 +103,10 @@ static void *sampleContext = &sampleContext;
     [[NSColor marlinBackgroundColor] setFill];
     NSRectFill(dirtyRect);
     
+    if ([_sample numberOfFrames] == 0) {
+        return;
+    }
+    
     NSRect borderRect = NSZeroRect;
     if (_visibleFrameRange.length != 0) {
         borderRect = _visiblePixelRect;
@@ -194,6 +198,11 @@ static void *sampleContext = &sampleContext;
     //channelRect = NSInsetRect(channelRect, 0, 1);
     
     [_channelMasks removeAllObjects];
+    
+    if ([_sample numberOfFrames] == 0) {
+        return;
+    }
+    
     for (int channel = 0; channel < [_sample numberOfChannels]; channel++) {
         CGContextRef maskContext = [self newMaskContextForRect:channelRect];
         CGImageRef channelMask;
@@ -229,6 +238,10 @@ static void *sampleContext = &sampleContext;
         NSSize scaledSize = [self convertSizeToBacking:[self bounds].size];
         _framesPerPixel = [_sample numberOfFrames] / scaledSize.width;
         
+        if ([_sample numberOfFrames] == 0) {
+            return;
+        }
+        
         _visiblePixelRect = [self visibleRangeToRect:_visibleFrameRange];
         [self createChannelMasks];
         [self invalidateIntrinsicContentSize];
@@ -252,6 +265,10 @@ static void *sampleContext = &sampleContext;
 {
     NSRect rect = [self bounds];
     NSRect selectionRect = NSZeroRect;
+    
+    if (_framesPerPixel == 0) {
+        return NSZeroRect;
+    }
     
     selectionRect.origin.x = selection.location / _framesPerPixel;
     selectionRect.size.width = (NSMaxRange(selection) / _framesPerPixel) - selectionRect.origin.x;
