@@ -408,12 +408,6 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
         }
     }
     
-    // Draw the outline of the selection over the waveform
-    // Checking selectionPath will let us know if the background of the selection needed to be draw
-    if (_hasSelection && NSIntersectsRect(dirtyRect, [self selectionRectToDirtyRect:selectionRect]) == YES) {
-        [self drawSelectionFrameInRect:selectionRect];
-    }
-
     if (_drawCursor /*&& _hasSelection == NO*/) {
         NSPoint cursorPoint = [self convertFrameToPoint:_cursorFramePosition];
         NSRect cursorRect = NSMakeRect(cursorPoint.x + 0.5, 0, 1, [self bounds].size.height);
@@ -424,6 +418,12 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
             
             NSRectFillUsingOperation(cursorRect, NSCompositeSourceOver);
         }
+    }
+    
+    // Draw the outline of the selection over the waveform
+    // Checking selectionPath will let us know if the background of the selection needed to be draw
+    if (_hasSelection && NSIntersectsRect(dirtyRect, [self selectionRectToDirtyRect:selectionRect]) == YES) {
+        [self drawSelectionFrameInRect:selectionRect];
     }
 }
 
