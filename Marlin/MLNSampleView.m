@@ -1066,7 +1066,7 @@ static void *markerContext = &markerContext;
 {
     NSDictionary *userInfo = [note userInfo];
     DDLogVerbose(@"Added marker");
-    [self addMarker:userInfo[@"object"]];
+    [self realAddMarker:userInfo[@"object"]];
 }
 
 - (void)sampleDidRemoveMarker:(NSNotification *)note
@@ -1470,12 +1470,12 @@ static void *markerContext = &markerContext;
     return YES;
 }
 */
-/*
+
 - (BOOL)acceptsFirstResponder
 {
     return YES;
 }
-*/
+
 - (void)keyDown:(NSEvent *)theEvent
 {
     if ([theEvent modifierFlags] & NSNumericPadKeyMask) {
@@ -2113,11 +2113,11 @@ static const CGFloat Y_DISTANCE_FROM_FRAME = 5.0;
     [_markersToHandler removeAllObjects];
     
     for (MLNMarker *marker in [[_sample markerController] arrangedObjects]) {
-        [self addMarker:marker];
+        [self realAddMarker:marker];
     }
 }
 
-- (void)addMarker:(MLNMarker *)marker
+- (void)realAddMarker:(MLNMarker *)marker
 {
     MLNMarkerHandler *handler = [[MLNMarkerHandler alloc] initForMarker:marker owner:self];
     [handler setDelegate:self];
