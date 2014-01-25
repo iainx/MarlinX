@@ -1464,16 +1464,18 @@ static void *markerContext = &markerContext;
     [self magnify:[event magnification] atFrame:zoomFrame offset:dx];
 }
 
+/*
 - (BOOL)canBecomeKeyView
 {
     return YES;
 }
-
+*/
+/*
 - (BOOL)acceptsFirstResponder
 {
     return YES;
 }
-
+*/
 - (void)keyDown:(NSEvent *)theEvent
 {
     if ([theEvent modifierFlags] & NSNumericPadKeyMask) {
