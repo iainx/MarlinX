@@ -235,6 +235,19 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
     return NSMakeRect(0, rulerY, 0, rulerGutterSize);
 }
 
+- (void)drawChannelBackgroundInRect:(NSRect)channelBackgroundRect
+{
+    NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:channelBackgroundRect xRadius:15.0 yRadius:15.0];
+    NSColor *darkBG = [NSColor colorWithCalibratedRed:55.0/255.0 green:56.0/255.0 blue:58.0/255.0 alpha:1.0];
+    
+    DDLogVerbose(@"Drawing rect: %@", NSStringFromRect(channelBackgroundRect));
+    [darkBG setFill];
+    [path fill];
+    
+    [[NSColor blackColor] setStroke];
+    [path stroke];
+}
+
 - (void)drawRect:(NSRect)dirtyRect
 {
     CGContextRef context = [[NSGraphicsContext currentContext] graphicsPort];
@@ -253,8 +266,6 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
     NSRect channelRect = realDrawRect;
     
     CGFloat channelHeight = _channelHeight;
-    // 55 56 58
-    NSColor *darkBG = [NSColor colorWithCalibratedRed:0.214 green:0.218 blue:0.226 alpha:1.0];
     
     channelRect.size.height = channelHeight;
     
@@ -269,48 +280,30 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
     CGFloat markerDashPattern[] = {5.0, 2.0};
     
     for (channel = 0; channel < numberOfChannels; channel++) {
-        channelRect.origin.y = [self calculateYForChannelNumber:channel];
+        NSArray *allMarkers = [[_sample markerController] arrangedObjects];
+        allMarkers = [[_sample markerController] arrangeObjects:allMarkers];
         
         NSRect channelBackgroundRect = channelRect;
         channelBackgroundRect.origin.x = bounds.origin.x;
-        channelBackgroundRect.size.width = bounds.size.width;
-
-        /*
-        if (NSIntersectsRect(dirtyRect, channelBackgroundRect) == NO) {
-            continue;
-        }
-         */
-    
-        if (_shadowGradient == nil) {
-            // Draw the shadow gradients
-            CGFloat components[8] = {0.45, 0.45, 0.45, 1.0,  // Start color
-                0.6, 0.6, 0.6, 0.1}; // End color
-            CGFloat locations[2] = {0.4, 1.0};
-            size_t num_locations = 2;
+        channelRect.origin.y = [self calculateYForChannelNumber:channel];
+        
+        for (MLNMarker *marker in allMarkers) {
+            NSUInteger markerFrame = [[marker frame] unsignedIntegerValue];
+            NSPoint markerPoint = [self convertFrameToPoint:markerFrame];
             
-            CGColorSpaceRef colorspace = CGColorSpaceCreateDeviceRGB();
-            _shadowGradient = CGGradientCreateWithColorComponents(colorspace, components, locations, num_locations);
-            CGColorSpaceRelease(colorspace);
+            channelBackgroundRect.size.width = markerPoint.x - channelBackgroundRect.origin.x;
+            
+            if (NSIntersectsRect(dirtyRect, channelBackgroundRect) == NO) {
+                continue;
+            }
+         
+            [self drawChannelBackgroundInRect:NSInsetRect(channelBackgroundRect, 1.0, 1.0)];
+            
+            channelBackgroundRect.origin.x = markerPoint.x;
         }
 
-        /*
-        CGPoint startPoint = CGPointMake(channelBackgroundRect.origin.x, NSMaxY(channelBackgroundRect) - 10);
-        CGPoint endPoint = CGPointMake(channelBackgroundRect.origin.x, NSMaxY(channelBackgroundRect) + 7);
-        CGContextDrawLinearGradient(context, _shadowGradient, startPoint, endPoint, 0);
-
-        startPoint = CGPointMake(channelBackgroundRect.origin.x, channelBackgroundRect.origin.y + 10);
-        endPoint = CGPointMake(channelBackgroundRect.origin.x, channelBackgroundRect.origin.y - 7);
-        CGContextDrawLinearGradient(context, _shadowGradient, startPoint, endPoint, 0);
-*/
-        channelBackgroundRect = NSInsetRect(channelBackgroundRect, 1.0, 1.0);
-
-        NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:channelBackgroundRect xRadius:15.0 yRadius:15.0];
-        
-        [darkBG setFill];
-        [path fill];
-        
-        [[NSColor blackColor] setStroke];
-        [path stroke];
+        channelBackgroundRect.size.width = bounds.size.width - channelBackgroundRect.origin.x;
+        [self drawChannelBackgroundInRect:NSInsetRect(channelBackgroundRect, 1.0, 1.0)];
     }
     
     // Draw ruler scale
@@ -391,7 +384,7 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
         CGContextRelease(maskContext);
         
         [self drawNameForChannel:channel InRect:channelRect];
-        
+        /*
         if ([markers count] > 0) {
             for (MLNMarker *marker in markers) {
                 NSPoint markerPoint = [self convertFrameToPoint:[[marker frame] unsignedIntegerValue]];
@@ -406,6 +399,7 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
                 [markerPath stroke];
             }
         }
+         */
     }
     
     if (_drawCursor /*&& _hasSelection == NO*/) {
