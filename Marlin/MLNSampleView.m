@@ -240,7 +240,6 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
     NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:channelBackgroundRect xRadius:15.0 yRadius:15.0];
     NSColor *darkBG = [NSColor colorWithCalibratedRed:55.0/255.0 green:56.0/255.0 blue:58.0/255.0 alpha:1.0];
     
-    DDLogVerbose(@"Drawing rect: %@", NSStringFromRect(channelBackgroundRect));
     [darkBG setFill];
     [path fill];
     
