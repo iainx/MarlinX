@@ -32,6 +32,12 @@
     MLNArrayController *ac = [self markerController];
     [ac removeObject:marker];
     
+    if ([undoManager isUndoing]) {
+        [self cleanMarkerData];
+    } else {
+        [self dirtyMarkerData];
+    }
+        
     [[undoManager prepareWithInvocationTarget:self] addMarker:marker
                                                   undoManager:undoManager];
 }
@@ -40,6 +46,12 @@
       undoManager:(NSUndoManager *)undoManager
 {
     [[self markerController] addObject:marker];
+    
+    if ([undoManager isUndoing]) {
+        [self cleanMarkerData];
+    } else {
+        [self dirtyMarkerData];
+    }
     
     [[undoManager prepareWithInvocationTarget:self] removeMarker:marker
                                                      undoManager:undoManager];
@@ -50,6 +62,12 @@
            toFrame:(NSNumber *)toFrame
        undoManager:(NSUndoManager *)undoManager
 {
+    if ([undoManager isUndoing]) {
+        [self cleanMarkerData];
+    } else {
+        [self dirtyMarkerData];
+    }
+    
     [[undoManager prepareWithInvocationTarget:self] moveMarker:marker
                                                      fromFrame:toFrame
                                                        toFrame:fromFrame
@@ -117,6 +135,12 @@
         [deletedBlocks addObject:blockList];
     }
     
+    if ([undoManager isUndoing]) {
+        [self cleanSampleData];
+    } else {
+        [self dirtySampleData];
+    }
+    
     [self setNumberOfFrames:[self numberOfFrames] - range.length];
     
     [self postChangeInRangeNotification:range];
@@ -153,6 +177,12 @@
         [blockList disownBlockList];
     }
 
+    if ([undoManager isUndoing]) {
+        [self cleanSampleData];
+    } else {
+        [self dirtySampleData];
+    }
+    
     [[undoManager prepareWithInvocationTarget:self] deleteRange:changedRange
                                                     undoManager:undoManager];
 
@@ -272,6 +302,12 @@
         [channel reverseRange:range];
         
         [channel dumpChannel:YES];
+    }
+    
+    if ([undoManager isUndoing]) {
+        [self cleanSampleData];
+    } else {
+        [self dirtySampleData];
     }
     
     [self postChangeInRangeNotification:range];

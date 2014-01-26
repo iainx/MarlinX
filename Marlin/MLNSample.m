@@ -70,6 +70,9 @@ typedef struct PlaybackData {
     PlaybackData *_playbackData;
     NSTimer *_playbackTimer;
     void (^_saveCompletionHandler)(NSError *);
+    
+    NSInteger _sampleDataDirtyCount;
+    NSInteger _markerDataDirtyCount;
 }
 
 #pragma mark Class methods
@@ -106,6 +109,8 @@ typedef struct PlaybackData {
     NSSortDescriptor *frameDescriptor = [[NSSortDescriptor alloc] initWithKey:@"frame" ascending:YES];
     [_markerController setSortDescriptors:@[frameDescriptor]];
     
+    _sampleDataDirtyCount = 0;
+    _markerDataDirtyCount = 0;
     return self;
 }
 
@@ -126,7 +131,47 @@ typedef struct PlaybackData {
     
     _markers = [[NSMutableArray alloc] init];
 
+    _markerController = [[MLNArrayController alloc] init];
+    [_markerController bind:@"contentArray"
+                   toObject:self
+                withKeyPath:@"markers"
+                    options:nil];
+    
+    NSSortDescriptor *frameDescriptor = [[NSSortDescriptor alloc] initWithKey:@"frame" ascending:YES];
+    [_markerController setSortDescriptors:@[frameDescriptor]];
+    
+    _sampleDataDirtyCount = 0;
+    _markerDataDirtyCount = 0;
+
     return self;
+}
+
+- (void)dirtySampleData
+{
+    _sampleDataDirtyCount++;
+    
+    DDLogVerbose(@"Dirty sample data: %ld", _sampleDataDirtyCount);
+}
+
+- (void)cleanSampleData
+{
+    _sampleDataDirtyCount--;
+    
+    DDLogVerbose(@"Dirty sample data: %ld", _sampleDataDirtyCount);
+}
+
+- (void)dirtyMarkerData
+{
+    _markerDataDirtyCount++;
+    
+    DDLogVerbose(@"Dirty marker data: %ld", _markerDataDirtyCount);
+}
+
+- (void)cleanMarkerData
+{
+    _markerDataDirtyCount--;
+    
+    DDLogVerbose(@"Dirty marker data: %ld", _markerDataDirtyCount);
 }
 
 - (void)startLoadFromURL:(NSURL *)url
@@ -171,16 +216,20 @@ typedef struct PlaybackData {
                   attributes:nil error:nil];
     
     // Markers
-    NSURL *markerURL = [url URLByAppendingPathComponent:@"markers.data"];
-    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:_markers];
-    [data writeToURL:markerURL options:0 error:nil];
+    if (_markerDataDirtyCount > 0) {
+        NSURL *markerURL = [url URLByAppendingPathComponent:@"markers.data"];
+        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:_markers];
+        [data writeToURL:markerURL options:0 error:nil];
+    }
     
     // Write data
-    NSURL *realURL = [url URLByAppendingPathComponent:@"marlin-filedata.wav"];
-    NSDictionary *format = @{@"formatDetails": [MLNExportPanelController exportableTypeForName:@"WAV"]};
-    
-    DDLogVerbose(@"Exporting to %@: %@", [realURL absoluteString], format);
-    [self startExportTo:realURL asFormat:format];
+    if (_sampleDataDirtyCount > 0) {
+        NSURL *realURL = [url URLByAppendingPathComponent:@"marlin-filedata.wav"];
+        NSDictionary *format = @{@"formatDetails": [MLNExportPanelController exportableTypeForName:@"WAV"]};
+        
+        DDLogVerbose(@"Exporting to %@: %@", [realURL absoluteString], format);
+        [self startExportTo:realURL asFormat:format];
+    }
 }
 
 - (void)startExportTo:(NSURL *)url

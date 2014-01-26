@@ -55,4 +55,8 @@ enum {
 - (void)insertObject:(MLNMarker *)object inMarkersAtIndex:(NSUInteger)index;
 - (void)removeObjectFromMarkersAtIndex:(NSUInteger)index;
 
+- (void)dirtySampleData;
+- (void)cleanSampleData;
+- (void)dirtyMarkerData;
+- (void)cleanMarkerData;
 @end
