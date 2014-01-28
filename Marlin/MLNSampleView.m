@@ -283,7 +283,9 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
         allMarkers = [[_sample markerController] arrangeObjects:allMarkers];
         
         NSRect channelBackgroundRect = channelRect;
-        channelBackgroundRect.origin.x = bounds.origin.x;
+        channelBackgroundRect.origin.x = bounds.origin.x + 1.5;
+        channelBackgroundRect.origin.y += 1.0;
+        channelBackgroundRect.size.height -= 2.0;
         channelRect.origin.y = [self calculateYForChannelNumber:channel];
         
         for (MLNMarker *marker in allMarkers) {
@@ -292,17 +294,13 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
             
             channelBackgroundRect.size.width = markerPoint.x - channelBackgroundRect.origin.x;
             
-            if (NSIntersectsRect(dirtyRect, channelBackgroundRect) == NO) {
-                continue;
-            }
-         
-            [self drawChannelBackgroundInRect:NSInsetRect(channelBackgroundRect, 1.0, 1.0)];
+            [self drawChannelBackgroundInRect:channelBackgroundRect];
             
             channelBackgroundRect.origin.x = markerPoint.x;
         }
 
-        channelBackgroundRect.size.width = bounds.size.width - channelBackgroundRect.origin.x;
-        [self drawChannelBackgroundInRect:NSInsetRect(channelBackgroundRect, 1.0, 1.0)];
+        channelBackgroundRect.size.width = (bounds.size.width - channelBackgroundRect.origin.x) - 1.5;
+        [self drawChannelBackgroundInRect:channelBackgroundRect];
     }
     
     // Draw ruler scale
