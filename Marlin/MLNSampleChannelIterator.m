@@ -82,12 +82,7 @@ BOOL MLNSampleChannelIteratorNextFrameData(MLNSampleChannelCIterator *iter,
         return NO;
     }
     
-    if (iter->currentBlock->reversed && iter->isRaw == NO) {
-        NSUInteger realFramePosition = (iter->currentBlock->numberOfFrames - 1) - iter->framePosition;
-        *value = MLNSampleBlockDataAtFrame(iter->currentBlock, realFramePosition);
-    } else {
-        *value = MLNSampleBlockDataAtFrame(iter->currentBlock, iter->framePosition);
-    }
+    *value = MLNSampleBlockDataAtFrame(iter->currentBlock, iter->framePosition);
     
     iter->framePosition++;
     iter->cachePointPosition = iter->framePosition / MLNSampleChannelFramesPerCachePoint();
@@ -113,8 +108,6 @@ BOOL MLNSampleChannelIteratorNextFrameData(MLNSampleChannelCIterator *iter,
 BOOL MLNSampleChannelIteratorNextCachePointData(MLNSampleChannelCIterator *iter,
                                                 MLNSampleCachePoint *cachePoint)
 {
-    //const MLNSampleCachePoint *cacheData;
-    
     if (iter->currentBlock == NULL) {
         DDLogCError(@"Requesting cachepoint from dead iterator");
         cachePoint->avgMaxValue = 0.0;
@@ -125,17 +118,9 @@ BOOL MLNSampleChannelIteratorNextCachePointData(MLNSampleChannelCIterator *iter,
         return NO;
     }
     
-    //cacheData = MLNSampleBlockSampleCacheData(iter->currentBlock);
-    
     MLNSampleCachePoint cp;
+    MLNSampleBlockCachePointAtFrame(iter->currentBlock, &cp, iter->cachePointPosition);
     
-    if (iter->currentBlock->reversed && iter->isRaw == NO) {
-        // FIXME: I feel like this needs to be tested as whether it is correct
-        NSUInteger realCachePointPosition = (iter->currentBlock->numberOfFrames / MLNSampleChannelFramesPerCachePoint()) - iter->cachePointPosition;
-        MLNSampleBlockCachePointAtFrame(iter->currentBlock, &cp, realCachePointPosition);
-    } else {
-        MLNSampleBlockCachePointAtFrame(iter->currentBlock, &cp, iter->cachePointPosition);
-    }
     cachePoint->minValue = cp.minValue;
     cachePoint->maxValue = cp.maxValue;
     cachePoint->avgMinValue = cp.avgMinValue;

@@ -30,20 +30,30 @@ MLNSampleBlockDataAtFrame(MLNSampleBlock *block,
     if (block == NULL) {
         return 0.0;
     }
+
+    NSUInteger realFrame = frame;
+    if (block->reversed) {
+        realFrame = (block->numberOfFrames - 1) - frame;
+    }
     
-    return block->methods->dataAtFrame(block, frame);
+    return block->methods->dataAtFrame(block, realFrame);
 }
 
 void
 MLNSampleBlockCachePointAtFrame(MLNSampleBlock *block,
                                 MLNSampleCachePoint *cachePoint,
-                                NSUInteger frame)
+                                NSUInteger cachePosition)
 {
     if (block == NULL) {
         return;
     }
     
-    block->methods->cachePointAtFrame(block, cachePoint, frame);
+    NSUInteger realCachePosition = cachePosition;
+    if (block->reversed) {
+        realCachePosition = ((block->numberOfFrames / MLNSampleChannelFramesPerCachePoint()) - 1) - cachePosition;
+    }
+    
+    block->methods->cachePointAtFrame(block, cachePoint, realCachePosition);
 }
 
 MLNSampleBlock *
