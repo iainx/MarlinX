@@ -171,4 +171,36 @@ NSUInteger MLNSampleChannelIteratorGetPosition(MLNSampleChannelCIterator *cIter)
 {
     return cIter->framePosition + cIter->currentBlock->startFrame;
 }
+
+BOOL MLNSampleChannelIteratorPeekNextFrameData(MLNSampleChannelCIterator *cIter, float *frame)
+{
+    if (cIter->framePosition < (cIter->currentBlock->numberOfFrames - 2)) {
+        *frame = MLNSampleBlockDataAtFrame(cIter->currentBlock, cIter->framePosition + 1);
+        return YES;
+    }
+    
+    MLNSampleBlock *nextBlock = cIter->currentBlock->nextBlock;
+    if (nextBlock == NULL) {
+        return NO;
+    }
+    
+    *frame = MLNSampleBlockDataAtFrame(nextBlock, 0);
+    return YES;
+}
+
+BOOL MLNSampleChannelIteratorPeekPreviousFrameData(MLNSampleChannelCIterator *cIter, float *frame)
+{
+    if (cIter->framePosition > 1) {
+        *frame = MLNSampleBlockDataAtFrame(cIter->currentBlock, cIter->framePosition - 1);
+        return YES;
+    }
+    
+    MLNSampleBlock *previousBlock = cIter->currentBlock->previousBlock;
+    if (previousBlock == NULL) {
+        return NO;
+    }
+    
+    *frame = MLNSampleBlockDataAtFrame(previousBlock, previousBlock->numberOfFrames - 1);
+    return YES;
+}
 @end
