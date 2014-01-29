@@ -64,6 +64,40 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     STAssertEquals(i, [_channel numberOfFrames], @"");
 }
 
+- (void)testPeek
+{
+    _channel = [self createChannel];
+    
+    NSUInteger frame = (rand() % [_channel numberOfFrames] - 3) + 1;
+    MLNSampleChannelCIterator *iter = MLNSampleChannelIteratorNew(_channel, frame, NO);
+    
+    float value;
+    MLNSampleChannelIteratorPeekFrame(iter, &value);
+    STAssertEquals((float)frame, value, @"");
+    
+    MLNSampleChannelIteratorPeekNextFrameData(iter, &value);
+    STAssertEquals((float)frame + 1, value, @"");
+    
+    MLNSampleChannelIteratorPeekPreviousFrameData(iter, &value);
+    STAssertEquals((float)frame - 1, value, @"");
+    
+    MLNSampleChannelIteratorFree(iter);
+    
+    MLNSampleBlock *block1, *block2;
+    [_channel splitAtFrame:frame firstBlock:&block1 secondBlock:&block2];
+    
+    iter = MLNSampleChannelIteratorNew(_channel, frame - 1, NO);
+    
+    MLNSampleChannelIteratorPeekNextFrameData(iter, &value);
+    STAssertEquals((float)frame, value, @"");
+    
+    MLNSampleChannelIteratorFree(iter);
+    
+    iter = MLNSampleChannelIteratorNew(_channel, frame, NO);
+    MLNSampleChannelIteratorPeekPreviousFrameData(iter, &value);
+    STAssertEquals((float)frame - 1, value, @"");
+}
+
 - (void)testSplitChannel
 {
     MLNSampleChannel *channel = [self createChannel];
