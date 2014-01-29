@@ -411,17 +411,6 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
         float value = MLNSampleBlockDataAtFrame(block, i);
         STAssertEquals(value, (float)i, @"data[%lu] != %f: %f", i, i, value);
     }
-    /*
-    block = block->nextBlock;
-    data = MLNSampleBlockSampleData(block);
-    
-    STAssertEquals(block->startFrame, insertFrame + [channel2 numberOfFrames], @"block->startFrame != %lu: %lu", insertFrame + [channel2 numberOfFrames], block->startFrame);
-    for (NSUInteger i = 0; i < block->numberOfFrames; i++) {
-        float result = insertFrame + i;
-        
-        STAssertEquals(data[i], (float)result, @"data[%lu] != %f: %f", i, result, data[i]);
-    }
-     */
 }
 
 - (void)testInsertInvalid

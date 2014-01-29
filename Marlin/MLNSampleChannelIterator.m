@@ -172,6 +172,11 @@ NSUInteger MLNSampleChannelIteratorGetPosition(MLNSampleChannelCIterator *cIter)
     return cIter->framePosition + cIter->currentBlock->startFrame;
 }
 
+void MLNSampleChannelIteratorPeekFrame(MLNSampleChannelCIterator *cIter, float *frame)
+{
+    *frame = MLNSampleBlockDataAtFrame(cIter->currentBlock, cIter->framePosition);
+}
+
 BOOL MLNSampleChannelIteratorPeekNextFrameData(MLNSampleChannelCIterator *cIter, float *frame)
 {
     if (cIter->framePosition < (cIter->currentBlock->numberOfFrames - 2)) {

@@ -275,8 +275,6 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
     CGFloat origin = MAX(scaledRect.origin.x - 10, 0);
     NSArray *markers = [self markersInRange:NSMakeRange(origin * _framesPerPixel,
                                                         (scaledRect.size.width + 20) * _framesPerPixel)];
-
-    CGFloat markerDashPattern[] = {5.0, 2.0};
     
     for (channel = 0; channel < numberOfChannels; channel++) {
         NSArray *allMarkers = [[_sample markerController] arrangedObjects];
