@@ -34,6 +34,7 @@ BOOL MLNSampleChannelIteratorNextFrameData(MLNSampleChannelCIterator *iter,
                                            float *value);
 NSUInteger MLNSampleChannelIteratorGetPosition(MLNSampleChannelCIterator *cIter);
 
+void MLNSampleChannelIteratorPeekFrame(MLNSampleChannelCIterator *cIter, float *frame);
 BOOL MLNSampleChannelIteratorPeekNextFrameData(MLNSampleChannelCIterator *cIter, float *frame);
 BOOL MLNSampleChannelIteratorPeekPreviousFrameData(MLNSampleChannelCIterator *cIter, float *frame);
 @end
