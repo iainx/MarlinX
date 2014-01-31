@@ -68,6 +68,21 @@ void MLNSampleChannelIteratorFree(MLNSampleChannelCIterator *cIter)
     MLNSampleChannelIteratorFree(_cIter);
 }
 
+void MLNSampleChannelIteratorResetToFrame(MLNSampleChannelCIterator *cIter,
+                                          MLNSampleChannel *channel,
+                                          NSUInteger frame)
+{
+    cIter->currentBlock = [channel sampleBlockForFrame:frame];
+    cIter->framePosition = (frame - cIter->currentBlock->startFrame);
+    cIter->cachePointPosition = (cIter->framePosition / MLNSampleChannelFramesPerCachePoint());
+}
+
+- (void)resetToFrame:(NSUInteger)frame
+           inChannel:(MLNSampleChannel *)channel
+{
+    MLNSampleChannelIteratorResetToFrame(_cIter, channel, frame);
+}
+
 BOOL MLNSampleChannelIteratorHasMoreData(MLNSampleChannelCIterator *iter)
 {
     return (iter->currentBlock != NULL);
@@ -103,6 +118,42 @@ BOOL MLNSampleChannelIteratorNextFrameData(MLNSampleChannelCIterator *iter,
 - (BOOL)nextFrameData:(float *)value
 {
     return MLNSampleChannelIteratorNextFrameData(_cIter, value);
+}
+
+BOOL MLNSampleChannelIteratorPreviousFrameData(MLNSampleChannelCIterator *iter,
+                                               float *value)
+{
+    if (iter->currentBlock == NULL) {
+        DDLogCError(@"Requesting frame from dead iterator");
+        *value = 0.0;
+        return NO;
+    }
+    
+    *value = MLNSampleBlockDataAtFrame(iter->currentBlock, iter->framePosition);
+    
+    if (iter->framePosition == 0) {
+        iter->currentBlock = iter->currentBlock->previousBlock;
+        
+        if (iter->currentBlock == NULL) {
+            return NO;
+        }
+        iter->framePosition = iter->currentBlock->numberOfFrames;
+    } else {
+        iter->framePosition--;
+    }
+    
+    iter->cachePointPosition = iter->framePosition / MLNSampleChannelFramesPerCachePoint();
+    
+    if (iter->currentBlock) {
+        return YES;
+    } else {
+        return NO;
+    }
+}
+
+- (BOOL)previousFrameData:(float *)value
+{
+    return MLNSampleChannelIteratorPreviousFrameData(_cIter, value);
 }
 
 BOOL MLNSampleChannelIteratorNextCachePointData(MLNSampleChannelCIterator *iter,
@@ -177,7 +228,15 @@ void MLNSampleChannelIteratorPeekFrame(MLNSampleChannelCIterator *cIter, float *
     *frame = MLNSampleBlockDataAtFrame(cIter->currentBlock, cIter->framePosition);
 }
 
-BOOL MLNSampleChannelIteratorPeekNextFrameData(MLNSampleChannelCIterator *cIter, float *frame)
+- (float)peekFrame
+{
+    float frame;
+    
+    MLNSampleChannelIteratorPeekFrame(_cIter, &frame);
+    return frame;
+}
+
+BOOL MLNSampleChannelIteratorPeekNextFrame(MLNSampleChannelCIterator *cIter, float *frame)
 {
     if (cIter->framePosition < (cIter->currentBlock->numberOfFrames - 2)) {
         *frame = MLNSampleBlockDataAtFrame(cIter->currentBlock, cIter->framePosition + 1);
@@ -193,7 +252,12 @@ BOOL MLNSampleChannelIteratorPeekNextFrameData(MLNSampleChannelCIterator *cIter,
     return YES;
 }
 
-BOOL MLNSampleChannelIteratorPeekPreviousFrameData(MLNSampleChannelCIterator *cIter, float *frame)
+- (BOOL)peekNextFrame:(float *)frame
+{
+    return MLNSampleChannelIteratorPeekNextFrame(_cIter, frame);
+}
+
+BOOL MLNSampleChannelIteratorPeekPreviousFrame(MLNSampleChannelCIterator *cIter, float *frame)
 {
     if (cIter->framePosition > 1) {
         *frame = MLNSampleBlockDataAtFrame(cIter->currentBlock, cIter->framePosition - 1);
@@ -207,5 +271,63 @@ BOOL MLNSampleChannelIteratorPeekPreviousFrameData(MLNSampleChannelCIterator *cI
     
     *frame = MLNSampleBlockDataAtFrame(previousBlock, previousBlock->numberOfFrames - 1);
     return YES;
+}
+
+- (BOOL)peekPreviousFrame:(float *)frame
+{
+    return MLNSampleChannelIteratorPeekPreviousFrame(_cIter, frame);
+}
+
+BOOL MLNSampleChannelIteratorFindNextZeroCrossing(MLNSampleChannelCIterator *cIter,
+                                                  NSUInteger *nextZeroCrossing)
+{
+    BOOL moreData;
+    float prevValue, nextValue;
+    
+    MLNSampleChannelIteratorPeekFrame(cIter, &prevValue);
+    while (moreData) {
+        moreData = MLNSampleChannelIteratorNextFrameData(cIter, &nextValue);
+        
+        if (prevValue < 0 && nextValue >= 0) {
+            *nextZeroCrossing = nextValue;
+            return YES;
+        }
+        
+        prevValue = nextValue;
+    }
+    
+    return NO;
+}
+
+- (BOOL)findNextZeroCrossing:(NSUInteger *)nextZeroCrossing
+{
+    return MLNSampleChannelIteratorFindNextZeroCrossing(_cIter, nextZeroCrossing);
+}
+
+
+BOOL MLNSampleChannelIteratorFindPreviousZeroCrossing(MLNSampleChannelCIterator *cIter,
+                                                      NSUInteger *previousZeroCrossing)
+{
+    BOOL moreData;
+    float prevValue, nextValue;
+    
+    MLNSampleChannelIteratorPeekFrame(cIter, &nextValue);
+    while (moreData) {
+        moreData = MLNSampleChannelIteratorPreviousFrameData(cIter, &prevValue);
+        
+        if (prevValue <= 0 && nextValue > 0) {
+            *previousZeroCrossing = prevValue;
+            return YES;
+        }
+        
+        nextValue = prevValue;
+    }
+    
+    return NO;
+}
+
+- (BOOL)findPreviousZeroCrossing:(NSUInteger *)previousZeroCrossing
+{
+    return MLNSampleChannelIteratorFindPreviousZeroCrossing(_cIter, previousZeroCrossing);
 }
 @end

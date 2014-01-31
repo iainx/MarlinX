@@ -75,10 +75,10 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     MLNSampleChannelIteratorPeekFrame(iter, &value);
     STAssertEquals((float)frame, value, @"");
     
-    MLNSampleChannelIteratorPeekNextFrameData(iter, &value);
+    MLNSampleChannelIteratorPeekNextFrame(iter, &value);
     STAssertEquals((float)frame + 1, value, @"");
     
-    MLNSampleChannelIteratorPeekPreviousFrameData(iter, &value);
+    MLNSampleChannelIteratorPeekPreviousFrame(iter, &value);
     STAssertEquals((float)frame - 1, value, @"");
     
     MLNSampleChannelIteratorFree(iter);
@@ -88,14 +88,36 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     iter = MLNSampleChannelIteratorNew(_channel, frame - 1, NO);
     
-    MLNSampleChannelIteratorPeekNextFrameData(iter, &value);
+    MLNSampleChannelIteratorPeekNextFrame(iter, &value);
     STAssertEquals((float)frame, value, @"");
     
     MLNSampleChannelIteratorFree(iter);
     
     iter = MLNSampleChannelIteratorNew(_channel, frame, NO);
-    MLNSampleChannelIteratorPeekPreviousFrameData(iter, &value);
+    MLNSampleChannelIteratorPeekPreviousFrame(iter, &value);
     STAssertEquals((float)frame - 1, value, @"");
+}
+
+- (void)testIteratorBackwards
+{
+    MLNSampleChannel *channel = [self createChannel];
+    NSUInteger frame = (rand() % [channel numberOfFrames] - 10) + 5;
+    MLNSampleChannelCIterator *iter = MLNSampleChannelIteratorNew(channel, frame, NO);
+    BOOL moreData = YES;
+    NSUInteger i = frame;
+    
+    while (moreData) {
+        float value;
+        
+        moreData = MLNSampleChannelIteratorPreviousFrameData(iter, &value);
+        
+        STAssertEquals(value, (float)i, @"");
+        if (moreData) {
+            i--;
+        }
+    }
+    
+    STAssertEquals(i, (NSUInteger)0, @"");
 }
 
 - (void)testSplitChannel
