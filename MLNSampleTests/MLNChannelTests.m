@@ -34,6 +34,32 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     return channel;
 }
 
+- (MLNSampleChannel *)createZeroCrossingChannel:(NSUInteger *)numberCreated
+{
+    MLNSampleChannel *channel = [[MLNSampleChannel alloc] init];
+    [channel setChannelName:@"Test channel"];
+    
+    float *buffer = malloc(BUFFER_FRAME_SIZE * sizeof(float));
+
+    float value = 1.0;
+    
+    *numberCreated = 0;
+    // Fill all the frames with dummy data
+    for (int i = 0; i < BUFFER_FRAME_SIZE; i++) {
+        if ((i > 0) && ((i % 100) == 0)) {
+            value *= -1.0;
+            
+            *numberCreated = *numberCreated + 1;
+        }
+        
+        buffer[i] = value;
+    }
+    
+    [channel addData:buffer withByteLength:BUFFER_FRAME_SIZE * sizeof(float)];
+    
+    return channel;
+}
+
 - (void)setUp
 {
     _channel = [[MLNSampleChannel alloc] init];
@@ -104,7 +130,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     NSUInteger frame = (rand() % [channel numberOfFrames] - 10) + 5;
     MLNSampleChannelCIterator *iter = MLNSampleChannelIteratorNew(channel, frame, NO);
     BOOL moreData = YES;
-    NSUInteger i = frame;
+    NSUInteger i = frame - 1;
     
     while (moreData) {
         float value;
@@ -557,5 +583,40 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
         float value = MLNSampleBlockDataAtFrame(block3, i);
         STAssertEquals(value, (float)i + 100, @"");
     }
+}
+
+- (void)testFindAllZeroCrossingForward
+{
+    NSUInteger numberCreated;
+    MLNSampleChannel *channel = [self createZeroCrossingChannel:&numberCreated];
+    MLNSampleChannelIterator *iter = [[MLNSampleChannelIterator alloc] initWithChannel:channel atFrame:0];
+    
+    NSUInteger zx;
+    NSUInteger foundZX = 0;
+    
+    while ([iter findNextZeroCrossing:&zx upTo:-1]) {
+        STAssertEquals((zx % 100), (NSUInteger)0, @"");
+        foundZX++;
+    }
+    
+    STAssertEquals(foundZX, numberCreated, @"");
+}
+
+- (void)testFindAllZeroCrossingBackwards
+{
+    NSUInteger numberCreated;
+    MLNSampleChannel *channel = [self createZeroCrossingChannel:&numberCreated];
+    MLNSampleChannelIterator *iter = [[MLNSampleChannelIterator alloc] initWithChannel:channel atFrame:[channel numberOfFrames] - 1];
+    
+    STAssertNotNil(iter, @"");
+    NSUInteger zx;
+    NSUInteger foundZX = 0;
+    
+    while ([iter findPreviousZeroCrossing:&zx upTo:-1]) {
+        STAssertEquals((zx % 100), (NSUInteger)0, @"");
+        foundZX++;
+    }
+    
+    STAssertEquals(foundZX, numberCreated, @"");
 }
 @end

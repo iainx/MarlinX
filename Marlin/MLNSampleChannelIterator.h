@@ -26,8 +26,8 @@ typedef struct MLNSampleChannelCIterator MLNSampleChannelCIterator;
 - (float)peekFrame;
 - (BOOL)peekNextFrame:(float *)frame;
 - (BOOL)peekPreviousFrame:(float *)frame;
-- (BOOL)findNextZeroCrossing:(NSUInteger *)nextZeroCrossing;
-- (BOOL)findPreviousZeroCrossing:(NSUInteger *)previousZeroCrossing;
+- (BOOL)findNextZeroCrossing:(NSUInteger *)nextZeroCrossing upTo:(NSUInteger)limit;
+- (BOOL)findPreviousZeroCrossing:(NSUInteger *)previousZeroCrossing upTo:(NSUInteger)limit;
 
 // C API
 MLNSampleChannelCIterator *MLNSampleChannelIteratorNew(MLNSampleChannel *channel,
@@ -51,8 +51,10 @@ BOOL MLNSampleChannelIteratorPeekNextFrame(MLNSampleChannelCIterator *cIter, flo
 BOOL MLNSampleChannelIteratorPeekPreviousFrame(MLNSampleChannelCIterator *cIter, float *frame);
 
 BOOL MLNSampleChannelIteratorFindNextZeroCrossing(MLNSampleChannelCIterator *cIter,
+                                                  NSUInteger limit,
                                                   NSUInteger *nextZeroCrossing);
 BOOL MLNSampleChannelIteratorFindPreviousZeroCrossing(MLNSampleChannelCIterator *cIter,
+                                                      NSUInteger limit,
                                                       NSUInteger *previousZeroCrossing);
 
 @end
