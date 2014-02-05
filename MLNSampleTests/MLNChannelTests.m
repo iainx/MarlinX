@@ -81,7 +81,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     BOOL moreData = YES;
     
     while (moreData) {
-        moreData = [iter nextFrameData:&d];
+        moreData = [iter frameDataAndAdvance:&d];
         STAssertEquals(d, (float)i, @"");
 
         i++;
@@ -130,17 +130,15 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     NSUInteger frame = (rand() % [channel numberOfFrames] - 10) + 5;
     MLNSampleChannelCIterator *iter = MLNSampleChannelIteratorNew(channel, frame, NO);
     BOOL moreData = YES;
-    NSUInteger i = frame - 1;
+    NSUInteger i = frame;
     
     while (moreData) {
         float value;
         
-        moreData = MLNSampleChannelIteratorPreviousFrameData(iter, &value);
+        moreData = MLNSampleChannelIteratorFrameDataAndRewind(iter, &value);
         
         STAssertEquals(value, (float)i, @"");
-        if (moreData) {
-            i--;
-        }
+        i--;
     }
     
     STAssertEquals(i, (NSUInteger)0, @"");

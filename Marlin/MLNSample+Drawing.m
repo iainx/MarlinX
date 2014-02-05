@@ -42,7 +42,7 @@
             if (fpp < framesPerCachePoint) {
                 float value;
                 
-                moreData = [iter nextFrameData:&value];
+                moreData = [iter frameDataAndAdvance:&value];
                 
                 maxPoint = MAX(maxPoint, value);
                 minPoint = MIN(minPoint, value);

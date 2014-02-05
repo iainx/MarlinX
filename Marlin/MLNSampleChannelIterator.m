@@ -101,8 +101,8 @@ BOOL MLNSampleChannelIteratorHasMoreData(MLNSampleChannelCIterator *iter)
     return (iter->currentBlock != NULL);
 }
 
-BOOL MLNSampleChannelIteratorNextFrameData(MLNSampleChannelCIterator *iter,
-                                           float *value)
+BOOL MLNSampleChannelIteratorFrameDataAndAdvance(MLNSampleChannelCIterator *iter,
+                                                 float *value)
 {
     if (iter->currentBlock == NULL) {
         DDLogCError(@"Requesting frame from dead iterator");
@@ -128,13 +128,13 @@ BOOL MLNSampleChannelIteratorNextFrameData(MLNSampleChannelCIterator *iter,
     }
 }
 
-- (BOOL)nextFrameData:(float *)value
+- (BOOL)frameDataAndAdvance:(float *)value
 {
-    return MLNSampleChannelIteratorNextFrameData(_cIter, value);
+    return MLNSampleChannelIteratorFrameDataAndAdvance(_cIter, value);
 }
 
-BOOL MLNSampleChannelIteratorPreviousFrameData(MLNSampleChannelCIterator *iter,
-                                               float *value)
+BOOL MLNSampleChannelIteratorFrameDataAndRewind(MLNSampleChannelCIterator *iter,
+                                                float *value)
 {
     if (iter->currentBlock == NULL) {
         DDLogCError(@"Requesting frame from dead iterator");
@@ -142,6 +142,8 @@ BOOL MLNSampleChannelIteratorPreviousFrameData(MLNSampleChannelCIterator *iter,
         return NO;
     }
     
+    *value = MLNSampleBlockDataAtFrame(iter->currentBlock, iter->framePosition);
+
     if (iter->framePosition == 0) {
         iter->currentBlock = iter->currentBlock->previousBlock;
         
@@ -153,8 +155,6 @@ BOOL MLNSampleChannelIteratorPreviousFrameData(MLNSampleChannelCIterator *iter,
         iter->framePosition--;
     }
     
-    *value = MLNSampleBlockDataAtFrame(iter->currentBlock, iter->framePosition);
-    
     iter->cachePointPosition = iter->framePosition / MLNSampleChannelFramesPerCachePoint();
     
     if (iter->framePosition > 0 || iter->currentBlock->previousBlock) {
@@ -164,9 +164,9 @@ BOOL MLNSampleChannelIteratorPreviousFrameData(MLNSampleChannelCIterator *iter,
     }
 }
 
-- (BOOL)previousFrameData:(float *)value
+- (BOOL)frameDataAndRewind:(float *)value
 {
-    return MLNSampleChannelIteratorPreviousFrameData(_cIter, value);
+    return MLNSampleChannelIteratorFrameDataAndRewind(_cIter, value);
 }
 
 BOOL MLNSampleChannelIteratorNextCachePointData(MLNSampleChannelCIterator *iter,
@@ -222,7 +222,7 @@ BOOL MLNSampleChannelIteratorNextCachePointData(MLNSampleChannelCIterator *iter,
         float value;
         
         // FIXME: We could speed this up with a memcpy when the current block is a pure block
-        moreData = MLNSampleChannelIteratorNextFrameData(_cIter, &value);
+        moreData = MLNSampleChannelIteratorFrameDataAndAdvance(_cIter, &value);
         buffer[framesAdded] = value;
         framesAdded++;
         framesToAdd--;
@@ -302,7 +302,7 @@ BOOL MLNSampleChannelIteratorFindNextZeroCrossing(MLNSampleChannelCIterator *cIt
     MLNSampleChannelIteratorPeekFrame(cIter, &prevValue);
     while (moreData) {
         currentPosition = MLNSampleChannelIteratorGetPosition(cIter);
-        moreData = MLNSampleChannelIteratorNextFrameData(cIter, &nextValue);
+        moreData = MLNSampleChannelIteratorFrameDataAndAdvance(cIter, &nextValue);
         
         if ((prevValue < 0 && nextValue >= 0) ||
             (prevValue > 0 && nextValue <= 0)) {
@@ -335,20 +335,24 @@ BOOL MLNSampleChannelIteratorFindPreviousZeroCrossing(MLNSampleChannelCIterator 
     BOOL moreData = YES; // FIXME: This should take limit into account
     float prevValue, nextValue;
     NSUInteger currentPosition;
-    
+
     MLNSampleChannelIteratorPeekFrame(cIter, &nextValue);
+    
     while (moreData) {
         currentPosition = MLNSampleChannelIteratorGetPosition(cIter);
-        moreData = MLNSampleChannelIteratorPreviousFrameData(cIter, &prevValue);
-        
-        if ((prevValue <= 0 && nextValue > 0) ||
-            (prevValue >= 0 && nextValue < 0)) {
-            *previousZeroCrossing = currentPosition;
+        moreData = MLNSampleChannelIteratorFrameDataAndRewind(cIter, &prevValue);
+
+        if ((prevValue < 0 && nextValue >= 0) ||
+            (prevValue > 0 && nextValue <= 0)) {
+            
+            // First time round this loop is a comparison of the same two positions
+            // which throws the counter off by one. This corrects it.
+            // FIXME: Work out how to make the first iteration not a dummy.
+            *previousZeroCrossing = currentPosition + 1;
             return YES;
         }
         
         nextValue = prevValue;
-        
         if (moreData) {
             NSInteger realPosition = (NSInteger)MLNSampleChannelIteratorGetPosition(cIter);
             NSInteger realLimit = (NSInteger)limit;

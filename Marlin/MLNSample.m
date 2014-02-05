@@ -408,7 +408,7 @@ MyAQOutputCallback (void *userData,
             float value;
             float *bufferData = (float *)buffer->mAudioData;
             
-            moreData = MLNSampleChannelIteratorNextFrameData(data->blocks[channel].cIter, &value);
+            moreData = MLNSampleChannelIteratorFrameDataAndAdvance(data->blocks[channel].cIter, &value);
             bufferData[(positionInBuffer * data->numberOfChannels) + channel] = value;
             positionInBuffer++;
             framesWritten++;

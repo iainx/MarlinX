@@ -19,8 +19,8 @@ typedef struct MLNSampleChannelCIterator MLNSampleChannelCIterator;
                          atFrame:(NSUInteger)frame;
 - (void)resetToFrame:(NSUInteger)frame
            inChannel:(MLNSampleChannel *)channel;
-- (BOOL)nextFrameData:(float *)value;
-- (BOOL)previousFrameData:(float *)value;
+- (BOOL)frameDataAndAdvance:(float *)value;
+- (BOOL)frameDataAndRewind:(float *)value;
 - (BOOL)nextCachePointData:(MLNSampleCachePoint *)cachePoint;
 - (NSUInteger)fillBufferWithData:(float *)buffer ofFrameLength:(NSUInteger)frameLength;
 - (float)peekFrame;
@@ -40,10 +40,10 @@ void MLNSampleChannelIteratorResetToFrame(MLNSampleChannelCIterator *cIter,
 BOOL MLNSampleChannelIteratorHasMoreData(MLNSampleChannelCIterator *iter);
 BOOL MLNSampleChannelIteratorNextCachePointData(MLNSampleChannelCIterator *iter,
                                                 MLNSampleCachePoint *cachePoint);
-BOOL MLNSampleChannelIteratorNextFrameData(MLNSampleChannelCIterator *iter,
-                                           float *value);
-BOOL MLNSampleChannelIteratorPreviousFrameData(MLNSampleChannelCIterator *iter,
-                                               float *value);
+BOOL MLNSampleChannelIteratorFrameDataAndAdvance(MLNSampleChannelCIterator *iter,
+                                                 float *value);
+BOOL MLNSampleChannelIteratorFrameDataAndRewind(MLNSampleChannelCIterator *iter,
+                                                float *value);
 NSUInteger MLNSampleChannelIteratorGetPosition(MLNSampleChannelCIterator *cIter);
 
 void MLNSampleChannelIteratorPeekFrame(MLNSampleChannelCIterator *cIter, float *frame);

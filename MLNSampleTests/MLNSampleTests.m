@@ -98,7 +98,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     while (moreData) {
         float value;
-        moreData = [iter nextFrameData:&value];
+        moreData = [iter frameDataAndAdvance:&value];
         
         STAssertEquals(value, (float)i, @"");
         i++;
@@ -238,7 +238,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     i = 0;
     while (moreData) {
         float value;
-        moreData = [iter nextFrameData:&value];
+        moreData = [iter frameDataAndAdvance:&value];
         
         if (NSLocationInRange(i, range)) {
             STAssertEquals(value, (float)0, @"at %lu (%@)", i, NSStringFromRange(range));
@@ -318,7 +318,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     while (moreData) {
         float value;
         
-        moreData = [iter nextFrameData:&value];
+        moreData = [iter frameDataAndAdvance:&value];
         
         if (NSLocationInRange(i, range)) {
             STAssertEquals(value, (float)0.0, @"");
@@ -409,7 +409,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     while (moreData) {
         float value = 0;
-        moreData = [iter nextFrameData:&value];
+        moreData = [iter frameDataAndAdvance:&value];
         
         if (NSLocationInRange(i, range)) {
             NSUInteger offset = i - range.location;
