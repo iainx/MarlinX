@@ -13,6 +13,7 @@
 #import "MLNSample+Operations.h"
 #import "MLNSampleBlock.h"
 #import "MLNSampleChannel.h"
+#import "MLNSampleChannelIterator.h"
 #import "MLNSelectionAction.h"
 #import "MLNSelectionButton.h"
 #import "MLNSelectionToolbar.h"
@@ -61,6 +62,8 @@ typedef enum {
     
     NSMapTable *_markersToHandler;
     MLNMarker *_inMarker;
+    
+    NSMutableArray *_channelIterators;
 }
 
 @synthesize framesPerPixel = _framesPerPixel;
@@ -826,6 +829,19 @@ getIncrementForFramesPerPixel (NSUInteger framesPerPixel)
 static void *sampleContext = &sampleContext;
 static void *markerContext = &markerContext;
 
+- (NSMutableArray *)setupIteratorsForSample:(MLNSample *)sample
+{
+    NSMutableArray *iterArray = [NSMutableArray arrayWithCapacity:[sample numberOfChannels]];
+    NSArray *channels = [sample channelData];
+    
+    for (MLNSampleChannel *channel in channels) {
+        MLNSampleChannelIterator *iter = [[MLNSampleChannelIterator alloc] initWithChannel:channel atFrame:0];
+        [iterArray addObject:iter];
+    }
+    
+    return iterArray;
+}
+
 - (void)sampleLoadedHandler
 {
     CGFloat iw = [_sample numberOfFrames] / (_framesPerPixel);
@@ -836,6 +852,7 @@ static void *markerContext = &markerContext;
     
     _channelHeight = [self calculateChannelHeight];
 
+    _channelIterators = [self setupIteratorsForSample:_sample];
     [self repositionTrackingAreasForMarkers];
     
     [self setNeedsDisplay:YES];
@@ -2042,6 +2059,26 @@ static const CGFloat Y_DISTANCE_FROM_FRAME = 5.0;
      */
 }
 
+- (NSUInteger)zxFrameForFrame:(NSUInteger)frame
+{
+    NSArray *channels = [_sample channelData];
+    NSUInteger bestZX = -1;
+
+    for (int i = 0; i < [_sample numberOfChannels]; i++) {
+        MLNSampleChannelIterator *iter = _channelIterators[i];
+        MLNSampleChannel *channel = channels[i];
+        NSUInteger channelFrame;
+        
+        [iter resetToFrame:frame inChannel:channel];
+        
+        if ([iter findNextZeroCrossing:&channelFrame upTo:frame + _framesPerPixel]) {
+            bestZX = MIN(bestZX, channelFrame);
+        }
+    }
+    
+    return bestZX;
+}
+
 - (void)moveCursorTo:(NSUInteger)cursorFrame
 {
     NSPoint cursorPoint = [self convertFrameToPoint:_cursorFramePosition];
@@ -2055,7 +2092,20 @@ static const CGFloat Y_DISTANCE_FROM_FRAME = 5.0;
     } else if (cursorFrame > [_sample numberOfFrames]) {
         cursorFrame = [_sample numberOfFrames];
     }
-    _cursorFramePosition = cursorFrame;
+    
+    NSUInteger zxCursorFrame;
+    if ([_sample isPlaying] == NO) {
+        zxCursorFrame = [self zxFrameForFrame:cursorFrame];
+        
+        if (zxCursorFrame == -1) {
+            zxCursorFrame = cursorFrame;
+        }
+        //DDLogVerbose(@"Cursor on %lu for %lu", zxCursorFrame, cursorFrame);
+    } else {
+        zxCursorFrame = cursorFrame;
+    }
+    
+    _cursorFramePosition = zxCursorFrame;
 
     // Now invalidate the new cursor
     cursorPoint = [self convertFrameToPoint:cursorFrame];
