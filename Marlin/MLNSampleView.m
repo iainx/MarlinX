@@ -2100,7 +2100,6 @@ static const CGFloat Y_DISTANCE_FROM_FRAME = 5.0;
         if (zxCursorFrame == -1) {
             zxCursorFrame = cursorFrame;
         }
-        //DDLogVerbose(@"Cursor on %lu for %lu", zxCursorFrame, cursorFrame);
     } else {
         zxCursorFrame = cursorFrame;
     }
