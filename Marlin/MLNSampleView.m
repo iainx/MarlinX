@@ -1510,10 +1510,10 @@ static void *markerContext = &markerContext;
 
     [super keyDown:theEvent];
 }
-
+ 
 - (void)keyUp:(NSEvent *)theEvent
 {
-    
+    [super keyUp:theEvent];
 }
 #pragma mark - Zoom handling
 
