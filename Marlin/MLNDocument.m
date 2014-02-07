@@ -350,6 +350,21 @@ completionHandler:(void (^)(NSError *))completionHandler
 }
 #pragma mark - Menu & Toolbar actions
 
+- (void)setSelection:(NSRange)selection
+     withUndoManager:(NSUndoManager *)undoManager
+{
+    [_sampleView setSelection:selection];
+    [[undoManager prepareWithInvocationTarget:self] clearSelectionWithUndoManager:undoManager];
+}
+
+- (void)clearSelectionWithUndoManager:(NSUndoManager *)undoManager
+{
+    NSRange oldSelection = [_sampleView selection];
+    
+    [_sampleView clearSelection];
+    [[undoManager prepareWithInvocationTarget:self] setSelection:oldSelection withUndoManager:undoManager];
+}
+
 - (void)delete:(id)sender
 {
     NSRange selection = [_sampleView selection];
@@ -360,7 +375,7 @@ completionHandler:(void (^)(NSError *))completionHandler
     
     [_sample deleteRange:selection undoManager:undoManager];
     
-    [_sampleView clearSelection];
+    [self clearSelectionWithUndoManager:undoManager];
     
     [self displayIndicatorForOperationName:@"Delete Range"];
 }
@@ -373,7 +388,7 @@ completionHandler:(void (^)(NSError *))completionHandler
     [undoManager setActionName:@"Crop Range"];
     
     [_sample cropRange:selection withUndoManager:undoManager];
-    [_sampleView clearSelection];
+    [self clearSelectionWithUndoManager:undoManager];
     
     [self displayIndicatorForOperationName:@"Crop Range"];
 }
@@ -465,7 +480,7 @@ completionHandler:(void (^)(NSError *))completionHandler
     
     [undoManager setActionName:@"Cut"];
     [_sample deleteRange:selection undoManager:undoManager];
-    [_sampleView clearSelection];
+    [self clearSelectionWithUndoManager:undoManager];
     
     [self displayIndicatorForOperationName:@"Cut"];
 }
@@ -492,7 +507,7 @@ completionHandler:(void (^)(NSError *))completionHandler
     [_sample clearRange:[_sampleView selection] withUndoManager:undoManager];
     
     [self displayIndicatorForOperationName:@"Clear Selection"];
-    [_sampleView clearSelection];
+    [self clearSelectionWithUndoManager:undoManager];
 }
 
 - (IBAction)selectAll:(id)sender
