@@ -1219,6 +1219,8 @@ static void *markerContext = &markerContext;
     if (_dragHandle == DragHandleNone) {
         possibleStartFrame = [self convertPointToFrame:startPoint];
         insideSelection = _hasSelection ? (possibleStartFrame >= _selectionStartFrame && possibleStartFrame <= _selectionEndFrame) : NO;
+        
+        possibleStartFrame = [self zxFrameForFrame:possibleStartFrame];
     }
     
     // Grab the mouse and handle everything in a modal event loop
@@ -1758,7 +1760,7 @@ subtractSelectionRects (NSRect a, NSRect b)
         _selectionEndFrame = [_sample numberOfFrames] - 1;
         _selectionStartFrame = _selectionEndFrame - frameCount;
     }
-    
+
     NSRect newSelectionRect = [self selectionToRect];
     
     [self updateSelection:newSelectionRect
@@ -1773,6 +1775,9 @@ subtractSelectionRects (NSRect a, NSRect b)
     NSUInteger otherEnd;
  
     NSRect oldSelectionRect = [self selectionToRect];
+    
+    // Get a zx for this frame
+    tmp = [self zxFrameForFrame:tmp];
     
     if (tmp >= [_sample numberOfFrames]) {
         tmp = [_sample numberOfFrames] - 1;

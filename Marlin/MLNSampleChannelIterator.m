@@ -85,6 +85,10 @@ void MLNSampleChannelIteratorResetToFrame(MLNSampleChannelCIterator *cIter,
                                           MLNSampleChannel *channel,
                                           NSUInteger frame)
 {
+    if (frame >= [channel numberOfFrames]) {
+        frame = 0;
+    }
+    
     cIter->currentBlock = [channel sampleBlockForFrame:frame];
     cIter->framePosition = (frame - cIter->currentBlock->startFrame);
     cIter->cachePointPosition = (cIter->framePosition / MLNSampleChannelFramesPerCachePoint());
