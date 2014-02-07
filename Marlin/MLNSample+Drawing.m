@@ -112,10 +112,25 @@
     
     // For each point in the array, draw a line between max and min
     
-    for (int i = 0; i < pixelsDrawn; i++) {
-        CGFloat x = i;
-        CGContextMoveToPoint(context, x + 0.5, (pointArray[i].maxValue * h) + h);
-        CGContextAddLineToPoint(context, x + 0.5, (pointArray[i].minValue * h) + h);
+    if (framesPerPixel == 1) {
+        CGFloat x = 0.0;
+        CGFloat value;
+        
+        value = pointArray[0].maxValue > 0 ? pointArray[0].maxValue : pointArray[0].minValue;
+        CGContextMoveToPoint(context, 0.5, (value * h) + h);
+        
+        for (int i = 1; i < pixelsDrawn; i++) {
+            x = i;
+            
+            value = pointArray[i].maxValue > 0 ? pointArray[i].maxValue : pointArray[i].minValue;
+            CGContextAddLineToPoint(context, x + 0.5, (value * h) + h);
+        }
+    } else {
+        for (int i = 0; i < pixelsDrawn; i++) {
+            CGFloat x = i;
+            CGContextMoveToPoint(context, x + 0.5, (pointArray[i].maxValue * h) + h);
+            CGContextAddLineToPoint(context, x + 0.5, (pointArray[i].minValue * h) + h);
+        }
     }
     CGContextSetRGBStrokeColor(context, 1.0, 1.0, 1.0, 1.0);
     CGContextStrokePath(context);
