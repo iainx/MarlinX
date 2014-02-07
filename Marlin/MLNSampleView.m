@@ -1761,6 +1761,9 @@ subtractSelectionRects (NSRect a, NSRect b)
         _selectionStartFrame = _selectionEndFrame - frameCount;
     }
 
+    _selectionStartFrame = [self zxFrameForFrame:_selectionStartFrame];
+    _selectionEndFrame = [self zxFrameForFrame:_selectionEndFrame];
+    
     NSRect newSelectionRect = [self selectionToRect];
     
     [self updateSelection:newSelectionRect
@@ -2067,7 +2070,7 @@ static const CGFloat Y_DISTANCE_FROM_FRAME = 5.0;
 - (NSUInteger)zxFrameForFrame:(NSUInteger)frame
 {
     NSArray *channels = [_sample channelData];
-    NSUInteger bestZX = -1;
+    NSUInteger bestZX = frame;
 
     for (int i = 0; i < [_sample numberOfChannels]; i++) {
         MLNSampleChannelIterator *iter = _channelIterators[i];
