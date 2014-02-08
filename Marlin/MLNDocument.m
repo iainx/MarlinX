@@ -40,7 +40,7 @@
     BOOL _infoPaneOpen;
     MLNInfoPaneViewController *_infoPaneVC;
     NSView *_infoPane;
-    NSLayoutConstraint *_infoPanelWidthConstraint;
+    NSLayoutConstraint *_infoPanelXConstraint;
     NSArray *_infoPaneHConstraints;
     NSArray *_infoPaneVConstraints;
     NSLayoutConstraint *_scrollviewRightConstraint;
@@ -417,21 +417,21 @@ completionHandler:(void (^)(NSError *))completionHandler
                                                                 views:viewsDict];
         [contentView addConstraints:constraints];
         
-        constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"|-4-[scrollView]-4-[infoPane]-4-|"
+        constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"|-4-[scrollView]-4-[infoPane]"
                                                               options:0
                                                               metrics:nil
                                                                 views:viewsDict];
         [contentView addConstraints:constraints];
         
-        _infoPanelWidthConstraint = [NSLayoutConstraint constraintWithItem:_infoPane
-                                                                 attribute:NSLayoutAttributeWidth
+        _infoPanelXConstraint = [NSLayoutConstraint constraintWithItem:_infoPane
+                                                                 attribute:NSLayoutAttributeLeft
                                                                  relatedBy:NSLayoutRelationEqual
-                                                                    toItem:nil
-                                                                 attribute:NSLayoutAttributeNotAnAttribute
-                                                                multiplier:0
+                                                                    toItem:contentView
+                                                                 attribute:NSLayoutAttributeRight
+                                                                multiplier:1
                                                                   constant:0];
-        [contentView addConstraint:_infoPanelWidthConstraint];
-        [[_infoPanelWidthConstraint animator] setConstant:240.0];
+        [contentView addConstraint:_infoPanelXConstraint];
+        [[_infoPanelXConstraint animator] setConstant:-240.0];
     } else {
         [NSAnimationContext beginGrouping];
         NSAnimationContext *ctxt = [NSAnimationContext currentContext];
@@ -441,12 +441,12 @@ completionHandler:(void (^)(NSError *))completionHandler
             // but the block will be executed too quickly to actually matter... I think?
             [_infoPane removeFromSuperview];
             _infoPane = nil;
-            _infoPanelWidthConstraint = nil;
+            _infoPanelXConstraint = nil;
             _infoPaneVC = nil;
             
             [[[self documentWindow] contentView] addConstraint:_scrollviewRightConstraint];
         }];
-        [[_infoPanelWidthConstraint animator] setConstant:0.0];
+        [[_infoPanelXConstraint animator] setConstant:0.0];
         [NSAnimationContext endGrouping];
     }
 }

@@ -23,7 +23,7 @@
 - (void)drawRect:(NSRect)dirtyRect
 {
     /*
-    [[NSColor marlinBackgroundColor] setFill];
+    [[NSColor redColor] setFill];
     NSRectFill(dirtyRect);
      */
 }
