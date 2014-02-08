@@ -58,6 +58,7 @@
 		AE5F5DB7187E22F40095D113 /* MLNInfoPaneViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = AE5F5DB5187E22F40095D113 /* MLNInfoPaneViewController.xib */; };
 		AE5F5DF51880986C0095D113 /* MLNInfoPane.m in Sources */ = {isa = PBXBuildFile; fileRef = AE5F5DF41880986C0095D113 /* MLNInfoPane.m */; };
 		AE5F5DFB1883656F0095D113 /* MLNSampleBlockList.m in Sources */ = {isa = PBXBuildFile; fileRef = AE5F5DFA1883656F0095D113 /* MLNSampleBlockList.m */; };
+		AE6270B718A6D9BB00401A85 /* MLNSampleBlockSilence.m in Sources */ = {isa = PBXBuildFile; fileRef = AE6270B618A6D9BB00401A85 /* MLNSampleBlockSilence.m */; };
 		AE6A0F3C16BD1F1900362CC4 /* MLNSampleBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = AE6A0F3B16BD1F1900362CC4 /* MLNSampleBlock.m */; };
 		AE6FB1D816B8FF6E00139735 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = AE6FB1D716B8FF6E00139735 /* Constants.m */; };
 		AE6FB1DB16B9C57900139735 /* MLNSampleView.m in Sources */ = {isa = PBXBuildFile; fileRef = AE6FB1DA16B9C57900139735 /* MLNSampleView.m */; };
@@ -186,6 +187,8 @@
 		AE5F5DF41880986C0095D113 /* MLNInfoPane.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNInfoPane.m; sourceTree = "<group>"; };
 		AE5F5DF91883656F0095D113 /* MLNSampleBlockList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNSampleBlockList.h; sourceTree = "<group>"; };
 		AE5F5DFA1883656F0095D113 /* MLNSampleBlockList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNSampleBlockList.m; sourceTree = "<group>"; };
+		AE6270B518A6D9BB00401A85 /* MLNSampleBlockSilence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNSampleBlockSilence.h; sourceTree = "<group>"; };
+		AE6270B618A6D9BB00401A85 /* MLNSampleBlockSilence.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNSampleBlockSilence.m; sourceTree = "<group>"; };
 		AE6A0F3A16BD1F1900362CC4 /* MLNSampleBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNSampleBlock.h; sourceTree = "<group>"; };
 		AE6A0F3B16BD1F1900362CC4 /* MLNSampleBlock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNSampleBlock.m; sourceTree = "<group>"; };
 		AE6FB1D416B8FC9200139735 /* MLNLoadOperationDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNLoadOperationDelegate.h; sourceTree = "<group>"; };
@@ -459,6 +462,8 @@
 				AE5F5DFA1883656F0095D113 /* MLNSampleBlockList.m */,
 				AE27FD8D187646E700EBA414 /* MLNSampleBlockFile.h */,
 				AE27FD8E187646E700EBA414 /* MLNSampleBlockFile.m */,
+				AE6270B518A6D9BB00401A85 /* MLNSampleBlockSilence.h */,
+				AE6270B618A6D9BB00401A85 /* MLNSampleBlockSilence.m */,
 				AE05C60116C246DF00A7B9D9 /* MLNSampleChannel.h */,
 				AE05C60216C246DF00A7B9D9 /* MLNSampleChannel.m */,
 				AE36D485186BB35E00070FC6 /* MLNSampleChannelIterator.h */,
@@ -702,6 +707,7 @@
 				AECDE7E316B7C26800DE94D5 /* MLNSample.m in Sources */,
 				AECDE7E816B7D59C00DE94D5 /* MLNLoadOperation.m in Sources */,
 				AE6FB1D816B8FF6E00139735 /* Constants.m in Sources */,
+				AE6270B718A6D9BB00401A85 /* MLNSampleBlockSilence.m in Sources */,
 				AE6FB1DB16B9C57900139735 /* MLNSampleView.m in Sources */,
 				AEA99051187263BB0022E55C /* MLNTransportControlsView.m in Sources */,
 				AE6A0F3C16BD1F1900362CC4 /* MLNSampleBlock.m in Sources */,

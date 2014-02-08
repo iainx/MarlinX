@@ -9,6 +9,7 @@
 #import "MLNApplicationDelegate.h"
 #import "MLNSampleChannel.h"
 #import "MLNSampleBlockFile.h"
+#import "MLNSampleBlockSilence.h"
 #import "MLNMMapRegion.h"
 
 @implementation MLNSampleChannel { 
@@ -485,37 +486,19 @@ int MLNSampleChannelFramesPerCachePoint(void)
                frameDuration:(NSUInteger)duration
 {
     MLNSampleBlock *firstBlock, *secondBlock;
-    float *data = calloc(MAX_BUFFER_FRAME_SIZE, sizeof(float));
     
     [self splitAtFrame:frame firstBlock:&firstBlock secondBlock:&secondBlock];
     
-    MLNSampleBlockDumpBlock(firstBlock);
-    MLNSampleBlockDumpBlock(secondBlock);
-    
-    while (duration) {
-        MLNSampleBlock *newBlock;
-        size_t framesToWrite = MIN(duration, MAX_BUFFER_FRAME_SIZE);
-        
-        newBlock = [self writeData:data withByteLength:framesToWrite * sizeof(float)];
-        if (firstBlock) {
-            [self insertBlock:newBlock afterBlock:firstBlock];
-        } else if (secondBlock) {
-            [self insertBlock:newBlock beforeBlock:secondBlock];
-        }
-        
-        firstBlock = newBlock;
-        
-        if (_firstBlock == NULL) {
-            _firstBlock = firstBlock;
-        }
-        
-        duration -= framesToWrite;
+    MLNSampleBlock *silenceBlock = MLNSampleBlockSilenceCreateBlock(duration);
+    if (firstBlock) {
+        [self insertBlock:silenceBlock afterBlock:firstBlock];
+    } else {
+        [self insertBlock:silenceBlock beforeBlock:secondBlock];
     }
     
     if (_lastBlock == NULL) {
         _lastBlock = firstBlock;
     }
-    free(data);
     
     return YES;
 }
