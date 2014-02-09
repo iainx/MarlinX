@@ -38,6 +38,7 @@
 - (IBAction)crop:(id)sender;
 - (IBAction)clearSelection:(id)sender;
 - (IBAction)reverseSelection:(id)sender;
+- (IBAction)insertSilence:(id)sender;
 
 - (IBAction)showInformation:(id)sender;
 

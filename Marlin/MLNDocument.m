@@ -23,6 +23,7 @@
 #import "MLNOperatorIndicator.h"
 #import "MLNTransportControlsView.h"
 #import "MLNInfoPaneViewController.h"
+#import "MLNAddSilenceWindowController.h"
 #import "MLNMarker.h"
 #import "Constants.h"
 
@@ -44,6 +45,8 @@
     NSArray *_infoPaneHConstraints;
     NSArray *_infoPaneVConstraints;
     NSLayoutConstraint *_scrollviewRightConstraint;
+    
+    MLNAddSilenceWindowController *_insertSilenceController;
 }
 
 + (NSArray *)readableTypes
@@ -572,6 +575,36 @@ completionHandler:(void (^)(NSError *))completionHandler
 - (IBAction)reverseSelection:(id)sender
 {
     [_sample reverseRange:[_sampleView selection] withUndoManager:[self undoManager]];
+}
+
+- (IBAction)insertSilence:(id)sender
+{
+    if (_insertSilenceController == nil) {
+        NSWindow *window = [self documentWindow];
+        
+        _insertSilenceController = [[MLNAddSilenceWindowController alloc] init];
+        NSWindow *addSilenceWindow = [_insertSilenceController window];
+        
+        MLNSample *sample = _sample;
+        MLNSampleView *sampleView = _sampleView;
+        NSUndoManager *undoManager = [self undoManager];
+        
+        [_insertSilenceController setDidCloseBlock:^(NSUInteger numberOfFramesToAdd) {
+            [window endSheet:addSilenceWindow];
+            
+            if (numberOfFramesToAdd == 0) {
+                return;
+            }
+            
+            [sample insertSilenceAtFrame:[sampleView cursorFramePosition]
+                          numberOfFrames:numberOfFramesToAdd
+                             undoManager:undoManager];
+        }];
+        
+        [window beginSheet:addSilenceWindow completionHandler:^(NSModalResponse returnCode) {
+            _insertSilenceController = nil;
+        }];
+    }
 }
 
 #pragma mark - Indicator

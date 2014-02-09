@@ -59,6 +59,8 @@
 		AE5F5DF51880986C0095D113 /* MLNInfoPane.m in Sources */ = {isa = PBXBuildFile; fileRef = AE5F5DF41880986C0095D113 /* MLNInfoPane.m */; };
 		AE5F5DFB1883656F0095D113 /* MLNSampleBlockList.m in Sources */ = {isa = PBXBuildFile; fileRef = AE5F5DFA1883656F0095D113 /* MLNSampleBlockList.m */; };
 		AE6270B718A6D9BB00401A85 /* MLNSampleBlockSilence.m in Sources */ = {isa = PBXBuildFile; fileRef = AE6270B618A6D9BB00401A85 /* MLNSampleBlockSilence.m */; };
+		AE6270BB18A703C200401A85 /* MLNAddSilenceWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = AE6270B918A703C200401A85 /* MLNAddSilenceWindowController.m */; };
+		AE6270BC18A703C200401A85 /* MLNAddSilenceWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = AE6270BA18A703C200401A85 /* MLNAddSilenceWindowController.xib */; };
 		AE6A0F3C16BD1F1900362CC4 /* MLNSampleBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = AE6A0F3B16BD1F1900362CC4 /* MLNSampleBlock.m */; };
 		AE6FB1D816B8FF6E00139735 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = AE6FB1D716B8FF6E00139735 /* Constants.m */; };
 		AE6FB1DB16B9C57900139735 /* MLNSampleView.m in Sources */ = {isa = PBXBuildFile; fileRef = AE6FB1DA16B9C57900139735 /* MLNSampleView.m */; };
@@ -189,6 +191,9 @@
 		AE5F5DFA1883656F0095D113 /* MLNSampleBlockList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNSampleBlockList.m; sourceTree = "<group>"; };
 		AE6270B518A6D9BB00401A85 /* MLNSampleBlockSilence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNSampleBlockSilence.h; sourceTree = "<group>"; };
 		AE6270B618A6D9BB00401A85 /* MLNSampleBlockSilence.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNSampleBlockSilence.m; sourceTree = "<group>"; };
+		AE6270B818A703C200401A85 /* MLNAddSilenceWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNAddSilenceWindowController.h; sourceTree = "<group>"; };
+		AE6270B918A703C200401A85 /* MLNAddSilenceWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNAddSilenceWindowController.m; sourceTree = "<group>"; };
+		AE6270BA18A703C200401A85 /* MLNAddSilenceWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MLNAddSilenceWindowController.xib; sourceTree = "<group>"; };
 		AE6A0F3A16BD1F1900362CC4 /* MLNSampleBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNSampleBlock.h; sourceTree = "<group>"; };
 		AE6A0F3B16BD1F1900362CC4 /* MLNSampleBlock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNSampleBlock.m; sourceTree = "<group>"; };
 		AE6FB1D416B8FC9200139735 /* MLNLoadOperationDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNLoadOperationDelegate.h; sourceTree = "<group>"; };
@@ -347,6 +352,7 @@
 		AEC19AC617E0B69500226CD9 /* XIB */ = {
 			isa = PBXGroup;
 			children = (
+				AE6270BA18A703C200401A85 /* MLNAddSilenceWindowController.xib */,
 				AE5F5DB5187E22F40095D113 /* MLNInfoPaneViewController.xib */,
 				AEEE7E9D17E71B8700ECA24B /* MLNExportPanelController.xib */,
 				AE24E45A17E1D14F00B67469 /* MLNProgressViewController.xib */,
@@ -501,6 +507,8 @@
 				AE41C727185BD2A500E68819 /* MLNOperatorIndicator.m */,
 				AE5F5DB3187E22F40095D113 /* MLNInfoPaneViewController.h */,
 				AE5F5DB4187E22F40095D113 /* MLNInfoPaneViewController.m */,
+				AE6270B818A703C200401A85 /* MLNAddSilenceWindowController.h */,
+				AE6270B918A703C200401A85 /* MLNAddSilenceWindowController.m */,
 				AE8CEAEE188F4C6600E9FCBB /* NSColor+Extra.h */,
 				AE8CEAEF188F4C6600E9FCBB /* NSColor+Extra.m */,
 				AE5F5DF31880986C0095D113 /* MLNInfoPane.h */,
@@ -634,6 +642,7 @@
 				AECDE7D816B7C0C300DE94D5 /* MLNDocument.xib in Resources */,
 				AE020EF4187A362400F82337 /* clear-selection16x16.png in Resources */,
 				AE27FD8618761B6000EBA414 /* play16x16@2x.png in Resources */,
+				AE6270BC18A703C200401A85 /* MLNAddSilenceWindowController.xib in Resources */,
 				AE27FD8318761B6000EBA414 /* ffwd16x16.png in Resources */,
 				AECDE7DB16B7C0C300DE94D5 /* MainMenu.xib in Resources */,
 				AE020EF9187A377700F82337 /* reverse-selection16x16@2x.png in Resources */,
@@ -748,6 +757,7 @@
 				AE8CEAF0188F4C6600E9FCBB /* NSColor+Extra.m in Sources */,
 				AEEE7EA617E7607F00ECA24B /* MLNExportOperation.m in Sources */,
 				AEEE7EA917E7642F00ECA24B /* MLNOperation.m in Sources */,
+				AE6270BB18A703C200401A85 /* MLNAddSilenceWindowController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
