@@ -17,7 +17,7 @@ typedef void (^AddSilenceWindowDidClose)(NSUInteger numberOfFramesToAdd);
 @property (readwrite, weak) IBOutlet NSStepper *durationStepper;
 @property (readwrite, weak) IBOutlet NSPopUpButton *framePopup;
 
-@property (readwrite) NSUInteger duration;
+@property (nonatomic, readwrite) NSUInteger duration;
 @property (nonatomic, readwrite) NSInteger typeIndex;
 @property (readwrite, copy) AddSilenceWindowDidClose didCloseBlock;
 

@@ -42,7 +42,6 @@
     [_durationStepper setMaxValue:MAXFLOAT];
     
     [[_durationField cell] setFormatter:_formatters[0]];
-    //[_durationField setIntegerValue:44100];
 }
 
 - (void)setDuration:(NSUInteger)duration
@@ -51,8 +50,6 @@
         return;
     }
     _duration = duration;
-    
-    NSLog(@"Duration: %lu", duration);
 }
 
 - (NSInteger)typeIndex
