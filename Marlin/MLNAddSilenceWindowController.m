@@ -7,12 +7,14 @@
 //
 
 #import "MLNAddSilenceWindowController.h"
+#import "MLNSecondsFormatter.h"
+#import "MLNDurationFormatter.h"
 
-@interface MLNAddSilenceWindowController ()
+@implementation MLNAddSilenceWindowController {
+    NSArray *_formatters;
+}
 
-@end
-
-@implementation MLNAddSilenceWindowController
+@synthesize typeIndex = _typeIndex;
 
 - (id)init
 {
@@ -23,6 +25,9 @@
     
     _duration = 44100;
     
+    _formatters = @[[[NSNumberFormatter alloc] init],
+                    [[MLNSecondsFormatter alloc] init],
+                    [[MLNDurationFormatter alloc] init]];
     return self;
 }
 
@@ -34,6 +39,49 @@
     
     [_durationStepper setMinValue:1.0];
     [_durationStepper setIncrement:1.0];
+    [_durationStepper setMaxValue:MAXFLOAT];
+    
+    [[_durationField cell] setFormatter:_formatters[0]];
+    //[_durationField setIntegerValue:44100];
+}
+
+- (void)setDuration:(NSUInteger)duration
+{
+    if (_duration == duration) {
+        return;
+    }
+    _duration = duration;
+    
+    NSLog(@"Duration: %lu", duration);
+}
+
+- (NSInteger)typeIndex
+{
+    return _typeIndex;
+}
+
+- (void)setTypeIndex:(NSInteger)typeIndex
+{
+    if (typeIndex == _typeIndex) {
+        return;
+    }
+    
+    _typeIndex = typeIndex;
+
+    NSFormatter *formatter = _formatters[_typeIndex];
+    if (_typeIndex == 1 || _typeIndex == 2) {
+        [(MLNSecondsFormatter *)formatter setSampleRate:44100];
+        [(MLNSecondsFormatter *)formatter setIgnoreUpdate:YES];
+    }
+    
+    [[_durationField cell] setFormatter:formatter];
+    
+    // Need this to force an update using the new formatter
+    [_durationField setStringValue:[NSString stringWithFormat:@"%lu", _duration]];
+    
+    if (_typeIndex == 1 || _typeIndex == 2) {
+        [(MLNSecondsFormatter *)formatter setIgnoreUpdate:NO];
+    }
 }
 
 - (IBAction)insertSilence:(id)sender

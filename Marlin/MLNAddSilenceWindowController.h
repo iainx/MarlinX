@@ -12,9 +12,13 @@ typedef void (^AddSilenceWindowDidClose)(NSUInteger numberOfFramesToAdd);
 
 @interface MLNAddSilenceWindowController : NSWindowController
 
-@property (readwrite) NSUInteger duration;
+@property (readwrite, weak) IBOutlet NSTextField *titleLabel;
 @property (readwrite, weak) IBOutlet NSTextField *durationField;
 @property (readwrite, weak) IBOutlet NSStepper *durationStepper;
+@property (readwrite, weak) IBOutlet NSPopUpButton *framePopup;
+
+@property (readwrite) NSUInteger duration;
+@property (nonatomic, readwrite) NSInteger typeIndex;
 @property (readwrite, copy) AddSilenceWindowDidClose didCloseBlock;
 
 - (IBAction)insertSilence:(id)sender;
