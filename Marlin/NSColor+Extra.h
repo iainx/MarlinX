@@ -11,5 +11,21 @@
 @interface NSColor (Extra)
 
 + (NSColor *)marlinBackgroundColor;
++ (NSColor *)marlinVoid;
++ (NSColor *)marlinAsh;
++ (NSColor *)marlinBlind;
++ (NSColor *)marlinBloodRed;
++ (NSColor *)marlinPigMeat;
++ (NSColor *)marlinOldPoop;
++ (NSColor *)marlinNewPoop;
++ (NSColor *)marlinBlaze;
++ (NSColor *)marlinZornSkin;
++ (NSColor *)marlinShadeGreen;
++ (NSColor *)marlinLeafGreen;
++ (NSColor *)marlinSlimeGreen;
++ (NSColor *)marlinNightBlue;
++ (NSColor *)marlinSeaBlue;
++ (NSColor *)marlinSkyBlue;
++ (NSColor *)marlinCloudBlue;
 
 @end

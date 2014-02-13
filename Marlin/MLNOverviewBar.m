@@ -31,8 +31,6 @@ typedef enum {
     NSPoint _mouseDownPoint;
     DragRegion _dragRegion;
     BOOL _dragged;
-    
-    NSColor *_darkBG;
 }
 
 @synthesize sample = _sample;
@@ -99,9 +97,6 @@ static void *sampleContext = &sampleContext;
     CGFloat channelHeight = (bounds.size.height - CHANNEL_PADDING) / [_sample numberOfChannels];
     
     channelRect.size.height = (channelHeight - 1);
-    if (_darkBG == nil) {
-        _darkBG = [NSColor colorWithCalibratedRed:0.214 green:0.218 blue:0.226 alpha:1.0];
-    }
     
     //[[NSColor marlinBackgroundColor] setFill];
     [[NSColor clearColor] setFill];
@@ -122,7 +117,7 @@ static void *sampleContext = &sampleContext;
         // Draw the background
         NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:channelRect
                                                              xRadius:6 yRadius:6];
-        [_darkBG set];
+        [[NSColor marlinVoid] set];
         [path fill];
     }
 
@@ -136,7 +131,7 @@ static void *sampleContext = &sampleContext;
         selectionRect.size.height -= 9;
         
         selectionPath = [NSBezierPath bezierPathWithRoundedRect:selectionRect xRadius:2.0 yRadius:2.0];
-        NSColor *selectionBackgroundColour = [NSColor colorWithCalibratedRed:0.2 green:0.2 blue:0.6 alpha:0.75];
+        NSColor *selectionBackgroundColour = [[NSColor marlinNightBlue] colorWithAlphaComponent:0.75];
         [selectionBackgroundColour setFill];
         
         [selectionPath fill];
@@ -151,12 +146,11 @@ static void *sampleContext = &sampleContext;
         
         CGContextClipToMask(context, channelRect, channelMask);
     
-        [[NSColor darkGrayColor] setFill];
+        [[NSColor marlinAsh] setFill];
         NSRectFill(channelRect);
         
         if (NSEqualRects(borderRect, NSZeroRect) == NO) {
-            NSColor *waveformColour = [NSColor colorWithCalibratedRed:0.5 green:0.5 blue:0.2 alpha:1.0];
-            [waveformColour setFill];
+            [[NSColor marlinZornSkin] setFill];
             
             NSRectFill(borderRect);
         }
@@ -165,12 +159,12 @@ static void *sampleContext = &sampleContext;
     }
     
     if (selectionPath) {
-        [[NSColor blackColor] setStroke];
+        [[NSColor marlinVoid] setStroke];
         [selectionPath stroke];
     }
     
     if (_visibleFrameRange.length != 0) {
-        [[NSColor colorWithCalibratedRed:0.1 green:0.12 blue:0.15 alpha:1.0] set];
+        [[NSColor marlinVoid] set];
         NSBezierPath *borderPath = [NSBezierPath bezierPathWithRoundedRect:borderRect xRadius:2.0 yRadius:2.0];
         [borderPath setLineWidth:1.0];
         [borderPath stroke];

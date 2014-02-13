@@ -20,6 +20,7 @@
 #import "MLNMarker.h"
 #import "MLNMarkerHandler.h"
 #import "Constants.h"
+#import "NSColor+Extra.h"
 
 typedef enum {
     DragHandleNone,
@@ -94,7 +95,8 @@ typedef enum {
     [self setContentHuggingPriority:NSLayoutPriorityDefaultLow
                      forOrientation:NSLayoutConstraintOrientationVertical];
     
-    _markerFillColour = [NSColor colorWithCalibratedRed:0.65 green:0.23 blue:0.23 alpha:0.897];
+    //_markerFillColour = [NSColor colorWithCalibratedRed:0.65 green:0.23 blue:0.23 alpha:0.897];
+    _markerFillColour = [[NSColor marlinBloodRed] colorWithAlphaComponent:0.75];
     
     _markersToHandler = [NSMapTable mapTableWithKeyOptions:NSMapTableStrongMemory | NSMapTableObjectPointerPersonality
                                                     valueOptions:NSMapTableStrongMemory];
@@ -241,9 +243,8 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
 - (void)drawChannelBackgroundInRect:(NSRect)channelBackgroundRect
 {
     NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:channelBackgroundRect xRadius:15.0 yRadius:15.0];
-    NSColor *darkBG = [NSColor colorWithCalibratedRed:55.0/255.0 green:56.0/255.0 blue:58.0/255.0 alpha:1.0];
     
-    [darkBG setFill];
+    [[NSColor marlinVoid] setFill];
     [path fill];
     
     [[NSColor blackColor] setStroke];
@@ -334,7 +335,9 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
         selectionRect = [self selectionToRect];
         
         if (NSIntersectsRect(selectionRect, dirtyRect)) {
-            NSColor *selectionBackgroundColour = [NSColor colorWithCalibratedRed:0.2 green:0.2 blue:0.6 alpha:0.75];
+            //NSColor *selectionBackgroundColour = [NSColor colorWithCalibratedRed:0.2 green:0.2 blue:0.6 alpha:0.75];
+            
+            NSColor *selectionBackgroundColour = [[NSColor marlinNightBlue] colorWithAlphaComponent:0.75];
             [selectionBackgroundColour setFill];
             
             selectionRect.origin.x += 0.5;
@@ -370,8 +373,7 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
         NSRect smallerMaskRect = NSInsetRect(channelRect, 0, 6);
         CGContextClipToMask(context, smallerMaskRect, sampleMask);
 
-        NSColor *waveformColour = [NSColor colorWithCalibratedRed:0.5 green:0.5 blue:0.2 alpha:1.0];
-        [waveformColour setFill];
+        [[NSColor marlinZornSkin] setFill];
         
         NSRect intersectRect = NSIntersectionRect(smallerMaskRect, dirtyRect);
         
@@ -404,9 +406,7 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
         NSPoint cursorPoint = [self convertFrameToPoint:_cursorFramePosition];
         NSRect cursorRect = NSMakeRect(cursorPoint.x + 0.5, 0, 1, [self bounds].size.height);
         if (NSIntersectsRect(cursorRect, dirtyRect)) {
-            //NSColor *cursorColour = [NSColor colorWithCalibratedWhite:1.0 alpha:1.0];
-            NSColor *cursorColour = [NSColor colorWithCalibratedRed:44.0/255.0 green:81.0/255.0 blue:167.0/255.0 alpha:1.0];
-            [cursorColour set];
+            [[NSColor marlinBlind] set];
             
             NSRectFillUsingOperation(cursorRect, NSCompositeSourceOver);
         }
@@ -564,7 +564,8 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
     
     [outerPath appendBezierPath:[innerPath bezierPathByReversingPath]];
     
-    [[NSColor colorWithCalibratedRed:0.566 green:0.666 blue:0.796 alpha:1.000] set];
+    //[[NSColor colorWithCalibratedRed:0.566 green:0.666 blue:0.796 alpha:1.000] set];
+    [[NSColor marlinCloudBlue] set];
     [outerPath fill];
 
     if (startSize.width + endSize.width + 25 < innerSelectionRect.size.width) {
@@ -572,7 +573,7 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
         [endString drawAtPoint:NSMakePoint(NSMaxX(innerSelectionRect) - [endString size].width - 5, innerSelectionRect.origin.y + 5)];
     }
     
-    [[NSColor blackColor] set];
+    [[NSColor marlinVoid] set];
     [outerPath stroke];
 }
 
@@ -686,7 +687,7 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
     
     const char **nameMap = channelCountToNamesMap[[_sample numberOfChannels] - 1];
     NSString *name = [NSString stringWithUTF8String:nameMap[channel]];
-    NSDictionary *attrs = @{NSForegroundColorAttributeName: [NSColor lightGrayColor]};
+    NSDictionary *attrs = @{NSForegroundColorAttributeName: [NSColor marlinBlind]};
     NSAttributedString *attrString = [[NSAttributedString alloc] initWithString:name attributes:attrs];
     
     NSRect nameRect;
