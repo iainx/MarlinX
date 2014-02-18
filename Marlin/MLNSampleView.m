@@ -123,6 +123,16 @@ typedef enum {
     return NO;
 }
 
+- (BOOL)isOpaque
+{
+    return YES;
+}
+
++ (BOOL)isCompatibleWithResponsiveScrolling
+{
+    return YES;
+}
+
 - (NSSize)intrinsicContentSize
 {
     CGFloat minimumHeight = 100 * [_sample numberOfChannels];
@@ -257,6 +267,9 @@ static const int SMALL_GUTTER_SIZE = GUTTER_SIZE - 7;
     NSRect bounds = [self bounds];
     NSRect realDrawRect = dirtyRect;
     
+    [[NSColor windowBackgroundColor] setFill];
+    NSRectFill(dirtyRect);
+
     // We actually want to draw the whole of the vertical
     realDrawRect.origin.y = bounds.origin.y;
     realDrawRect.size.height = bounds.size.height;

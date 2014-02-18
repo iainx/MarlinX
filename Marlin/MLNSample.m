@@ -184,6 +184,8 @@ typedef struct PlaybackData {
     
     NSURL *dataURL = [url URLByAppendingPathComponent:@"marlin-filedata.wav"];
 
+    _url = url;
+    
     [self importFromURL:dataURL];
 }
 

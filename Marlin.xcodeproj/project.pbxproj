@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AE0105AC18B0EB3700D4B9B0 /* MLNDocumentController.m in Sources */ = {isa = PBXBuildFile; fileRef = AE0105AB18B0EB3700D4B9B0 /* MLNDocumentController.m */; };
 		AE020EEC187A31EA00F82337 /* delete-selection16x16.png in Resources */ = {isa = PBXBuildFile; fileRef = AE020EEA187A31EA00F82337 /* delete-selection16x16.png */; };
 		AE020EED187A31EA00F82337 /* delete-selection16x16@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = AE020EEB187A31EA00F82337 /* delete-selection16x16@2x.png */; };
 		AE020EF0187A34D800F82337 /* crop-selection16x16.png in Resources */ = {isa = PBXBuildFile; fileRef = AE020EEE187A34D800F82337 /* crop-selection16x16.png */; };
@@ -109,6 +110,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		AE0105AA18B0EB3700D4B9B0 /* MLNDocumentController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNDocumentController.h; sourceTree = "<group>"; };
+		AE0105AB18B0EB3700D4B9B0 /* MLNDocumentController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNDocumentController.m; sourceTree = "<group>"; };
 		AE020EEA187A31EA00F82337 /* delete-selection16x16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "delete-selection16x16.png"; sourceTree = "<group>"; };
 		AE020EEB187A31EA00F82337 /* delete-selection16x16@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "delete-selection16x16@2x.png"; sourceTree = "<group>"; };
 		AE020EEE187A34D800F82337 /* crop-selection16x16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "crop-selection16x16.png"; sourceTree = "<group>"; };
@@ -442,6 +445,8 @@
 			children = (
 				AEDA842916C88B7F001B2DD1 /* MLNApplicationDelegate.h */,
 				AEDA842A16C88B7F001B2DD1 /* MLNApplicationDelegate.m */,
+				AE0105AA18B0EB3700D4B9B0 /* MLNDocumentController.h */,
+				AE0105AB18B0EB3700D4B9B0 /* MLNDocumentController.m */,
 				AE1C448C18930EA50061DFD6 /* MLNWindow.h */,
 				AE1C448D18930EA50061DFD6 /* MLNWindow.m */,
 				AE1C448F18930FCA0061DFD6 /* MLNWindowDelegate.h */,
@@ -761,6 +766,7 @@
 				AE57CA511710EB0A0043E690 /* MLNSelectionAction.m in Sources */,
 				AE2E4437172333B8005463FB /* MLNCacheFile.m in Sources */,
 				AE071B89172B542A0089278E /* MLNPasteboardSampleData.m in Sources */,
+				AE0105AC18B0EB3700D4B9B0 /* MLNDocumentController.m in Sources */,
 				AE760C0B183910D700108327 /* MLNArrayController.m in Sources */,
 				AE24E45B17E1D14F00B67469 /* MLNProgressViewController.m in Sources */,
 				AE1A2F671833CDC10012E510 /* MLNMarker.m in Sources */,
@@ -888,7 +894,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx10.9;
+				SDKROOT = macosx;
+				VALID_ARCHS = "x86_64 i386";
 			};
 			name = Debug;
 		};
@@ -910,7 +917,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				SDKROOT = macosx10.9;
+				SDKROOT = macosx;
+				VALID_ARCHS = "x86_64 i386";
 			};
 			name = Release;
 		};

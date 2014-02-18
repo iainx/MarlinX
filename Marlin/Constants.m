@@ -20,3 +20,5 @@ NSString *const kMLNSampleDataDidChangeInRange = @"com.sleepfive.Marlin.Sample.D
 
 NSString *const kMLNArrayControllerObjectAdded = @"com.sleepfive.Marlin.ArrayController.ObjectAdded";
 NSString *const kMLNArrayControllerObjectRemoved = @"com.sleepfive.Marlin.ArrayController.ObjectRemoved";
+
+NSString *const kMLNDocumentRestoreURL = @"com.sleepfive.Marlin.Document.RestoreURLKey";

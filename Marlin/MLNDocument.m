@@ -84,7 +84,43 @@
     if (self) {
         // Add your subclass-specific initialization here.
     }
+    
     return self;
+}
+
+- (id)initForURL:(NSURL *)urlOrNil withContentsOfURL:(NSURL *)contentsURL ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
+{
+    self = [super init];
+
+    DDLogVerbose(@"initForURL: %@ withContentsOfURL: %@ ofType: %@", urlOrNil, contentsURL, typeName);
+    [self readFromURL:contentsURL ofType:typeName error:outError];
+    
+    return self;
+}
+
+- (id)initWithContentsOfURL:(NSURL *)url ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
+{
+    self = [super init];
+    
+    DDLogVerbose(@"initWithContentsOfURL: %@ ofType: %@", url, typeName);
+    
+    [self readFromURL:url ofType:typeName error:outError];
+    return self;
+}
+
+- (id)initWithType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
+{
+    self = [super init];
+    
+    DDLogVerbose(@"initWithType: %@", typeName);
+    return self;
+}
+
+- (void)encodeRestorableStateWithCoder:(NSCoder *)coder
+{
+    [coder encodeObject:[_sample url] forKey:kMLNDocumentRestoreURL];
+    
+    [super encodeRestorableStateWithCoder:coder];
 }
 
 - (NSString *)windowNibName
@@ -147,10 +183,18 @@ static void *sampleViewContext = &sampleViewContext;
         [_overviewBarView setVisibleRange:[_sampleView visibleRange]];
     }
 }
-
+/*
+- (void)restoreDocumentWindowWithIdentifier:(NSString *)identifier state:(NSCoder *)state completionHandler:(void (^)(NSWindow *, NSError *))completionHandler
+{
+    DDLogVerbose(@"Restore %@: %@", identifier, state);
+    [super restoreDocumentWindowWithIdentifier:identifier state:state completionHandler:completionHandler];
+}
+*/
 - (void)windowControllerDidLoadNib:(NSWindowController *)aController
 {
     [super windowControllerDidLoadNib:aController];
+    
+    DDLogVerbose(@"Document controller: %@", [NSDocumentController sharedDocumentController]);
     
     [_transportControlsView setDelegate:self];
     _overviewBarView = [[MLNOverviewBar alloc] initWithFrame:NSZeroRect];
@@ -241,11 +285,11 @@ static void *sampleViewContext = &sampleViewContext;
     //[_scrollView setVerticalScrollElasticity:NSScrollElasticityAllowed];
     
     //[_scrollView setBackgroundColor:[NSColor marlinBackgroundColor]];
-    [_scrollView setDrawsBackground:NO];
+    //[_scrollView setDrawsBackground:NO];
     [_scrollView setDocumentView:_sampleView];
     
     NSClipView *clipView = [_scrollView contentView];
-    //[clipView setCopiesOnScroll:NO];
+    [clipView setCopiesOnScroll:YES];
     
     // Set up the clipview so that the sampleView fills the whole of it vertically
     [clipView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[sampleView]|" options:0 metrics:nil views:viewsDict]];
@@ -274,6 +318,7 @@ static void *sampleViewContext = &sampleViewContext;
 
     if ([typeName isEqualToString:@"com.sleepfive.marlin"]) {
         [_sample startLoadFromURL:url];
+        [self setFileURL:url];
     } else {
         
         [_sample startImportFromURL:url];

@@ -11,14 +11,27 @@
 #import "DDTTYLogger.h"
 #import "MLNApplicationDelegate.h"
 #import "MLNCacheFile.h"
+#import "MLNDocumentController.h"
 
 @implementation MLNApplicationDelegate {
+    MLNDocumentController *_documentController;
     NSMutableArray *_cacheFiles;
 }
 
 @synthesize clipboardContent = _clipboardContent;
 
 #pragma mark - Delegate methods
+
+- (id)init
+{
+    self = [super init];
+    if (!self) {
+        return nil;
+    }
+    
+    _documentController = [[MLNDocumentController alloc] init];
+    return self;
+}
 
 - (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)sender
 {
@@ -35,6 +48,22 @@
     }
     
     return NO;
+}
+
+- (void)applicationDidFinishLaunching:(NSNotification *)notification
+{
+    // Schedule "Checking whether document exists." into next UI Loop.
+    // Because document is not restored yet.
+    // So we don't know what do we have to create new one.
+    // Opened document can be identified here. (double click document file)
+    NSInvocationOperation* op = [[NSInvocationOperation alloc] initWithTarget:self
+                                                                     selector:@selector(openNewDocumentIfNeeded)
+                                                                       object:nil];
+    [[NSOperationQueue mainQueue] addOperation:op];
+}
+
+- (void)openNewDocumentIfNeeded
+{
 }
 
 - (void)applicationWillFinishLaunching:(NSNotification *)notification
