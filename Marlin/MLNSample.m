@@ -231,6 +231,8 @@ typedef struct PlaybackData {
         
         DDLogVerbose(@"Exporting to %@: %@", [realURL absoluteString], format);
         [self startExportTo:realURL asFormat:format];
+    } else {
+        _saveCompletionHandler(nil);
     }
 }
 

@@ -343,6 +343,7 @@ completionHandler:(void (^)(NSError *))completionHandler
     DDLogInfo(@"saveToURL:%@ ofType:%@", [url absoluteString], typeName);
     
     [_sample startWriteToURL:url completionHandler:completionHandler];
+    
     [self unblockUserInteraction];
     
     [self updateChangeCountWithToken:token forSaveOperation:saveOperation];
