@@ -51,6 +51,7 @@
 		AE41C72A185BEDE200E68819 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE41C729185BEDE200E68819 /* QuartzCore.framework */; };
 		AE47540917FDD51E001105F8 /* utils.m in Sources */ = {isa = PBXBuildFile; fileRef = AE47540817FDD51E001105F8 /* utils.m */; };
 		AE48B5B0184554C800F5642E /* MLNMarkerHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = AE48B5AF184554C800F5642E /* MLNMarkerHandler.m */; };
+		AE4B1B5E19662E6D005298E2 /* fontawesome-webfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AE4B1B5D19662E6D005298E2 /* fontawesome-webfont.ttf */; };
 		AE57CA4B170F73250043E690 /* MLNSelectionButton.m in Sources */ = {isa = PBXBuildFile; fileRef = AE57CA4A170F73250043E690 /* MLNSelectionButton.m */; };
 		AE57CA4E171040AE0043E690 /* MLNSelectionToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = AE57CA4D171040AE0043E690 /* MLNSelectionToolbar.m */; };
 		AE57CA511710EB0A0043E690 /* MLNSelectionAction.m in Sources */ = {isa = PBXBuildFile; fileRef = AE57CA501710EB0A0043E690 /* MLNSelectionAction.m */; };
@@ -97,6 +98,7 @@
 		AEEE7EA217E725FA00ECA24B /* MLNExportPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = AEEE7EA117E725FA00ECA24B /* MLNExportPanelController.m */; };
 		AEEE7EA617E7607F00ECA24B /* MLNExportOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = AEEE7EA517E7607F00ECA24B /* MLNExportOperation.m */; };
 		AEEE7EA917E7642F00ECA24B /* MLNOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = AEEE7EA817E7642F00ECA24B /* MLNOperation.m */; };
+		C632B23B0913464A828719FA /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A6C416BF9F44EC89CA1318B /* libPods.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -110,6 +112,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3A6C416BF9F44EC89CA1318B /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		8A3FE13A52E34AA6887A32C8 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
 		AE0105AA18B0EB3700D4B9B0 /* MLNDocumentController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNDocumentController.h; sourceTree = "<group>"; };
 		AE0105AB18B0EB3700D4B9B0 /* MLNDocumentController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNDocumentController.m; sourceTree = "<group>"; };
 		AE020EEA187A31EA00F82337 /* delete-selection16x16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "delete-selection16x16.png"; sourceTree = "<group>"; };
@@ -176,6 +180,7 @@
 		AE47540A17FDD5D1001105F8 /* utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
 		AE48B5AE184554C800F5642E /* MLNMarkerHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNMarkerHandler.h; sourceTree = "<group>"; };
 		AE48B5AF184554C800F5642E /* MLNMarkerHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNMarkerHandler.m; sourceTree = "<group>"; };
+		AE4B1B5D19662E6D005298E2 /* fontawesome-webfont.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "fontawesome-webfont.ttf"; sourceTree = "<group>"; };
 		AE4E854317E9E5C9001AECED /* MLNOperationDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNOperationDelegate.h; sourceTree = "<group>"; };
 		AE57CA49170F73250043E690 /* MLNSelectionButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNSelectionButton.h; sourceTree = "<group>"; };
 		AE57CA4A170F73250043E690 /* MLNSelectionButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNSelectionButton.m; sourceTree = "<group>"; };
@@ -289,6 +294,7 @@
 				AE41C72A185BEDE200E68819 /* QuartzCore.framework in Frameworks */,
 				AECDE7E516B7C3B900DE94D5 /* AudioToolbox.framework in Frameworks */,
 				AECDE7C216B7C0C300DE94D5 /* Cocoa.framework in Frameworks */,
+				C632B23B0913464A828719FA /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -358,6 +364,15 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		AEAB3B611966261500EB649D /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				AE4B1B5D19662E6D005298E2 /* fontawesome-webfont.ttf */,
+				AEC19AC717E13F9200226CD9 /* Images */,
+			);
+			name = Assets;
+			sourceTree = "<group>";
+		};
 		AEC19AC617E0B69500226CD9 /* XIB */ = {
 			isa = PBXGroup;
 			children = (
@@ -406,6 +421,7 @@
 				AE7254B4171B7EAC00B48145 /* MLNSampleTests */,
 				AECDE7C016B7C0C300DE94D5 /* Frameworks */,
 				AECDE7BE16B7C0C300DE94D5 /* Products */,
+				8A3FE13A52E34AA6887A32C8 /* Pods.xcconfig */,
 			);
 			sourceTree = "<group>";
 		};
@@ -426,6 +442,7 @@
 				AECDE7C116B7C0C300DE94D5 /* Cocoa.framework */,
 				AE7254B1171B7EAC00B48145 /* SenTestingKit.framework */,
 				AECDE7C316B7C0C300DE94D5 /* Other Frameworks */,
+				3A6C416BF9F44EC89CA1318B /* libPods.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -537,7 +554,7 @@
 				AEC19AC617E0B69500226CD9 /* XIB */,
 				AE5AB6C916E93623008D0AE4 /* External Sources */,
 				AECDE7C816B7C0C300DE94D5 /* Supporting Files */,
-				AEC19AC717E13F9200226CD9 /* Images */,
+				AEAB3B611966261500EB649D /* Assets */,
 			);
 			path = Marlin;
 			sourceTree = "<group>";
@@ -591,10 +608,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = AECDE7DE16B7C0C300DE94D5 /* Build configuration list for PBXNativeTarget "Marlin" */;
 			buildPhases = (
+				FAB1C546E17E48DDA451D543 /* Check Pods Manifest.lock */,
 				AECDE7B916B7C0C300DE94D5 /* Sources */,
 				AECDE7BA16B7C0C300DE94D5 /* Frameworks */,
 				AECDE7BB16B7C0C300DE94D5 /* Resources */,
 				AE24E45D17E2219B00B67469 /* ShellScript */,
+				353E953E1891467F987AF667 /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -675,6 +694,7 @@
 				AE020EEC187A31EA00F82337 /* delete-selection16x16.png in Resources */,
 				AE020EED187A31EA00F82337 /* delete-selection16x16@2x.png in Resources */,
 				AEEE7E9F17E71B8700ECA24B /* MLNExportPanelController.xib in Resources */,
+				AE4B1B5E19662E6D005298E2 /* fontawesome-webfont.ttf in Resources */,
 				AE020EF8187A377700F82337 /* reverse-selection16x16.png in Resources */,
 				AE020EF5187A362400F82337 /* clear-selection16x16@2x.png in Resources */,
 			);
@@ -683,6 +703,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		353E953E1891467F987AF667 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Pods-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		AE24E45D17E2219B00B67469 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -708,6 +743,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+		FAB1C546E17E48DDA451D543 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -924,6 +974,7 @@
 		};
 		AECDE7DF16B7C0C300DE94D5 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8A3FE13A52E34AA6887A32C8 /* Pods.xcconfig */;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -936,6 +987,7 @@
 		};
 		AECDE7E016B7C0C300DE94D5 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8A3FE13A52E34AA6887A32C8 /* Pods.xcconfig */;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;

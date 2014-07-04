@@ -7,6 +7,7 @@
 //
 
 #import "MLNTransportControlsView.h"
+#import "NSString+FontAwesome.h"
 
 @implementation MLNTransportControlsView {
     NSButton *_startButton;
@@ -17,12 +18,14 @@
     NSButton *_endButton;
 }
 
-- (NSButton *)createButtonWithImageNamed:(NSString *)imageName
-                                  action:(SEL)action
+- (NSButton *)createButtonWithTitle:(NSString *)title
+                             action:(SEL)action
 {
     NSButton *button = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 27, 27)];
     
-    [button setImage:[NSImage imageNamed:imageName]];
+    NSFont *awesome = [NSFont fontWithName:@"FontAwesome" size:12.0];
+    [button setFont:awesome];
+    [button setTitle:title];
     [button setBezelStyle:NSTexturedRoundedBezelStyle];
     [button setTranslatesAutoresizingMaskIntoConstraints:NO];
     
@@ -42,18 +45,18 @@
 
 - (void)doRealInit
 {
-    _startButton = [self createButtonWithImageNamed:@"start16x16" action:@selector(requestMoveToStart:)];
-    _rewindButton = [self createButtonWithImageNamed:@"rewind16x16" action:@selector(requestPreviousFrame:)];
+    _startButton = [self createButtonWithTitle:[NSString awesomeIcon:FaStepBackward] action:@selector(requestMoveToStart:)];
+    _rewindButton = [self createButtonWithTitle:[NSString awesomeIcon:FaBackward] action:@selector(requestPreviousFrame:)];
     [_rewindButton setContinuous:YES];
     [_rewindButton setPeriodicDelay:0.25 interval:0.01];
     
-    _playButton = [self createButtonWithImageNamed:@"play16x16" action:@selector(requestPlay:)];
-    _stopButton = [self createButtonWithImageNamed:@"stop16x16" action:@selector(requestStop:)];
-    _ffwdButton = [self createButtonWithImageNamed:@"ffwd16x16" action:@selector(requestNextFrame:)];
+    _playButton = [self createButtonWithTitle:[NSString awesomeIcon:FaPlay] action:@selector(requestPlay:)];
+    _stopButton = [self createButtonWithTitle:[NSString awesomeIcon:FaStop] action:@selector(requestStop:)];
+    _ffwdButton = [self createButtonWithTitle:[NSString awesomeIcon:FaForward] action:@selector(requestNextFrame:)];
     [_ffwdButton setContinuous:YES];
     [_ffwdButton setPeriodicDelay:0.25 interval:0.01];
     
-    _endButton = [self createButtonWithImageNamed:@"end16x16" action:@selector(requestMoveToEnd:)];
+    _endButton = [self createButtonWithTitle:[NSString awesomeIcon:FaStepForward] action:@selector(requestMoveToEnd:)];
     
     NSArray *constraints;
     NSDictionary *viewsDict = NSDictionaryOfVariableBindings(_startButton,_rewindButton,_playButton,_stopButton,_ffwdButton,_endButton);

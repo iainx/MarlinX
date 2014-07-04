@@ -161,5 +161,7 @@
 			</dict>
 		</dict>
 	</array>
+	<key>ATSApplicationFontsPath</key>
+	<string>fontawesome-webfont.ttf</string>
 </dict>
 </plist>
