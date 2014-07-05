@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 iain. All rights reserved.
 //
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 
-@interface MLNChannelTests : SenTestCase
+@interface MLNChannelTests : XCTestCase
 
 @end

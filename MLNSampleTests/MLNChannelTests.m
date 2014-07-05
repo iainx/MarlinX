@@ -82,12 +82,12 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     while (moreData) {
         moreData = [iter frameDataAndAdvance:&d];
-        STAssertEquals(d, (float)i, @"");
+        XCTAssertEqual(d, (float)i, @"");
 
         i++;
     }
     
-    STAssertEquals(i, [_channel numberOfFrames], @"");
+    XCTAssertEqual(i, [_channel numberOfFrames], @"");
 }
 
 - (void)testIteratorRange
@@ -101,12 +101,12 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     while (moreData) {
         moreData = [iter frameDataAndAdvance:&d];
-        STAssertEquals(d, (float)(i + 10), @"");
+        XCTAssertEqual(d, (float)(i + 10), @"");
         
         i++;
     }
     
-    STAssertEquals(i, (NSUInteger)10, @"");
+    XCTAssertEqual(i, (NSUInteger)10, @"");
 }
 
 - (void)testPeek
@@ -119,13 +119,13 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     float value;
     MLNSampleChannelIteratorPeekFrame(iter, &value);
-    STAssertEquals((float)frame, value, @"");
+    XCTAssertEqual((float)frame, value, @"");
     
     MLNSampleChannelIteratorPeekNextFrame(iter, &value);
-    STAssertEquals((float)frame + 1, value, @"");
+    XCTAssertEqual((float)frame + 1, value, @"");
     
     MLNSampleChannelIteratorPeekPreviousFrame(iter, &value);
-    STAssertEquals((float)frame - 1, value, @"");
+    XCTAssertEqual((float)frame - 1, value, @"");
     
     MLNSampleChannelIteratorFree(iter);
     
@@ -136,14 +136,14 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     iter = MLNSampleChannelIteratorNew(_channel, range, NO);
     
     MLNSampleChannelIteratorPeekNextFrame(iter, &value);
-    STAssertEquals((float)frame, value, @"");
+    XCTAssertEqual((float)frame, value, @"");
     
     MLNSampleChannelIteratorFree(iter);
     
     range = NSMakeRange(frame, [_channel numberOfFrames] - frame);
     iter = MLNSampleChannelIteratorNew(_channel, range, NO);
     MLNSampleChannelIteratorPeekPreviousFrame(iter, &value);
-    STAssertEquals((float)frame - 1, value, @"");
+    XCTAssertEqual((float)frame - 1, value, @"");
 }
 
 - (void)testIteratorBackwards
@@ -160,11 +160,11 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
         
         moreData = MLNSampleChannelIteratorFrameDataAndRewind(iter, &value);
         
-        STAssertEquals(value, (float)i, @"");
+        XCTAssertEqual(value, (float)i, @"");
         i--;
     }
     
-    STAssertEquals(i, (NSUInteger)0, @"");
+    XCTAssertEqual(i, (NSUInteger)0, @"");
 }
 
 - (void)testSplitChannel
@@ -174,25 +174,25 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     NSUInteger splitFrame = rand() % [channel numberOfFrames];
 
     [channel splitAtFrame:splitFrame firstBlock:&block1 secondBlock:&block2];
-    STAssertFalse(block1 == NULL, @"");
-    STAssertFalse(block2 == NULL, @"");
+    XCTAssertFalse(block1 == NULL, @"");
+    XCTAssertFalse(block2 == NULL, @"");
     
-    STAssertEquals(block1->startFrame, (NSUInteger)0, @"");
-    STAssertEquals(block1->numberOfFrames, (NSUInteger)splitFrame, @"");
-    STAssertEquals(block1->nextBlock, block2, @"");
+    XCTAssertEqual(block1->startFrame, (NSUInteger)0, @"");
+    XCTAssertEqual(block1->numberOfFrames, (NSUInteger)splitFrame, @"");
+    XCTAssertEqual(block1->nextBlock, block2, @"");
     
     for (int i = 0; i < splitFrame; i++) {
         float value = MLNSampleBlockDataAtFrame(block1, i);
-        STAssertEquals(value, (float)i, @"");
+        XCTAssertEqual(value, (float)i, @"");
     }
     
-    STAssertEquals(block2->startFrame, (NSUInteger)splitFrame, @"");
-    STAssertEquals(block2->numberOfFrames, (NSUInteger)[channel numberOfFrames] - splitFrame, @"");
-    STAssertEquals(block2->previousBlock, block1, @"");
+    XCTAssertEqual(block2->startFrame, (NSUInteger)splitFrame, @"");
+    XCTAssertEqual(block2->numberOfFrames, (NSUInteger)[channel numberOfFrames] - splitFrame, @"");
+    XCTAssertEqual(block2->previousBlock, block1, @"");
     
     for (NSUInteger i = splitFrame; i < splitFrame + block2->numberOfFrames; i++) {
         float value = MLNSampleBlockDataAtFrame(block2, i - splitFrame);
-        STAssertEquals(value, (float)i, @"");
+        XCTAssertEqual(value, (float)i, @"");
     }
 }
 
@@ -203,20 +203,20 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     block1 = MLNSampleBlockFileCreateBlock(NULL, BUFFER_FRAME_SIZE * sizeof(float), 0, NULL, 0, 0);
     block2 = MLNSampleBlockFileCreateBlock(NULL, BUFFER_FRAME_SIZE * sizeof(float), 0, NULL, 0, 0);
     
-    STAssertTrue([_channel firstBlock] == NULL, @"[_channel firstBlock] != NULL");
+    XCTAssertTrue([_channel firstBlock] == NULL, @"[_channel firstBlock] != NULL");
     
     [_channel addBlock:block1];
     
-    STAssertTrue([_channel firstBlock] == block1, @"[_channel firstBlock] != block1");
-    STAssertTrue([_channel lastBlock] == block1, @"[_channel lastBlock] != block1");
-    STAssertEquals([_channel numberOfFrames], BUFFER_FRAME_SIZE, @"[_channel numberOfFrames != %lu: %lu", BUFFER_FRAME_SIZE, [_channel numberOfFrames]);
+    XCTAssertTrue([_channel firstBlock] == block1, @"[_channel firstBlock] != block1");
+    XCTAssertTrue([_channel lastBlock] == block1, @"[_channel lastBlock] != block1");
+    XCTAssertEqual([_channel numberOfFrames], BUFFER_FRAME_SIZE, @"[_channel numberOfFrames != %lu: %lu", BUFFER_FRAME_SIZE, [_channel numberOfFrames]);
     
     [_channel addBlock:block2];
     
-    STAssertTrue([_channel lastBlock] == block2, @"[_channel lastBlock != block2");
-    STAssertEquals([_channel numberOfFrames], BUFFER_FRAME_SIZE * 2, @"[_channel numberOfFrames != %lu: %lu", BUFFER_FRAME_SIZE * 2, [_channel numberOfFrames]);
+    XCTAssertTrue([_channel lastBlock] == block2, @"[_channel lastBlock != block2");
+    XCTAssertEqual([_channel numberOfFrames], BUFFER_FRAME_SIZE * 2, @"[_channel numberOfFrames != %lu: %lu", BUFFER_FRAME_SIZE * 2, [_channel numberOfFrames]);
     
-    STAssertEquals(block2->startFrame, BUFFER_FRAME_SIZE, @"block2->startFrame != %lu: %lu", BUFFER_FRAME_SIZE, block2->startFrame);
+    XCTAssertEqual(block2->startFrame, BUFFER_FRAME_SIZE, @"block2->startFrame != %lu: %lu", BUFFER_FRAME_SIZE, block2->startFrame);
 }
 
 - (void)testRemoveBlocks
@@ -232,19 +232,19 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
 
     [_channel removeBlock:block1];
     
-    STAssertTrue([_channel firstBlock] == block2, @"[_channel firstBlock] != block2");
-    STAssertEquals([_channel numberOfFrames], BUFFER_FRAME_SIZE, @"[_channel numberOfFrames] != %lu: %lu", BUFFER_FRAME_SIZE, [_channel numberOfFrames]);
-    STAssertEquals(block2->startFrame, (NSUInteger)0, @"block2->startFrame != 0: %lu", block2->startFrame);
+    XCTAssertTrue([_channel firstBlock] == block2, @"[_channel firstBlock] != block2");
+    XCTAssertEqual([_channel numberOfFrames], BUFFER_FRAME_SIZE, @"[_channel numberOfFrames] != %lu: %lu", BUFFER_FRAME_SIZE, [_channel numberOfFrames]);
+    XCTAssertEqual(block2->startFrame, (NSUInteger)0, @"block2->startFrame != 0: %lu", block2->startFrame);
     
     // Check the removed blocks have been unlinked
-    STAssertTrue(block1->nextBlock == NULL, @"block1->nextBlock != NULL");
-    STAssertTrue(block2->previousBlock == NULL, @"block2->previousBlock != NULL");
+    XCTAssertTrue(block1->nextBlock == NULL, @"block1->nextBlock != NULL");
+    XCTAssertTrue(block2->previousBlock == NULL, @"block2->previousBlock != NULL");
     
     [_channel removeBlock:block2];
     
-    STAssertTrue([_channel firstBlock] == NULL, @"[_channel firstBlock] != NULL");
-    STAssertTrue([_channel lastBlock] == NULL, @"[_channel lastBlock] != NULL");
-    STAssertEquals([_channel numberOfFrames], (NSUInteger)0, @"[_channel numberOfFrames] != 0: %lu", [_channel numberOfFrames]);
+    XCTAssertTrue([_channel firstBlock] == NULL, @"[_channel firstBlock] != NULL");
+    XCTAssertTrue([_channel lastBlock] == NULL, @"[_channel lastBlock] != NULL");
+    XCTAssertEqual([_channel numberOfFrames], (NSUInteger)0, @"[_channel numberOfFrames] != 0: %lu", [_channel numberOfFrames]);
     
     MLNSampleBlockFree(block1);
     MLNSampleBlockFree(block2);
@@ -259,16 +259,16 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     [_channel deleteRange:NSMakeRange(100, 100)];
     
     // We should now have 2 blocks [0 -> 99] & [100 -> 43999]
-    STAssertEquals([_channel count], (NSUInteger)2, @"[_channel count] != 2: %lu", [_channel count]);
+    XCTAssertEqual([_channel count], (NSUInteger)2, @"[_channel count] != 2: %lu", [_channel count]);
     
     block = [_channel firstBlock];
-    STAssertEquals(block->startFrame, (NSUInteger)0, @"block->startFrame != 0: %lu", block->startFrame);
-    STAssertEquals(block->numberOfFrames, (NSUInteger)100, @"block->numberOfFrames != 100: %lu", block->numberOfFrames);
+    XCTAssertEqual(block->startFrame, (NSUInteger)0, @"block->startFrame != 0: %lu", block->startFrame);
+    XCTAssertEqual(block->numberOfFrames, (NSUInteger)100, @"block->numberOfFrames != 100: %lu", block->numberOfFrames);
     
     block = block->nextBlock;
-    STAssertFalse(block == NULL, @"block == NULL");
-    STAssertEquals(block->startFrame, (NSUInteger)100, @"block->startFrame != 100: %lu", block->startFrame);
-    STAssertEquals(block->numberOfFrames, (NSUInteger)43900, @"block->numberOfFrames != 43900: %lu", block->numberOfFrames);
+    XCTAssertFalse(block == NULL, @"block == NULL");
+    XCTAssertEqual(block->startFrame, (NSUInteger)100, @"block->startFrame != 100: %lu", block->startFrame);
+    XCTAssertEqual(block->numberOfFrames, (NSUInteger)43900, @"block->numberOfFrames != 43900: %lu", block->numberOfFrames);
 }
 
 - (void)testDeleteStart
@@ -279,14 +279,14 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     [_channel deleteRange:NSMakeRange(0, 100)];
     
-    STAssertEquals([_channel count], (NSUInteger)1, @"[_channel count] != 1: %lu", [_channel count]);
+    XCTAssertEqual([_channel count], (NSUInteger)1, @"[_channel count] != 1: %lu", [_channel count]);
     block = [_channel firstBlock];
     
-    STAssertFalse(block == NULL, @"block == NULL");
-    STAssertEquals(block->startFrame, (NSUInteger)0, @"block->startFrame != 0: %lu", block->startFrame);
-    STAssertEquals(block->numberOfFrames, (NSUInteger)BUFFER_FRAME_SIZE - 100, @"block->numberOfFrames != 44000: %lu", block->numberOfFrames);
+    XCTAssertFalse(block == NULL, @"block == NULL");
+    XCTAssertEqual(block->startFrame, (NSUInteger)0, @"block->startFrame != 0: %lu", block->startFrame);
+    XCTAssertEqual(block->numberOfFrames, (NSUInteger)BUFFER_FRAME_SIZE - 100, @"block->numberOfFrames != 44000: %lu", block->numberOfFrames);
     
-    STAssertEquals([_channel lastBlock], [_channel firstBlock], @"");
+    XCTAssertEqual([_channel lastBlock], [_channel firstBlock], @"");
 }
 
 - (void)testDeleteEnd
@@ -297,14 +297,14 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     [_channel deleteRange:NSMakeRange(44000, 100)];
     
-    STAssertEquals([_channel count], (NSUInteger)1, @"[_channel count] != 1: %lu", [_channel count]);
+    XCTAssertEqual([_channel count], (NSUInteger)1, @"[_channel count] != 1: %lu", [_channel count]);
     block = [_channel firstBlock];
     
-    STAssertFalse(block == NULL, @"block == NULL");
-    STAssertEquals(block->startFrame, (NSUInteger)0, @"block->startFrame != 0: %lu", block->startFrame);
-    STAssertEquals(block->numberOfFrames, (NSUInteger)BUFFER_FRAME_SIZE - 100, @"block->numberOfFrames != 44000: %lu", block->numberOfFrames);
+    XCTAssertFalse(block == NULL, @"block == NULL");
+    XCTAssertEqual(block->startFrame, (NSUInteger)0, @"block->startFrame != 0: %lu", block->startFrame);
+    XCTAssertEqual(block->numberOfFrames, (NSUInteger)BUFFER_FRAME_SIZE - 100, @"block->numberOfFrames != 44000: %lu", block->numberOfFrames);
     
-    STAssertEquals([_channel lastBlock], [_channel firstBlock], @"");
+    XCTAssertEqual([_channel lastBlock], [_channel firstBlock], @"");
 }
 
 - (void)testDeleteAll
@@ -313,22 +313,22 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     [_channel deleteRange:NSMakeRange(0, BUFFER_FRAME_SIZE)];
     
-    STAssertEquals([_channel count], (NSUInteger)0, @"[_channel count] != 0: %lu", [_channel count]);
-    STAssertEquals([_channel numberOfFrames], (NSUInteger)0, @"[_channel numberOfFrames] != 0: %lu", [_channel numberOfFrames]);
-    STAssertTrue([_channel firstBlock] == NULL, @"[_channel firstBlock] != NULL");
-    STAssertTrue([_channel lastBlock] == NULL, @"[_channel lastBlock] != NULL");
+    XCTAssertEqual([_channel count], (NSUInteger)0, @"[_channel count] != 0: %lu", [_channel count]);
+    XCTAssertEqual([_channel numberOfFrames], (NSUInteger)0, @"[_channel numberOfFrames] != 0: %lu", [_channel numberOfFrames]);
+    XCTAssertTrue([_channel firstBlock] == NULL, @"[_channel firstBlock] != NULL");
+    XCTAssertTrue([_channel lastBlock] == NULL, @"[_channel lastBlock] != NULL");
 }
 
 - (void)testDeleteInvalidLocation
 {
     _channel = [self createChannel];
-    STAssertThrows([_channel deleteRange:NSMakeRange(276824, 100)], nil);
+    XCTAssertThrows([_channel deleteRange:NSMakeRange(276824, 100)]);
 }
 
 - (void)testDeleteInvalidLength
 {
     _channel = [self createChannel];
-    STAssertThrows([_channel deleteRange:NSMakeRange(100, 124124123)], nil);
+    XCTAssertThrows([_channel deleteRange:NSMakeRange(100, 124124123)]);
 }
 
 - (void)testCopyChannel
@@ -343,8 +343,8 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     channelCopy = [_channel copyChannelInRange:NSMakeRange(startFrame, numberOfFrames)];
     
-    STAssertNotNil(channelCopy, @"channelCopy is nil");
-    STAssertEquals([channelCopy numberOfFrames], numberOfFrames, @"[channelCopy numberOfFrames] != %lu: %lu", numberOfFrames, [channelCopy numberOfFrames]);
+    XCTAssertNotNil(channelCopy, @"channelCopy is nil");
+    XCTAssertEqual([channelCopy numberOfFrames], numberOfFrames, @"[channelCopy numberOfFrames] != %lu: %lu", numberOfFrames, [channelCopy numberOfFrames]);
 }
 
 - (void)insertChannelAt:(NSUInteger)insertFrame
@@ -367,32 +367,32 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
         block = block->nextBlock;
     }
     
-    STAssertEquals(blockCount, count, @"blockCount != %lu: %lu", count, blockCount);
+    XCTAssertEqual(blockCount, count, @"blockCount != %lu: %lu", count, blockCount);
     block = [_channel firstBlock];
     
-    STAssertEquals(block->startFrame, (NSUInteger)0, @"block->startFrame != 0: %lu", block->startFrame);
+    XCTAssertEqual(block->startFrame, (NSUInteger)0, @"block->startFrame != 0: %lu", block->startFrame);
     for (NSUInteger i = 0; i < insertFrame; i++) {
         float value = MLNSampleBlockDataAtFrame(block, i);
-        STAssertEquals(value, (float)i, @"data[%lu] != %f: %f", i, i, value);
+        XCTAssertEqual(value, (float)i, @"data[%lu] != %f: %f", i, i, value);
     }
     
     if (count == 3) {
         block = block->nextBlock;
         
-        STAssertEquals(block->startFrame, insertFrame, @"block->startFrame != %lu: %lu", insertFrame, block->startFrame);
+        XCTAssertEqual(block->startFrame, insertFrame, @"block->startFrame != %lu: %lu", insertFrame, block->startFrame);
         for (NSUInteger i = 0; i < block->numberOfFrames; i++) {
             float value = MLNSampleBlockDataAtFrame(block, i);
-            STAssertEquals(value, (float)i, @"data[%lu] != %f: %f", i, i, value);
+            XCTAssertEqual(value, (float)i, @"data[%lu] != %f: %f", i, i, value);
         }
     }
     
     block = block->nextBlock;
     
-    STAssertEquals(block->startFrame, insertFrame + [channel2 numberOfFrames], @"block->startFrame != %lu: %lu", insertFrame + [channel2 numberOfFrames], block->startFrame);
+    XCTAssertEqual(block->startFrame, insertFrame + [channel2 numberOfFrames], @"block->startFrame != %lu: %lu", insertFrame + [channel2 numberOfFrames], block->startFrame);
     for (NSUInteger i = 0; i < block->numberOfFrames; i++) {
         float result = insertFrame + i;
         float value = MLNSampleBlockDataAtFrame(block, i);
-        STAssertEquals(value, (float)result, @"data[%lu] != %f: %f", i, result, value);
+        XCTAssertEqual(value, (float)result, @"data[%lu] != %f: %f", i, result, value);
     }
 }
 
@@ -416,28 +416,28 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
         block = block->nextBlock;
     }
     
-    STAssertEquals(blockCount, (NSUInteger)3, @"blockCount != 3: %lu", blockCount);
+    XCTAssertEqual(blockCount, (NSUInteger)3, @"blockCount != 3: %lu", blockCount);
     block = [_channel firstBlock];
     
-    STAssertEquals(block->startFrame, (NSUInteger)0, @"block->startFrame != 0: %lu", block->startFrame);
+    XCTAssertEqual(block->startFrame, (NSUInteger)0, @"block->startFrame != 0: %lu", block->startFrame);
     for (NSUInteger i = 0; i < insertFrame; i++) {
         float value = MLNSampleBlockDataAtFrame(block, i);
-        STAssertEquals(value, (float)i, @"data[%lu] != %f: %f", i, i, value);
+        XCTAssertEqual(value, (float)i, @"data[%lu] != %f: %f", i, i, value);
     }
     
     block = block->nextBlock;
-    STAssertEquals(block->startFrame, insertFrame, @"block->startFrame != %lu: %lu", insertFrame, block->startFrame);
+    XCTAssertEqual(block->startFrame, insertFrame, @"block->startFrame != %lu: %lu", insertFrame, block->startFrame);
     for (NSUInteger i = 0; i < block->numberOfFrames; i++) {
         float value = MLNSampleBlockDataAtFrame(block, i);
-        STAssertEquals(value, (float)i, @"data[%lu] != %f: %f", i, i, value);
+        XCTAssertEqual(value, (float)i, @"data[%lu] != %f: %f", i, i, value);
     }
     
     block = block->nextBlock;
-    STAssertEquals(block->startFrame, insertFrame + [channel2 numberOfFrames], @"block->startFrame != %lu: %lu", insertFrame + [channel2 numberOfFrames], block->startFrame);
+    XCTAssertEqual(block->startFrame, insertFrame + [channel2 numberOfFrames], @"block->startFrame != %lu: %lu", insertFrame + [channel2 numberOfFrames], block->startFrame);
     for (NSUInteger i = 0; i < block->numberOfFrames; i++) {
         float result = insertFrame + i;
         float value = MLNSampleBlockDataAtFrame(block, i);
-        STAssertEquals(value, (float)result, @"data[%lu] != %f: %f", i, result, value);
+        XCTAssertEqual(value, (float)result, @"data[%lu] != %f: %f", i, result, value);
     }
 }
 
@@ -461,21 +461,21 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
         block = block->nextBlock;
     }
     
-    STAssertEquals(blockCount, (NSUInteger)2, @"blockCount != 2: %lu", blockCount);
+    XCTAssertEqual(blockCount, (NSUInteger)2, @"blockCount != 2: %lu", blockCount);
     block = [_channel firstBlock];
     
-    STAssertEquals(block->startFrame, (NSUInteger)0, @"block->startFrame != 0: %lu", block->startFrame);
+    XCTAssertEqual(block->startFrame, (NSUInteger)0, @"block->startFrame != 0: %lu", block->startFrame);
     for (NSUInteger i = 0; i < insertFrame; i++) {
         float value = MLNSampleBlockDataAtFrame(block, i);
-        STAssertEquals(value, (float)i, @"data[%lu] != %f: %f", i, i, value);
+        XCTAssertEqual(value, (float)i, @"data[%lu] != %f: %f", i, i, value);
     }
     
     block = block->nextBlock;
-    STAssertEquals(block->startFrame, insertFrame + [channel2 numberOfFrames], @"block->startFrame != %lu: %lu", insertFrame + [channel2 numberOfFrames], block->startFrame);
+    XCTAssertEqual(block->startFrame, insertFrame + [channel2 numberOfFrames], @"block->startFrame != %lu: %lu", insertFrame + [channel2 numberOfFrames], block->startFrame);
     for (NSUInteger i = 0; i < block->numberOfFrames; i++) {
         float result = insertFrame + i;
         float value = MLNSampleBlockDataAtFrame(block, i);
-        STAssertEquals(value, (float)result, @"data[%lu] != %f: %f", i, result, value);
+        XCTAssertEqual(value, (float)result, @"data[%lu] != %f: %f", i, result, value);
     }
 }
 
@@ -499,20 +499,20 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
         block = block->nextBlock;
     }
     
-    STAssertEquals(blockCount, (NSUInteger)2, @"blockCount != 2: %lu", blockCount);
+    XCTAssertEqual(blockCount, (NSUInteger)2, @"blockCount != 2: %lu", blockCount);
     block = [_channel firstBlock];
     
-    STAssertEquals(block->startFrame, (NSUInteger)0, @"block->startFrame != 0: %lu", block->startFrame);
+    XCTAssertEqual(block->startFrame, (NSUInteger)0, @"block->startFrame != 0: %lu", block->startFrame);
     for (NSUInteger i = 0; i < insertFrame; i++) {
         float value = MLNSampleBlockDataAtFrame(block, i);
-        STAssertEquals(value, (float)i, @"data[%lu] != %f: %f", i, i, value);
+        XCTAssertEqual(value, (float)i, @"data[%lu] != %f: %f", i, i, value);
     }
     
     block = block->nextBlock;
-    STAssertEquals(block->startFrame, insertFrame, @"block->startFrame != %lu: %lu", insertFrame, block->startFrame);
+    XCTAssertEqual(block->startFrame, insertFrame, @"block->startFrame != %lu: %lu", insertFrame, block->startFrame);
     for (NSUInteger i = 0; i < block->numberOfFrames; i++) {
         float value = MLNSampleBlockDataAtFrame(block, i);
-        STAssertEquals(value, (float)i, @"data[%lu] != %f: %f", i, i, value);
+        XCTAssertEqual(value, (float)i, @"data[%lu] != %f: %f", i, i, value);
     }
 }
 
@@ -523,7 +523,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     _channel = [self createChannel];
     channel2 = [self createChannel];
     
-    STAssertThrows([_channel insertChannel:channel2 atFrame:BUFFER_FRAME_SIZE + rand()], nil);
+    XCTAssertThrows([_channel insertChannel:channel2 atFrame:BUFFER_FRAME_SIZE + rand()]);
 }
 
 #define TEST_BUFFER_SIZE 1024
@@ -562,47 +562,47 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     [_channel insertSilenceAtFrame:100 frameDuration:100];
     
-    STAssertEquals([_channel numberOfFrames], (NSUInteger)44200, @"");
+    XCTAssertEqual([_channel numberOfFrames], (NSUInteger)44200, @"");
 
     // FIXME: Should probably just use an iterator for this.
     
     // First block should be 0 -> 99
     MLNSampleBlock *block1 = [_channel firstBlock];
-    STAssertFalse(block1 == NULL, @"");
+    XCTAssertFalse(block1 == NULL, @"");
     
-    STAssertEquals(block1->startFrame, (NSUInteger)0, @"");
-    STAssertEquals(block1->numberOfFrames, (NSUInteger)100, @"");
-    STAssertEquals(MLNSampleBlockLastFrame(block1), (NSUInteger)99, @"");
+    XCTAssertEqual(block1->startFrame, (NSUInteger)0, @"");
+    XCTAssertEqual(block1->numberOfFrames, (NSUInteger)100, @"");
+    XCTAssertEqual(MLNSampleBlockLastFrame(block1), (NSUInteger)99, @"");
     
     for (int i = 0; i < 100; i++) {
         float value = MLNSampleBlockDataAtFrame(block1, i);
-        STAssertEquals(value, (float)i, @"");
+        XCTAssertEqual(value, (float)i, @"");
     }
     
     // Second block should be 100 -> 199
     MLNSampleBlock *block2 = block1->nextBlock;
     
-    STAssertFalse(block2 == NULL, @"");
-    STAssertEquals(block2->startFrame, (NSUInteger)100, @"");
-    STAssertEquals(block2->numberOfFrames, (NSUInteger)100, @"");
-    STAssertEquals(MLNSampleBlockLastFrame(block2), (NSUInteger)199, @"");
+    XCTAssertFalse(block2 == NULL, @"");
+    XCTAssertEqual(block2->startFrame, (NSUInteger)100, @"");
+    XCTAssertEqual(block2->numberOfFrames, (NSUInteger)100, @"");
+    XCTAssertEqual(MLNSampleBlockLastFrame(block2), (NSUInteger)199, @"");
     
     for (int i = 0; i < 100; i++) {
         float value = MLNSampleBlockDataAtFrame(block2, i);
-        STAssertEquals(value, (float)0.0, @"");
+        XCTAssertEqual(value, (float)0.0, @"");
     }
     
     // Third block should be 200 -> 44199, containing 100 -> 44099
     MLNSampleBlock *block3 = block2->nextBlock;
     
-    STAssertFalse(block3 == NULL, @"");
-    STAssertEquals(block3->startFrame, (NSUInteger)200, @"");
-    STAssertEquals(block3->numberOfFrames, (NSUInteger)44000, @"");
-    STAssertEquals(MLNSampleBlockLastFrame(block3), (NSUInteger)44199, @"");
+    XCTAssertFalse(block3 == NULL, @"");
+    XCTAssertEqual(block3->startFrame, (NSUInteger)200, @"");
+    XCTAssertEqual(block3->numberOfFrames, (NSUInteger)44000, @"");
+    XCTAssertEqual(MLNSampleBlockLastFrame(block3), (NSUInteger)44199, @"");
     
     for (int i = 0; i < 44000; i++) {
         float value = MLNSampleBlockDataAtFrame(block3, i);
-        STAssertEquals(value, (float)i + 100, @"");
+        XCTAssertEqual(value, (float)i + 100, @"");
     }
 }
 
@@ -616,11 +616,11 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     NSUInteger foundZX = 0;
     
     while ([iter findNextZeroCrossing:&zx upTo:[channel numberOfFrames]]) {
-        STAssertEquals((zx % 100), (NSUInteger)0, @"");
+        XCTAssertEqual((zx % 100), (NSUInteger)0, @"");
         foundZX++;
     }
     
-    STAssertEquals(foundZX, numberCreated, @"");
+    XCTAssertEqual(foundZX, numberCreated, @"");
 }
 
 - (void)testFindAllZeroCrossingBackwards
@@ -629,16 +629,16 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     MLNSampleChannel *channel = [self createZeroCrossingChannel:&numberCreated];
     MLNSampleChannelIterator *iter = [[MLNSampleChannelIterator alloc] initWithChannel:channel atFrame:[channel numberOfFrames] - 1];
     
-    STAssertNotNil(iter, @"");
+    XCTAssertNotNil(iter, @"");
     NSUInteger zx;
     NSUInteger foundZX = 0;
     
     while ([iter findPreviousZeroCrossing:&zx upTo:-1]) {
-        STAssertEquals((zx % 100), (NSUInteger)0, @"");
+        XCTAssertEqual((zx % 100), (NSUInteger)0, @"");
         foundZX++;
     }
     
-    STAssertEquals(foundZX, numberCreated, @"");
+    XCTAssertEqual(foundZX, numberCreated, @"");
 }
 
 - (void)testMaxValueInRange
@@ -647,6 +647,6 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     float maxSampleValue = [_channel maxSampleValueInRange:NSMakeRange(0, [_channel numberOfFrames])];
     
-    STAssertEquals(maxSampleValue, (float)44099, @"");
+    XCTAssertEqual(maxSampleValue, (float)44099, @"");
 }
 @end

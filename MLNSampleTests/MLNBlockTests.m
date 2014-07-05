@@ -35,25 +35,25 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     // Append block 2 to block 1
     MLNSampleBlockAppendBlock(block1, block2);
     
-    STAssertFalse(block1->nextBlock == NULL, @"block1->nextBlock == NULL");
-    STAssertTrue(block1->nextBlock == block2, @"block2->nextBlock != block2");
-    STAssertFalse(block2->previousBlock == NULL, @"block2->previousBlock == NULL");
-    STAssertTrue(block2->previousBlock == block1, @"block2->previousBlock != block2");
+    XCTAssertFalse(block1->nextBlock == NULL, @"block1->nextBlock == NULL");
+    XCTAssertTrue(block1->nextBlock == block2, @"block2->nextBlock != block2");
+    XCTAssertFalse(block2->previousBlock == NULL, @"block2->previousBlock == NULL");
+    XCTAssertTrue(block2->previousBlock == block1, @"block2->previousBlock != block2");
     
     // Append block 3 to block 1, inserting it before block 2
     MLNSampleBlockAppendBlock(block1, block3);
     
     // Check that block 3 is connected to block 1
-    STAssertFalse(block1->nextBlock == NULL, @"block1->nextBlock == NULL");
-    STAssertTrue(block1->nextBlock == block3, @"block1->nextBlock != block3");
-    STAssertFalse(block3->previousBlock == NULL, @"block3->previouBlock == NULL");
-    STAssertTrue(block3->previousBlock == block1, @"block3->previousBlock != block1");
+    XCTAssertFalse(block1->nextBlock == NULL, @"block1->nextBlock == NULL");
+    XCTAssertTrue(block1->nextBlock == block3, @"block1->nextBlock != block3");
+    XCTAssertFalse(block3->previousBlock == NULL, @"block3->previouBlock == NULL");
+    XCTAssertTrue(block3->previousBlock == block1, @"block3->previousBlock != block1");
     
     // Check that block 3 is connected to block 2
-    STAssertFalse(block3->nextBlock == NULL, @"block3->nextBlock == NULL");
-    STAssertTrue(block3->nextBlock == block2, @"block3->nextBlock != block2");
-    STAssertFalse(block2->previousBlock == NULL, @"block2->previousBlock == NULL");
-    STAssertTrue(block2->previousBlock == block3, @"block2->previousBlock != block2");
+    XCTAssertFalse(block3->nextBlock == NULL, @"block3->nextBlock == NULL");
+    XCTAssertTrue(block3->nextBlock == block2, @"block3->nextBlock != block2");
+    XCTAssertFalse(block2->previousBlock == NULL, @"block2->previousBlock == NULL");
+    XCTAssertTrue(block2->previousBlock == block3, @"block2->previousBlock != block2");
     
     MLNSampleBlockFree(block1);
     MLNSampleBlockFree(block2);
@@ -71,25 +71,25 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     // Prepend block 2 to block 1
     MLNSampleBlockPrependBlock(block1, block2);
     
-    STAssertFalse(block1->previousBlock == NULL, @"block1->previousBlock == NULL");
-    STAssertTrue(block1->previousBlock == block2, @"block1->previousBlock != block2");
-    STAssertFalse(block2->nextBlock == NULL, @"block2->nextBlock == NULL");
-    STAssertTrue(block2->nextBlock == block1, @"block2->nextBlock != block1");
+    XCTAssertFalse(block1->previousBlock == NULL, @"block1->previousBlock == NULL");
+    XCTAssertTrue(block1->previousBlock == block2, @"block1->previousBlock != block2");
+    XCTAssertFalse(block2->nextBlock == NULL, @"block2->nextBlock == NULL");
+    XCTAssertTrue(block2->nextBlock == block1, @"block2->nextBlock != block1");
     
     // Prepend block 3 to block 1, inserting it after block 2
     MLNSampleBlockPrependBlock(block1, block3);
     
     // Check that block 3 is connected to block 1
-    STAssertFalse(block1->previousBlock == NULL, @"block1->previousBlock == NULL");
-    STAssertTrue(block1->previousBlock == block3, @"block1->previousBlock != block3");
-    STAssertFalse(block3->nextBlock == NULL, @"block3->nextBlock == NULL");
-    STAssertTrue(block3->nextBlock == block1, @"block3->nextBlock != block1");
+    XCTAssertFalse(block1->previousBlock == NULL, @"block1->previousBlock == NULL");
+    XCTAssertTrue(block1->previousBlock == block3, @"block1->previousBlock != block3");
+    XCTAssertFalse(block3->nextBlock == NULL, @"block3->nextBlock == NULL");
+    XCTAssertTrue(block3->nextBlock == block1, @"block3->nextBlock != block1");
     
     // Check that block 3 is connected to block 2
-    STAssertFalse(block3->previousBlock == NULL, @"block3->previousBlock == NULL");
-    STAssertTrue(block3->previousBlock == block2, @"block3->previousBlock != block2");
-    STAssertFalse(block2->nextBlock == NULL, @"block2->nextBlock == NULL");
-    STAssertTrue(block2->nextBlock == block3, @"block2->nextBlock != block3");
+    XCTAssertFalse(block3->previousBlock == NULL, @"block3->previousBlock == NULL");
+    XCTAssertTrue(block3->previousBlock == block2, @"block3->previousBlock != block2");
+    XCTAssertFalse(block2->nextBlock == NULL, @"block2->nextBlock == NULL");
+    XCTAssertTrue(block2->nextBlock == block3, @"block2->nextBlock != block3");
     
     MLNSampleBlockFree(block1);
     MLNSampleBlockFree(block2);
@@ -113,25 +113,25 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     MLNSampleBlockRemoveFromList(block2);
     
     // Check block2 is detached
-    STAssertTrue(block2->previousBlock == NULL, @"block2->previousBlock != NULL");
-    STAssertTrue(block2->nextBlock == NULL, @"block2->nextBlock != NULL");
+    XCTAssertTrue(block2->previousBlock == NULL, @"block2->previousBlock != NULL");
+    XCTAssertTrue(block2->nextBlock == NULL, @"block2->nextBlock != NULL");
     
     // Check block1 & block3 are connected
-    STAssertFalse(block1->nextBlock == NULL, @"block1->nextBlock == NULL");
-    STAssertTrue(block1->nextBlock == block3, @"block1->nextBlock != block3");
-    STAssertFalse(block3->previousBlock == NULL, @"block3->previousBlock == NULL");
-    STAssertTrue(block3->previousBlock == block1, @"block3->previousBlock != block1");
+    XCTAssertFalse(block1->nextBlock == NULL, @"block1->nextBlock == NULL");
+    XCTAssertTrue(block1->nextBlock == block3, @"block1->nextBlock != block3");
+    XCTAssertFalse(block3->previousBlock == NULL, @"block3->previousBlock == NULL");
+    XCTAssertTrue(block3->previousBlock == block1, @"block3->previousBlock != block1");
     
     // Remove block3
     MLNSampleBlockRemoveFromList(block3);
     
     // Check block3 is detached
-    STAssertTrue(block3->previousBlock == NULL, @"block3->previousBlock != NULL");
-    STAssertTrue(block3->nextBlock == NULL, @"block3->nextBlock != NULL");
+    XCTAssertTrue(block3->previousBlock == NULL, @"block3->previousBlock != NULL");
+    XCTAssertTrue(block3->nextBlock == NULL, @"block3->nextBlock != NULL");
     
     // Check block1 is detached
-    STAssertTrue(block1->previousBlock == NULL, @"block3->previousBlock != NULL");
-    STAssertTrue(block1->nextBlock == NULL, @"block3->nextBlock != NULL");
+    XCTAssertTrue(block1->previousBlock == NULL, @"block3->previousBlock != NULL");
+    XCTAssertTrue(block1->nextBlock == NULL, @"block3->nextBlock != NULL");
 
     MLNSampleBlockFree(block1);
     MLNSampleBlockFree(block2);
@@ -157,15 +157,15 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     // This should leave us with 2 lists: block1->block4 & block2->block3
     MLNSampleBlockRemoveBlocksFromList(block2, block3);
     
-    STAssertFalse(block1->nextBlock == NULL, @"block1->nextBlock == NULL");
-    STAssertTrue(block1->nextBlock == block4, @"block1->nextBlock != block4");
-    STAssertFalse(block4->previousBlock == NULL, @"block4->previousBlock == NULL");
-    STAssertTrue(block4->previousBlock == block1, @"block4->previousBlock != block1");
+    XCTAssertFalse(block1->nextBlock == NULL, @"block1->nextBlock == NULL");
+    XCTAssertTrue(block1->nextBlock == block4, @"block1->nextBlock != block4");
+    XCTAssertFalse(block4->previousBlock == NULL, @"block4->previousBlock == NULL");
+    XCTAssertTrue(block4->previousBlock == block1, @"block4->previousBlock != block1");
     
-    STAssertFalse(block2->nextBlock == NULL, @"block2->nextBlock == NULL");
-    STAssertTrue(block2->nextBlock == block3, @"block2->nextBlock != block3");
-    STAssertFalse(block3->previousBlock == NULL, @"block3->previousBlock == NULL");
-    STAssertTrue(block3->previousBlock == block2, @"block3->previousBlock != block2");
+    XCTAssertFalse(block2->nextBlock == NULL, @"block2->nextBlock == NULL");
+    XCTAssertTrue(block2->nextBlock == block3, @"block2->nextBlock != block3");
+    XCTAssertFalse(block3->previousBlock == NULL, @"block3->previousBlock == NULL");
+    XCTAssertTrue(block3->previousBlock == block2, @"block3->previousBlock != block2");
 
     MLNSampleBlockFree(block1);
     MLNSampleBlockFree(block2);
@@ -199,28 +199,28 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     block1 = [channel firstBlock];
     MLNSampleBlockSplitBlockAtFrame(block1, 22050, &block1, &block2);
     
-    STAssertFalse(block2 == NULL, @"block2 == NULL");
+    XCTAssertFalse(block2 == NULL, @"block2 == NULL");
     
     fileBlock = (MLNSampleBlockFile *)block1;
-    STAssertEquals(block1->startFrame, (NSUInteger)0, @"block1->startFrame != 0: Got %lu", block1->startFrame);
-    STAssertEquals(block1->numberOfFrames, (NSUInteger)22050, @"block1->numberOfFrames != 22050: Got %lu", block1->numberOfFrames);
-    STAssertEquals(fileBlock->sampleByteLength, (ssize_t)22050 * sizeof(float), @"block1->sampleByteLength != %lu: Got %lu",
+    XCTAssertEqual(block1->startFrame, (NSUInteger)0, @"block1->startFrame != 0: Got %lu", block1->startFrame);
+    XCTAssertEqual(block1->numberOfFrames, (NSUInteger)22050, @"block1->numberOfFrames != 22050: Got %lu", block1->numberOfFrames);
+    XCTAssertEqual(fileBlock->sampleByteLength, (ssize_t)22050 * sizeof(float), @"block1->sampleByteLength != %lu: Got %lu",
                    22050 * sizeof(float), fileBlock->sampleByteLength);
     
     for (int i = 0; i < 22050; i++) {
         float value = MLNSampleBlockDataAtFrame(block1, i);
-        STAssertEquals(value, (float)i, @"block1->data[%d] != %f: %f", i, (float)i, value);
+        XCTAssertEqual(value, (float)i, @"block1->data[%d] != %f: %f", i, (float)i, value);
     }
     
     fileBlock = (MLNSampleBlockFile *)block2;
-    STAssertEquals(block2->startFrame, (NSUInteger)22050, @"block2->startFrame != 22050: Got %lu", block2->startFrame);
-    STAssertEquals(block2->numberOfFrames, (NSUInteger)22050, @"block2->numberOfFrames != 22050: Got %lu", block2->numberOfFrames);
-    STAssertEquals(fileBlock->sampleByteLength, (ssize_t)22050 * sizeof(float), @"block2->sampleByteLength != %lu: Got %lu",
+    XCTAssertEqual(block2->startFrame, (NSUInteger)22050, @"block2->startFrame != 22050: Got %lu", block2->startFrame);
+    XCTAssertEqual(block2->numberOfFrames, (NSUInteger)22050, @"block2->numberOfFrames != 22050: Got %lu", block2->numberOfFrames);
+    XCTAssertEqual(fileBlock->sampleByteLength, (ssize_t)22050 * sizeof(float), @"block2->sampleByteLength != %lu: Got %lu",
                    22050 * sizeof(float), fileBlock->sampleByteLength);
     
     for (int i = 0; i < 22050; i++) {
         float value = MLNSampleBlockDataAtFrame(block2, i);
-        STAssertEquals(value, (float)22050 + i, @"block1->data[%d] != %f: %f", i, (float)22050 + i, value);
+        XCTAssertEqual(value, (float)22050 + i, @"block1->data[%d] != %f: %f", i, (float)22050 + i, value);
     }
 }
 
@@ -232,8 +232,8 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     desiredBlock2 = block1;
     MLNSampleBlockSplitBlockAtFrame(block1, 0, &block1, &block2);
     
-    STAssertEquals(block1, (MLNSampleBlock *)NULL, @"");
-    STAssertTrue(block2 == desiredBlock2, @"block2 != desiredBlock2");
+    XCTAssertEqual(block1, (MLNSampleBlock *)NULL, @"");
+    XCTAssertTrue(block2 == desiredBlock2, @"block2 != desiredBlock2");
     
     MLNSampleBlockFree(block1);
 }
@@ -249,20 +249,20 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     // Split final frame, result should be a single framed block
     MLNSampleBlockSplitBlockAtFrame(block1, 44099, &block1, &block2);
     
-    STAssertFalse(block2 == NULL, @"block2 == NULL");
+    XCTAssertFalse(block2 == NULL, @"block2 == NULL");
     
     fileBlock = (MLNSampleBlockFile *)block1;
     
-    STAssertEquals(block1->startFrame, (NSUInteger)0, @"block1->startFrame != 0: Got %lu", block1->startFrame);
-    STAssertEquals(block1->numberOfFrames, (NSUInteger)44099, @"block1->numberOfFrames != 44099: Got %lu", block1->numberOfFrames);
-    STAssertEquals(fileBlock->sampleByteLength, (ssize_t)44099 * sizeof(float), @"block1->sampleByteLength != %lu: Got %lu",
+    XCTAssertEqual(block1->startFrame, (NSUInteger)0, @"block1->startFrame != 0: Got %lu", block1->startFrame);
+    XCTAssertEqual(block1->numberOfFrames, (NSUInteger)44099, @"block1->numberOfFrames != 44099: Got %lu", block1->numberOfFrames);
+    XCTAssertEqual(fileBlock->sampleByteLength, (ssize_t)44099 * sizeof(float), @"block1->sampleByteLength != %lu: Got %lu",
                    44099 * sizeof(float), fileBlock->sampleByteLength);
     
     fileBlock = (MLNSampleBlockFile *)block2;
     
-    STAssertEquals(block2->startFrame, (NSUInteger)44099, @"block2->startFrame != 22050: Got %lu", block2->startFrame);
-    STAssertEquals(block2->numberOfFrames, (NSUInteger)1, @"block2->numberOfFrames != 22050: Got %lu", block2->numberOfFrames);
-    STAssertEquals(fileBlock->sampleByteLength, (ssize_t)1 * sizeof(float), @"block2->sampleByteLength != %lu: Got %lu",
+    XCTAssertEqual(block2->startFrame, (NSUInteger)44099, @"block2->startFrame != 22050: Got %lu", block2->startFrame);
+    XCTAssertEqual(block2->numberOfFrames, (NSUInteger)1, @"block2->numberOfFrames != 22050: Got %lu", block2->numberOfFrames);
+    XCTAssertEqual(fileBlock->sampleByteLength, (ssize_t)1 * sizeof(float), @"block2->sampleByteLength != %lu: Got %lu",
                    1 * sizeof(float), fileBlock->sampleByteLength);
 }
 
@@ -273,7 +273,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     block1 = MLNSampleBlockFileCreateBlock(NULL, 44100 * sizeof(float), 0, NULL, (44100 / 256) * sizeof(MLNSampleCachePoint), 0);
     MLNSampleBlockSplitBlockAtFrame(block1, 876235, &block1, &block2);
     
-    STAssertTrue(block2 == NULL, @"block2 != NULL");
+    XCTAssertTrue(block2 == NULL, @"block2 != NULL");
     
     MLNSampleBlockFree(block1);
 }
@@ -288,28 +288,28 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     block2 = MLNSampleBlockCopy(block1, 22050, MLNSampleBlockLastFrame(block1));
 
-    STAssertFalse(block2 == NULL, @"block2 == NULL");
+    XCTAssertFalse(block2 == NULL, @"block2 == NULL");
     
     fileBlock = (MLNSampleBlockFile *)block1;
-    STAssertEquals(block1->startFrame, (NSUInteger)0, @"block1->startFrame != 0: Got %lu", block1->startFrame);
-    STAssertEquals(block1->numberOfFrames, (NSUInteger)44100, @"block1->numberOfFrames != 44100: Got %lu", block1->numberOfFrames);
-    STAssertEquals(fileBlock->sampleByteLength, (ssize_t)44100 * sizeof(float), @"block1->sampleByteLength != %lu: Got %lu",
+    XCTAssertEqual(block1->startFrame, (NSUInteger)0, @"block1->startFrame != 0: Got %lu", block1->startFrame);
+    XCTAssertEqual(block1->numberOfFrames, (NSUInteger)44100, @"block1->numberOfFrames != 44100: Got %lu", block1->numberOfFrames);
+    XCTAssertEqual(fileBlock->sampleByteLength, (ssize_t)44100 * sizeof(float), @"block1->sampleByteLength != %lu: Got %lu",
                    44100 * sizeof(float), fileBlock->sampleByteLength);
     
     for (int i = 0; i < 44100; i++) {
         float value = MLNSampleBlockDataAtFrame(block1, i);
-        STAssertEquals(value, (float)i, @"block1->data[%d] != %f: %f", i, (float)i, value);
+        XCTAssertEqual(value, (float)i, @"block1->data[%d] != %f: %f", i, (float)i, value);
     }
     
     fileBlock = (MLNSampleBlockFile *)block2;
-    STAssertEquals(block2->startFrame, (NSUInteger)22050, @"block2->startFrame != 22050: Got %lu", block2->startFrame);
-    STAssertEquals(block2->numberOfFrames, (NSUInteger)22050, @"block2->numberOfFrames != 22050: Got %lu", block2->numberOfFrames);
-    STAssertEquals(fileBlock->sampleByteLength, (ssize_t)22050 * sizeof(float), @"block2->sampleByteLength != %lu: Got %lu",
+    XCTAssertEqual(block2->startFrame, (NSUInteger)22050, @"block2->startFrame != 22050: Got %lu", block2->startFrame);
+    XCTAssertEqual(block2->numberOfFrames, (NSUInteger)22050, @"block2->numberOfFrames != 22050: Got %lu", block2->numberOfFrames);
+    XCTAssertEqual(fileBlock->sampleByteLength, (ssize_t)22050 * sizeof(float), @"block2->sampleByteLength != %lu: Got %lu",
                    22050 * sizeof(float), fileBlock->sampleByteLength);
     
     for (int i = 0; i < 22050; i++) {
         float value = MLNSampleBlockDataAtFrame(block2, i);
-        STAssertEquals(value, (float)22050 + i, @"block1->data[%d] != %f: %f", i, (float)22050 + i, value);
+        XCTAssertEqual(value, (float)22050 + i, @"block1->data[%d] != %f: %f", i, (float)22050 + i, value);
     }
 
     // Don't need to free block1 because it is owned by the channel
@@ -326,17 +326,17 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     block2 = MLNSampleBlockCopy(block1, 0, 22049);
     
-    STAssertFalse(block2 == NULL, @"block2 == NULL");
+    XCTAssertFalse(block2 == NULL, @"block2 == NULL");
     
     fileBlock = (MLNSampleBlockFile *)block2;
-    STAssertEquals(block2->startFrame, (NSUInteger)0, @"block2->startFrame != 0: Got %lu", block2->startFrame);
-    STAssertEquals(block2->numberOfFrames, (NSUInteger)22050, @"block2->numberOfFrames != 22050: Got %lu", block2->numberOfFrames);
-    STAssertEquals(fileBlock->sampleByteLength, (ssize_t)22050 * sizeof(float), @"block2->sampleByteLength != %lu: Got %lu",
+    XCTAssertEqual(block2->startFrame, (NSUInteger)0, @"block2->startFrame != 0: Got %lu", block2->startFrame);
+    XCTAssertEqual(block2->numberOfFrames, (NSUInteger)22050, @"block2->numberOfFrames != 22050: Got %lu", block2->numberOfFrames);
+    XCTAssertEqual(fileBlock->sampleByteLength, (ssize_t)22050 * sizeof(float), @"block2->sampleByteLength != %lu: Got %lu",
                    22050 * sizeof(float), fileBlock->sampleByteLength);
     
     for (int i = 0; i < 22050; i++) {
         float value = MLNSampleBlockDataAtFrame(block2, i);
-        STAssertEquals(value, (float)i, @"block2->data[%lu] != %f: %f", i, (float)i, value);
+        XCTAssertEqual(value, (float)i, @"block2->data[%lu] != %f: %f", i, (float)i, value);
     }
 }
 
@@ -356,18 +356,18 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     block2 = MLNSampleBlockCopy(block1, startFrame, endFrame);
     
-    STAssertFalse(block2 == NULL, @"block2 == NULL");
+    XCTAssertFalse(block2 == NULL, @"block2 == NULL");
     
     fileBlock = (MLNSampleBlockFile *)block2;
     
-    STAssertEquals(block2->startFrame, startFrame, @"block2->startFrame != %lu: Got %lu", startFrame, block2->startFrame);
-    STAssertEquals(block2->numberOfFrames, numberOfFrames, @"block2->numberOfFrames != %lu: Got %lu", numberOfFrames, block2->numberOfFrames);
-    STAssertEquals(fileBlock->sampleByteLength, (ssize_t)numberOfFrames * sizeof(float), @"block2->sampleByteLength != %lu: Got %lu",
+    XCTAssertEqual(block2->startFrame, startFrame, @"block2->startFrame != %lu: Got %lu", startFrame, block2->startFrame);
+    XCTAssertEqual(block2->numberOfFrames, numberOfFrames, @"block2->numberOfFrames != %lu: Got %lu", numberOfFrames, block2->numberOfFrames);
+    XCTAssertEqual(fileBlock->sampleByteLength, (ssize_t)numberOfFrames * sizeof(float), @"block2->sampleByteLength != %lu: Got %lu",
                    numberOfFrames * sizeof(float), fileBlock->sampleByteLength);
     
     for (int i = 0; i < numberOfFrames; i++) {
         float value = MLNSampleBlockDataAtFrame(block2, i);
-        STAssertEquals(value, (float)i + startFrame, @"block2->data[%lu] != %f: %f", i, (float)i + startFrame, value);
+        XCTAssertEqual(value, (float)i + startFrame, @"block2->data[%lu] != %f: %f", i, (float)i + startFrame, value);
     }
 }
 
@@ -381,28 +381,28 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     block2 = MLNSampleBlockCopy(block1, 0, MLNSampleBlockLastFrame(block1));
     
-    STAssertFalse(block2 == NULL, @"block2 == NULL");
+    XCTAssertFalse(block2 == NULL, @"block2 == NULL");
     
     fileBlock = (MLNSampleBlockFile *)block1;
-    STAssertEquals(block1->startFrame, (NSUInteger)0, @"block1->startFrame != 0: Got %lu", block1->startFrame);
-    STAssertEquals(block1->numberOfFrames, (NSUInteger)44100, @"block1->numberOfFrames != 44100: Got %lu", block1->numberOfFrames);
-    STAssertEquals(fileBlock->sampleByteLength, (ssize_t)44100 * sizeof(float), @"block1->sampleByteLength != %lu: Got %lu",
+    XCTAssertEqual(block1->startFrame, (NSUInteger)0, @"block1->startFrame != 0: Got %lu", block1->startFrame);
+    XCTAssertEqual(block1->numberOfFrames, (NSUInteger)44100, @"block1->numberOfFrames != 44100: Got %lu", block1->numberOfFrames);
+    XCTAssertEqual(fileBlock->sampleByteLength, (ssize_t)44100 * sizeof(float), @"block1->sampleByteLength != %lu: Got %lu",
                    44100 * sizeof(float), fileBlock->sampleByteLength);
     
     for (int i = 0; i < 44100; i++) {
         float value = MLNSampleBlockDataAtFrame(block1, i);
-        STAssertEquals(value, (float)i, @"block1->data[%d] != %f: %f", i, (float)i, value);
+        XCTAssertEqual(value, (float)i, @"block1->data[%d] != %f: %f", i, (float)i, value);
     }
     
     fileBlock = (MLNSampleBlockFile *)block2;
-    STAssertEquals(block2->startFrame, (NSUInteger)0, @"block2->startFrame != 22050: Got %lu", block2->startFrame);
-    STAssertEquals(block2->numberOfFrames, (NSUInteger)44100, @"block2->numberOfFrames != 22050: Got %lu", block2->numberOfFrames);
-    STAssertEquals(fileBlock->sampleByteLength, (ssize_t)44100 * sizeof(float), @"block2->sampleByteLength != %lu: Got %lu",
+    XCTAssertEqual(block2->startFrame, (NSUInteger)0, @"block2->startFrame != 22050: Got %lu", block2->startFrame);
+    XCTAssertEqual(block2->numberOfFrames, (NSUInteger)44100, @"block2->numberOfFrames != 22050: Got %lu", block2->numberOfFrames);
+    XCTAssertEqual(fileBlock->sampleByteLength, (ssize_t)44100 * sizeof(float), @"block2->sampleByteLength != %lu: Got %lu",
                    44100 * sizeof(float), fileBlock->sampleByteLength);
     
     for (int i = 0; i < 44100; i++) {
         float value = MLNSampleBlockDataAtFrame(block2, i);
-        STAssertEquals(value, (float)i, @"block1->data[%d] != %f: %f", i, (float)i, value);
+        XCTAssertEqual(value, (float)i, @"block1->data[%d] != %f: %f", i, (float)i, value);
     }
 
     // Do not need to free block1 as it is owned by the channel
@@ -416,7 +416,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     block1 = MLNSampleBlockFileCreateBlock(NULL, 44100 * sizeof(float), 0, NULL, (44100 / 256) * sizeof(MLNSampleCachePoint), 0);
     block2 = MLNSampleBlockCopy(block1, 876235, MLNSampleBlockLastFrame(block1));
     
-    STAssertTrue(block2 == NULL, @"block2 != NULL");
+    XCTAssertTrue(block2 == NULL, @"block2 != NULL");
     
     MLNSampleBlockFree(block1);
 }
@@ -447,15 +447,15 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
         copyCount++;
     }
     
-    STAssertEquals(blockCount, copyCount, @"blockCount != copyCount: %lu != %lu", blockCount, copyCount);
+    XCTAssertEqual(blockCount, copyCount, @"blockCount != copyCount: %lu != %lu", blockCount, copyCount);
 
     block = blockList;
     copyBlock = copyList;
     
     // Check all the blocks are equal
     while (block && copyBlock) {
-        STAssertEquals(block->startFrame, copyBlock->startFrame, @"block->startFrame != copyBlock->startFrame: %lu != %lu", block->startFrame, copyBlock->startFrame);
-        STAssertEquals(block->numberOfFrames, copyBlock->numberOfFrames, @"block->numberOfFrames != copyBlock->numberOfFrames: %lu != %lu", block->numberOfFrames, copyBlock->numberOfFrames);
+        XCTAssertEqual(block->startFrame, copyBlock->startFrame, @"block->startFrame != copyBlock->startFrame: %lu != %lu", block->startFrame, copyBlock->startFrame);
+        XCTAssertEqual(block->numberOfFrames, copyBlock->numberOfFrames, @"block->numberOfFrames != copyBlock->numberOfFrames: %lu != %lu", block->numberOfFrames, copyBlock->numberOfFrames);
         
         NSUInteger k;
         
@@ -465,7 +465,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
             value = MLNSampleBlockDataAtFrame(block, k);
             copyValue = MLNSampleBlockDataAtFrame(copyBlock, k);
             
-            STAssertEquals(value, copyValue, @"data[%lu] != copyData[%lu]: %f != %f", k, k, value, copyValue);
+            XCTAssertEqual(value, copyValue, @"data[%lu] != copyData[%lu]: %f != %f", k, k, value, copyValue);
         }
         block = block->nextBlock;
         copyBlock = copyBlock->nextBlock;

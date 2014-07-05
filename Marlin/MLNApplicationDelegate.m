@@ -35,6 +35,12 @@
 
 - (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)sender
 {
+    // If we're running tests then we don't want any open file dialogs
+    BOOL runningTests = NSClassFromString(@"XCTestCase") != nil;
+    if(runningTests) {
+        return NO;
+    }
+    
     NSDocumentController *dc = [NSDocumentController sharedDocumentController];
     NSArray *urls = [dc URLsFromRunningOpenPanel];
     

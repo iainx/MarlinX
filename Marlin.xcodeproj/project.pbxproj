@@ -68,7 +68,6 @@
 		AE6A0F3C16BD1F1900362CC4 /* MLNSampleBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = AE6A0F3B16BD1F1900362CC4 /* MLNSampleBlock.m */; };
 		AE6FB1D816B8FF6E00139735 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = AE6FB1D716B8FF6E00139735 /* Constants.m */; };
 		AE6FB1DB16B9C57900139735 /* MLNSampleView.m in Sources */ = {isa = PBXBuildFile; fileRef = AE6FB1DA16B9C57900139735 /* MLNSampleView.m */; };
-		AE7254B2171B7EAC00B48145 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE7254B1171B7EAC00B48145 /* SenTestingKit.framework */; };
 		AE7254B3171B7EAC00B48145 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AECDE7C116B7C0C300DE94D5 /* Cocoa.framework */; };
 		AE7254B9171B7EAC00B48145 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = AE7254B7171B7EAC00B48145 /* InfoPlist.strings */; };
 		AE7254BC171B7EAC00B48145 /* MLNSampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AE7254BB171B7EAC00B48145 /* MLNSampleTests.m */; };
@@ -215,8 +214,7 @@
 		AE6FB1D716B8FF6E00139735 /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
 		AE6FB1D916B9C57900139735 /* MLNSampleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNSampleView.h; sourceTree = "<group>"; };
 		AE6FB1DA16B9C57900139735 /* MLNSampleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNSampleView.m; sourceTree = "<group>"; };
-		AE7254B0171B7EAC00B48145 /* MLNSampleTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MLNSampleTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
-		AE7254B1171B7EAC00B48145 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		AE7254B0171B7EAC00B48145 /* MLNSampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MLNSampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AE7254B6171B7EAC00B48145 /* MLNSampleTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MLNSampleTests-Info.plist"; sourceTree = "<group>"; };
 		AE7254B8171B7EAC00B48145 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		AE7254BA171B7EAC00B48145 /* MLNSampleTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNSampleTests.h; sourceTree = "<group>"; };
@@ -282,7 +280,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AE7254B2171B7EAC00B48145 /* SenTestingKit.framework in Frameworks */,
 				AE7254B3171B7EAC00B48145 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -429,7 +426,7 @@
 			isa = PBXGroup;
 			children = (
 				AECDE7BD16B7C0C300DE94D5 /* Marlin.app */,
-				AE7254B0171B7EAC00B48145 /* MLNSampleTests.octest */,
+				AE7254B0171B7EAC00B48145 /* MLNSampleTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -440,7 +437,6 @@
 				AE41C729185BEDE200E68819 /* QuartzCore.framework */,
 				AECDE7E416B7C3B900DE94D5 /* AudioToolbox.framework */,
 				AECDE7C116B7C0C300DE94D5 /* Cocoa.framework */,
-				AE7254B1171B7EAC00B48145 /* SenTestingKit.framework */,
 				AECDE7C316B7C0C300DE94D5 /* Other Frameworks */,
 				3A6C416BF9F44EC89CA1318B /* libPods.a */,
 			);
@@ -601,8 +597,8 @@
 			);
 			name = MLNSampleTests;
 			productName = MLNSampleTests;
-			productReference = AE7254B0171B7EAC00B48145 /* MLNSampleTests.octest */;
-			productType = "com.apple.product-type.bundle";
+			productReference = AE7254B0171B7EAC00B48145 /* MLNSampleTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		AECDE7BC16B7C0C300DE94D5 /* Marlin */ = {
 			isa = PBXNativeTarget;
@@ -631,6 +627,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = MLN;
+				LastTestingUpgradeCheck = 0510;
 				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = iain;
 			};
@@ -891,13 +888,15 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = "\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"";
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+					"$(inherited)",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MLNSampleTests/MLNSampleTests-Prefix.pch";
 				INFOPLIST_FILE = "MLNSampleTests/MLNSampleTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = octest;
 			};
 			name = Debug;
 		};
@@ -909,13 +908,15 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = "\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"";
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+					"$(inherited)",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MLNSampleTests/MLNSampleTests-Prefix.pch";
 				INFOPLIST_FILE = "MLNSampleTests/MLNSampleTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = octest;
 			};
 			name = Release;
 		};

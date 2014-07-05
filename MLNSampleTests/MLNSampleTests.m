@@ -67,24 +67,24 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
 
 - (void)testData
 {
-    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, nil);
+    XCTAssertEqual([_testSample numberOfFrames], (NSUInteger)44100);
     
     MLNSampleChannel *channel = [_testSample channelData][0];
     
-    STAssertNotNil(channel, @"Channel is nil");
+    XCTAssertNotNil(channel, @"Channel is nil");
     
     MLNSampleBlock *block = [channel firstBlock];
     
-    STAssertFalse(block == NULL, @"Block is NULL");
+    XCTAssertFalse(block == NULL, @"Block is NULL");
     
     NSUInteger numberOfFrames = block->numberOfFrames;
     
-    STAssertEquals(numberOfFrames, BUFFER_FRAME_SIZE, @"Number of frames are different: Expected %d, got %d", BUFFER_FRAME_SIZE, numberOfFrames);
+    XCTAssertEqual(numberOfFrames, BUFFER_FRAME_SIZE, @"Number of frames are different: Expected %d, got %d", BUFFER_FRAME_SIZE, numberOfFrames);
     
     for (int i = 0; i < BUFFER_FRAME_SIZE; i++) {
         float value = MLNSampleBlockDataAtFrame(block, i);
         
-        STAssertEquals(value, (float)i, @"Frame %d is %f: Expected %f", i, value, (float)i);
+        XCTAssertEqual(value, (float)i, @"Frame %d is %f: Expected %f", i, value, (float)i);
     }
 }
 
@@ -100,7 +100,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
         float value;
         moreData = [iter frameDataAndAdvance:&value];
         
-        STAssertEquals(value, (float)i, @"");
+        XCTAssertEqual(value, (float)i, @"");
         i++;
     }
 }
@@ -110,7 +110,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     [_testSample deleteRange:NSMakeRange(100, 100) undoManager:nil];
     
     // If the Channel tests have passed then the only thing this needs to test is that the sample has the correct number of frames
-    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44000, @"[_testSample numberOfFrames != 44000: %lu", [_testSample numberOfFrames]);
+    XCTAssertEqual([_testSample numberOfFrames], (NSUInteger)44000, @"[_testSample numberOfFrames != 44000: %lu", [_testSample numberOfFrames]);
 }
 
 - (void)testDeleteRangeUndo
@@ -119,13 +119,13 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     [_testSample deleteRange:NSMakeRange(100, 100) undoManager:undo];
     
-    STAssertTrue([undo canUndo], @"");
+    XCTAssertTrue([undo canUndo], @"");
     
     [undo undo];
     
-    STAssertFalse([undo canUndo], @"");
+    XCTAssertFalse([undo canUndo], @"");
     
-    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+    XCTAssertEqual([_testSample numberOfFrames], (NSUInteger)44100, @"");
     
     [self checkData];
 }
@@ -139,9 +139,9 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
                                       atFrame:insertFrame
                               withUndoManager:nil];
     
-    STAssertTrue(result, @"");
+    XCTAssertTrue(result, @"");
     
-    STAssertEquals([_testSample numberOfFrames], (NSUInteger)88200, @"%lu", insertFrame);
+    XCTAssertEqual([_testSample numberOfFrames], (NSUInteger)88200, @"%lu", insertFrame);
 }
 
 - (void)testInsertStart
@@ -152,9 +152,9 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
                                       atFrame:0
                               withUndoManager:nil];
     
-    STAssertTrue(result, @"");
+    XCTAssertTrue(result, @"");
     
-    STAssertEquals([_testSample numberOfFrames], (NSUInteger)88200, @"");
+    XCTAssertEqual([_testSample numberOfFrames], (NSUInteger)88200, @"");
 }
 
 - (void)testInsertEnd
@@ -165,9 +165,9 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
                                       atFrame:[_testSample numberOfFrames]
                               withUndoManager:nil];
     
-    STAssertTrue(result, @"");
+    XCTAssertTrue(result, @"");
     
-    STAssertEquals([_testSample numberOfFrames], (NSUInteger)88200, @"");
+    XCTAssertEqual([_testSample numberOfFrames], (NSUInteger)88200, @"");
 }
 
 - (void)testInsertUndo
@@ -181,13 +181,13 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
                                       atFrame:insertFrame
                               withUndoManager:undo];
     
-    STAssertTrue(result, @"");
+    XCTAssertTrue(result, @"");
     
-    STAssertEquals([_testSample numberOfFrames], (NSUInteger)88200, @"%lu", insertFrame);
+    XCTAssertEqual([_testSample numberOfFrames], (NSUInteger)88200, @"%lu", insertFrame);
     
     [undo undo];
     
-    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"%lu", insertFrame);
+    XCTAssertEqual([_testSample numberOfFrames], (NSUInteger)44100, @"%lu", insertFrame);
     
     [self checkData];
 }
@@ -201,7 +201,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     [_testSample cropRange:range withUndoManager:nil];
     
-    STAssertEquals([_testSample numberOfFrames], length, @"Range is %@", NSStringFromRange(range));
+    XCTAssertEqual([_testSample numberOfFrames], length, @"Range is %@", NSStringFromRange(range));
 }
 
 - (void)testCropRangeUndo
@@ -217,10 +217,10 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     MLNSampleChannel *channel = [_testSample channelData][0];
     MLNSampleBlock *block = [channel firstBlock];
     
-    STAssertFalse(block == NULL, @"");
+    XCTAssertFalse(block == NULL, @"");
     [undo undo];
     
-    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+    XCTAssertEqual([_testSample numberOfFrames], (NSUInteger)44100, @"");
     [self checkData];
 }
 
@@ -241,11 +241,11 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
         moreData = [iter frameDataAndAdvance:&value];
         
         if (NSLocationInRange(i, range)) {
-            STAssertEquals(value, (float)0, @"at %lu (%@)", i, NSStringFromRange(range));
+            XCTAssertEqual(value, (float)0, @"at %lu (%@)", i, NSStringFromRange(range));
         } else if (i < range.location) {
-            STAssertEquals(value, (float)i, @"at %lu (%@)", i, NSStringFromRange(range));
+            XCTAssertEqual(value, (float)i, @"at %lu (%@)", i, NSStringFromRange(range));
         } else {
-            STAssertEquals(value, (float)i - range.length, @"at %lu (%@)", i, NSStringFromRange(range));
+            XCTAssertEqual(value, (float)i - range.length, @"at %lu (%@)", i, NSStringFromRange(range));
         }
         
         i++;
@@ -260,7 +260,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     [_testSample insertSilenceAtFrame:frame numberOfFrames:numberOfFrames undoManager:nil];
     
-    STAssertEquals([_testSample numberOfFrames], (NSUInteger)expectedNumberOfFrames, @"");
+    XCTAssertEqual([_testSample numberOfFrames], (NSUInteger)expectedNumberOfFrames, @"");
     
     [self checkSilenceInRange:NSMakeRange(frame, numberOfFrames)];
 }
@@ -272,7 +272,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     [_testSample insertSilenceAtFrame:0 numberOfFrames:numberOfFrames undoManager:nil];
     
-    STAssertEquals([_testSample numberOfFrames], expectedNumberOfFrames, @"");
+    XCTAssertEqual([_testSample numberOfFrames], expectedNumberOfFrames, @"");
     
     [self checkSilenceInRange:NSMakeRange(0, numberOfFrames)];
 }
@@ -284,7 +284,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     [_testSample insertSilenceAtFrame:[_testSample numberOfFrames] numberOfFrames:numberOfFrames undoManager:nil];
     
-    STAssertEquals([_testSample numberOfFrames], expectedNumberOfFrames, @"");
+    XCTAssertEqual([_testSample numberOfFrames], expectedNumberOfFrames, @"");
 
     [self checkSilenceInRange:NSMakeRange(44100, numberOfFrames)];
 }
@@ -299,11 +299,11 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     [_testSample insertSilenceAtFrame:frame numberOfFrames:numberOfFrames undoManager:undo];
     
-    STAssertEquals([_testSample numberOfFrames], (NSUInteger)expectedNumberOfFrames, @"");
+    XCTAssertEqual([_testSample numberOfFrames], (NSUInteger)expectedNumberOfFrames, @"");
     
     [undo undo];
     
-    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+    XCTAssertEqual([_testSample numberOfFrames], (NSUInteger)44100, @"");
     
     [self checkData];
 }
@@ -321,9 +321,9 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
         moreData = [iter frameDataAndAdvance:&value];
         
         if (NSLocationInRange(i, range)) {
-            STAssertEquals(value, (float)0.0, @"");
+            XCTAssertEqual(value, (float)0.0, @"");
         } else {
-            STAssertEquals(value, (float)i, @"");
+            XCTAssertEqual(value, (float)i, @"");
         }
         
         i++;
@@ -338,7 +338,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     [_testSample clearRange:range withUndoManager:nil];
     
-    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+    XCTAssertEqual([_testSample numberOfFrames], (NSUInteger)44100, @"");
     
     [self checkClearInRange:range];
 }
@@ -351,7 +351,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     [_testSample clearRange:range withUndoManager:nil];
     
-    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+    XCTAssertEqual([_testSample numberOfFrames], (NSUInteger)44100, @"");
     
     [self checkClearInRange:range];
 }
@@ -364,7 +364,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     [_testSample clearRange:range withUndoManager:nil];
     
-    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+    XCTAssertEqual([_testSample numberOfFrames], (NSUInteger)44100, @"");
     
     [self checkClearInRange:range];
 }
@@ -375,7 +375,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     [_testSample clearRange:range withUndoManager:nil];
     
-    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+    XCTAssertEqual([_testSample numberOfFrames], (NSUInteger)44100, @"");
     
     [self checkClearInRange:range];
 }
@@ -390,11 +390,11 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     [_testSample clearRange:range withUndoManager:undo];
     
-    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+    XCTAssertEqual([_testSample numberOfFrames], (NSUInteger)44100, @"");
     
     [undo undo];
     
-    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+    XCTAssertEqual([_testSample numberOfFrames], (NSUInteger)44100, @"");
     
     [self checkData];
 }
@@ -413,9 +413,9 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
         
         if (NSLocationInRange(i, range)) {
             NSUInteger offset = i - range.location;
-            STAssertEquals(value, (float)((NSMaxRange(range) - 1) - offset), @"%@ - %lu - %lu - %lu", NSStringFromRange(range), offset, NSMaxRange(range), i);
+            XCTAssertEqual(value, (float)((NSMaxRange(range) - 1) - offset), @"%@ - %lu - %lu - %lu", NSStringFromRange(range), offset, NSMaxRange(range), i);
         } else {
-            STAssertEquals(value, (float)i, @"");
+            XCTAssertEqual(value, (float)i, @"");
         }
         
         i++;
@@ -430,7 +430,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     [_testSample reverseRange:range withUndoManager:nil];
     
-    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+    XCTAssertEqual([_testSample numberOfFrames], (NSUInteger)44100, @"");
     [self checkReverseInRange:range];
 }
 
@@ -441,7 +441,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     [_testSample reverseRange:range withUndoManager:nil];
     
-    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+    XCTAssertEqual([_testSample numberOfFrames], (NSUInteger)44100, @"");
     [self checkReverseInRange:range];
 }
 
@@ -453,7 +453,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     [_testSample reverseRange:range withUndoManager:nil];
     
-    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+    XCTAssertEqual([_testSample numberOfFrames], (NSUInteger)44100, @"");
     [self checkReverseInRange:range];
 }
 
@@ -463,7 +463,7 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     [_testSample reverseRange:range withUndoManager:nil];
     
-    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+    XCTAssertEqual([_testSample numberOfFrames], (NSUInteger)44100, @"");
     [self checkReverseInRange:range];
 }
 
@@ -476,11 +476,11 @@ static const NSUInteger BUFFER_FRAME_SIZE = 44100;
     
     [_testSample reverseRange:range withUndoManager:undo];
     
-    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+    XCTAssertEqual([_testSample numberOfFrames], (NSUInteger)44100, @"");
     
     [undo undo];
     
-    STAssertEquals([_testSample numberOfFrames], (NSUInteger)44100, @"");
+    XCTAssertEqual([_testSample numberOfFrames], (NSUInteger)44100, @"");
     [self checkData];
 }
 @end
