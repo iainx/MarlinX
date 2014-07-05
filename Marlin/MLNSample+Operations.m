@@ -315,6 +315,23 @@
                                                  withUndoManager:undoManager];
 }
 
+- (void)normaliseDataInRange:(NSRange)range
+{
+    if (![self containsRange:range]) {
+        return;
+    }
+    
+    float maxInSample = 0.0;
+    for (MLNSampleChannel *channel in [self channelData]) {
+        float maxInChannel = [channel maxSampleValueInRange:range];
+        
+        if (maxInChannel < 0) {
+            maxInChannel *= -1;
+        }
+        maxInSample = MAX (maxInSample, maxInChannel);
+    }
+}
+
 - (void)dumpDataInRange:(NSRange)range
 {
     for (MLNSampleChannel *channel in [self channelData]) {
@@ -324,4 +341,5 @@
                atomically:YES];                           
     }
 }
+
 @end

@@ -43,6 +43,7 @@
 - (void)reverseRange:(NSRange)range
      withUndoManager:(NSUndoManager *)undoManager;
 
+- (void)normaliseDataInRange:(NSRange)range;
 - (void)dumpDataInRange:(NSRange)range;
 
 @end

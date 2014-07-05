@@ -485,8 +485,8 @@ MyAQOutputCallback (void *userData,
     _playbackData->blocks = malloc(sizeof (PlaybackBlock) * _format.mChannelsPerFrame);
     for (i = 0; i < _format.mChannelsPerFrame; i++) {
         MLNSampleChannel *channel = [self channelData][i];
-        
-        _playbackData->blocks[i].cIter = MLNSampleChannelIteratorNew(channel, startFrame, NO);
+        NSRange range = NSMakeRange(startFrame, endFrame - startFrame);
+        _playbackData->blocks[i].cIter = MLNSampleChannelIteratorNew(channel, range, NO);
     }
     
     AudioQueueNewOutput(&newAsbd, MyAQOutputCallback, _playbackData, NULL, NULL, 0, &_playbackQueue);

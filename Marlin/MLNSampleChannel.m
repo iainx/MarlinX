@@ -6,11 +6,13 @@
 //  Copyright (c) 2013 iain. All rights reserved.
 //
 
+#include <math.h>
 #import "MLNApplicationDelegate.h"
 #import "MLNSampleChannel.h"
 #import "MLNSampleBlockFile.h"
 #import "MLNSampleBlockSilence.h"
 #import "MLNMMapRegion.h"
+#import "MLNSampleChannelIterator.h"
 
 @implementation MLNSampleChannel { 
     MLNCacheFile *_dataFile;
@@ -530,6 +532,25 @@ int MLNSampleChannelFramesPerCachePoint(void)
     }
     
     [self updateBlockCount];
+}
+
+- (float)maxSampleValueInRange:(NSRange)range
+{
+    MLNSampleChannelIterator *iter = [[MLNSampleChannelIterator alloc] initWithChannel:self withRange:range];
+    float maxValue = 0;
+    BOOL moreData = YES;
+    
+    while (moreData) {
+        MLNSampleCachePoint cachePoint;
+        float max;
+        
+        moreData = [iter cachePointAndAdvance:&cachePoint];
+        max = MAX(fabsf(cachePoint.maxValue), fabsf(cachePoint.minValue));
+        
+        maxValue = MAX(maxValue, max);
+    }
+    
+    return maxValue;
 }
 
 #pragma mark - Debugging

@@ -15,6 +15,7 @@ struct MLNSampleChannelCIterator {
     NSUInteger framePosition;
     NSUInteger cachePointPosition;
     MLNSampleBlock *currentBlock;
+    NSRange range;
     BOOL isRaw;
 };
 
@@ -23,9 +24,10 @@ struct MLNSampleChannelCIterator {
 }
 
 MLNSampleChannelCIterator *MLNSampleChannelIteratorNew(MLNSampleChannel *channel,
-                                                       NSUInteger frame,
+                                                       NSRange range,
                                                        BOOL isRaw)
 {
+    NSUInteger frame = range.location;
     MLNSampleChannelCIterator *cIter = malloc(sizeof(MLNSampleChannelCIterator));
     cIter->currentBlock = [channel sampleBlockForFrame:frame];
     
@@ -35,6 +37,7 @@ MLNSampleChannelCIterator *MLNSampleChannelIteratorNew(MLNSampleChannel *channel
         return NULL;
     }
     
+    cIter->range = range;
     cIter->framePosition = (frame - cIter->currentBlock->startFrame);
     cIter->cachePointPosition = (cIter->framePosition / MLNSampleChannelFramesPerCachePoint());
     cIter->isRaw = isRaw;
@@ -48,19 +51,28 @@ void MLNSampleChannelIteratorFree(MLNSampleChannelCIterator *cIter)
 }
 
 - (id)initWithChannel:(MLNSampleChannel *)channel
-              atFrame:(NSUInteger)frame
+            withRange:(NSRange)range
 {
     self = [super init];
     if (!self) {
         return nil;
     }
     
-    _cIter = MLNSampleChannelIteratorNew(channel, frame, NO);
+    _cIter = MLNSampleChannelIteratorNew(channel, range, NO);
     if (_cIter == NULL) {
         self = nil;
         return nil;
     }
     return self;
+}
+
+- (id)initWithChannel:(MLNSampleChannel *)channel
+              atFrame:(NSUInteger)frame
+{
+    NSInteger length = [channel numberOfFrames] - frame;
+    NSRange range = NSMakeRange(frame, length);
+    
+    return [self initWithChannel:channel withRange:range];
 }
 
 - (id)initRawIteratorWithChannel:(MLNSampleChannel *)channel
@@ -119,6 +131,13 @@ BOOL MLNSampleChannelIteratorFrameDataAndAdvance(MLNSampleChannelCIterator *iter
     iter->framePosition++;
     iter->cachePointPosition = iter->framePosition / MLNSampleChannelFramesPerCachePoint();
     
+    if (iter->framePosition >= NSMaxRange(iter->range)) {
+        iter->currentBlock = NULL;
+        iter->framePosition = 0;
+        iter->cachePointPosition = 0;
+        return NO;
+    }
+    
     if (iter->framePosition >= iter->currentBlock->numberOfFrames) {
         iter->currentBlock = iter->currentBlock->nextBlock;
         iter->framePosition = 0;
@@ -135,6 +154,44 @@ BOOL MLNSampleChannelIteratorFrameDataAndAdvance(MLNSampleChannelCIterator *iter
 - (BOOL)frameDataAndAdvance:(float *)value
 {
     return MLNSampleChannelIteratorFrameDataAndAdvance(_cIter, value);
+}
+
+BOOL MLNSampleChannelIteratorCachePointAndAdvance(MLNSampleChannelCIterator *iter,
+                                                  MLNSampleCachePoint *cachePoint)
+{
+    if (iter->currentBlock == NULL) {
+        DDLogCError(@"Requesting frame from dead iterator");
+        return NO;
+    }
+    
+    MLNSampleBlockCachePointAtFrame(iter->currentBlock, cachePoint, iter->cachePointPosition);
+    
+    iter->cachePointPosition++;
+    iter->framePosition = iter->cachePointPosition * MLNSampleChannelFramesPerCachePoint();
+    
+    if (iter->framePosition >= NSMaxRange(iter->range)) {
+        iter->currentBlock = NULL;
+        iter->framePosition = 0;
+        iter->cachePointPosition = 0;
+        return NO;
+    }
+    
+    if (iter->framePosition >= iter->currentBlock->numberOfFrames) {
+        iter->currentBlock = iter->currentBlock->nextBlock;
+        iter->framePosition = 0;
+        iter->cachePointPosition = 0;
+    }
+    
+    if (iter->currentBlock) {
+        return YES;
+    } else {
+        return NO;
+    }
+}
+
+- (BOOL)cachePointAndAdvance:(MLNSampleCachePoint *)cachePoint
+{
+    return MLNSampleChannelIteratorCachePointAndAdvance(_cIter, cachePoint);
 }
 
 BOOL MLNSampleChannelIteratorFrameDataAndRewind(MLNSampleChannelCIterator *iter,
@@ -196,6 +253,13 @@ BOOL MLNSampleChannelIteratorNextCachePointData(MLNSampleChannelCIterator *iter,
     
     iter->cachePointPosition++;
     iter->framePosition = iter->cachePointPosition * MLNSampleChannelFramesPerCachePoint();
+    
+    if (iter->framePosition > NSMaxRange(iter->range)) {
+        iter->currentBlock = NULL;
+        iter->framePosition = 0;
+        iter->cachePointPosition = 0;
+        return NO;
+    }
     
     if (iter->framePosition >= iter->currentBlock->numberOfFrames) {
         iter->currentBlock = iter->currentBlock->nextBlock;

@@ -14,12 +14,15 @@
 typedef struct MLNSampleChannelCIterator MLNSampleChannelCIterator;
 
 @interface MLNSampleChannelIterator : NSObject
+- (id)initWithChannel:(MLNSampleChannel *)channel
+            withRange:(NSRange)range;
 - (id)initWithChannel:(MLNSampleChannel *)channel atFrame:(NSUInteger)frame;
 - (id)initRawIteratorWithChannel:(MLNSampleChannel *)channel
                          atFrame:(NSUInteger)frame;
 - (void)resetToFrame:(NSUInteger)frame
            inChannel:(MLNSampleChannel *)channel;
 - (BOOL)frameDataAndAdvance:(float *)value;
+- (BOOL)cachePointAndAdvance:(MLNSampleCachePoint *)cachePoint;
 - (BOOL)frameDataAndRewind:(float *)value;
 - (BOOL)nextCachePointData:(MLNSampleCachePoint *)cachePoint;
 - (NSUInteger)fillBufferWithData:(float *)buffer ofFrameLength:(NSUInteger)frameLength;
@@ -31,7 +34,7 @@ typedef struct MLNSampleChannelCIterator MLNSampleChannelCIterator;
 
 // C API
 MLNSampleChannelCIterator *MLNSampleChannelIteratorNew(MLNSampleChannel *channel,
-                                                       NSUInteger frame,
+                                                       NSRange range,
                                                        BOOL isRaw);
 void MLNSampleChannelIteratorFree(MLNSampleChannelCIterator *cIter);
 void MLNSampleChannelIteratorResetToFrame(MLNSampleChannelCIterator *cIter,
