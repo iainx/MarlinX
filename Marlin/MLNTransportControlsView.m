@@ -7,7 +7,7 @@
 //
 
 #import "MLNTransportControlsView.h"
-#import "NSString+FontAwesome.h"
+//#import "NSString+FontAwesome.h"
 
 @implementation MLNTransportControlsView {
     NSButton *_startButton;
@@ -45,19 +45,19 @@
 
 - (void)doRealInit
 {
-    _startButton = [self createButtonWithTitle:[NSString awesomeIcon:FaStepBackward] action:@selector(requestMoveToStart:)];
-    _rewindButton = [self createButtonWithTitle:[NSString awesomeIcon:FaBackward] action:@selector(requestPreviousFrame:)];
+    _startButton = [self createButtonWithTitle:@"Start" action:@selector(requestMoveToStart:)];
+    _rewindButton = [self createButtonWithTitle:@"Rewind" action:@selector(requestPreviousFrame:)];
     [_rewindButton setContinuous:YES];
     [_rewindButton setPeriodicDelay:0.25 interval:0.01];
     
-    _playButton = [self createButtonWithTitle:[NSString awesomeIcon:FaPlay] action:@selector(requestPlay:)];
-    _stopButton = [self createButtonWithTitle:[NSString awesomeIcon:FaStop] action:@selector(requestStop:)];
-    _ffwdButton = [self createButtonWithTitle:[NSString awesomeIcon:FaForward] action:@selector(requestNextFrame:)];
+    _playButton = [self createButtonWithTitle:@"Play" action:@selector(requestPlay:)];
+    _stopButton = [self createButtonWithTitle:@"Stop" action:@selector(requestStop:)];
+    _ffwdButton = [self createButtonWithTitle:@"Fwd" action:@selector(requestNextFrame:)];
     [_ffwdButton setContinuous:YES];
     [_ffwdButton setPeriodicDelay:0.25 interval:0.01];
     
-    _endButton = [self createButtonWithTitle:[NSString awesomeIcon:FaStepForward] action:@selector(requestMoveToEnd:)];
-    
+    _endButton = [self createButtonWithTitle:@"Step" action:@selector(requestMoveToEnd:)];
+
     NSArray *constraints;
     NSDictionary *viewsDict = NSDictionaryOfVariableBindings(_startButton,_rewindButton,_playButton,_stopButton,_ffwdButton,_endButton);
     
